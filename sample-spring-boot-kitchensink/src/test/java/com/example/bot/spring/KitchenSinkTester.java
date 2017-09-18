@@ -87,7 +87,7 @@ public class KitchenSinkTester {
 		assertThat(result.equals("def"));
 	}
 	@Test
-	public void testFound_1() throws Exception {
+	public void testFound_2() throws Exception {
 		boolean thrown = false;
 		String result = null;
 		try {
