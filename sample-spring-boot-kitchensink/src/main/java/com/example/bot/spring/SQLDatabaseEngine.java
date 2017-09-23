@@ -18,16 +18,18 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		Connection connection = getConnection();
 		String result = null;
 		try {
-			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM keyword;");
+			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM keywords;");
 			ResultSet rs = stmt.executeQuery();
 			while (result == null && rs.next()) {
 				if (text.toLowerCase().contains(rs.getString(1).toLowerCase())) {
-					result = rs.getString(2)+rs.getInt(3);
-					PreparedStatement stmt2 = connection.prepareStatement("UPDATE keyword" + 
+					result = rs.getString(2)+" "+rs.getInt(3);
+					PreparedStatement stmt2 = connection.prepareStatement("UPDATE keywords" + 
 							"SET hits = ?" + 
 							"where keyword = ?;");
-					stmt2.setInt(1, rs.getInt(3)+1);
-					stmt2.setString(2, rs.getString(1));
+					int hits = rs.getInt(3)+1;
+					String keyword=rs.getString(1);
+					stmt2.setInt(1, hits);
+					stmt2.setString(2, keyword);
 					stmt2.executeQuery();
 					stmt2.close();
 				}
