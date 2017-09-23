@@ -22,10 +22,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			ResultSet rs = stmt.executeQuery();
 			while (result == null && rs.next()) {
 				if (text.toLowerCase().contains(rs.getString(1).toLowerCase())) {
-					result = rs.getString(2)+" "+rs.getInt(3);
-					PreparedStatement stmt2 = connection.prepareStatement("UPDATE keywords" + 
-							"SET hits = ?" + 
-							"where keyword = ?;");
+					result = rs.getString(2)+" //"+rs.getInt(3);
+					PreparedStatement stmt2 = connection.prepareStatement("UPDATE keywords SET hits = ? WHERE keyword = ?;");
 					int hits = rs.getInt(3)+1;
 					String keyword=rs.getString(1);
 					stmt2.setInt(1, hits);
