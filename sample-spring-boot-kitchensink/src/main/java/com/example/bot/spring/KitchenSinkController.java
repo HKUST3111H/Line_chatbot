@@ -245,7 +245,7 @@ public class KitchenSinkController {
         		log.info("Returns message {}: {}", replyToken, reply);
         		this.replyText(replyToken,reply);
         		database.createUser(userId,time,FAQ1);
-        		user.setUserID(userId);
+        		user.setID(userId);
         		user.setTime(time);
         		user.setState(FAQ1);
         }
