@@ -18,12 +18,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		Connection connection = getConnection();
 		String result = null;
 		try {
-			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM keywords;");
+			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_faq;");
 			ResultSet rs = stmt.executeQuery();
 			while (result == null && rs.next()) {
 				if (text.toLowerCase().contains(rs.getString(1).toLowerCase())) {
 					result = rs.getString(2)+" //"+rs.getInt(3);
-					PreparedStatement stmt2 = connection.prepareStatement("UPDATE keywords SET hits = ? WHERE keyword = ?;");
+					PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_faq SET hit = ? WHERE question = ?;");
 					int hits = rs.getInt(3)+1;
 					String keyword=rs.getString(1);
 					stmt2.setInt(1, hits);
@@ -40,6 +40,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} finally {
 			
 		}
+		if (result == null)
+			result ="null";
 		if (result != null)
 			return result;
 		throw new Exception("NOT FOUND");
@@ -92,7 +94,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 	
-	void updateTime(String id, java.sql.Timestamp time) throws Exception {
+	void setUserTime(String id, java.sql.Timestamp time) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
 		try {
@@ -130,6 +132,27 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		}
 		if (1==1)
 			return;
+		throw new Exception("NOT FOUND");
+	}
+	
+	void createUser(String id, java.sql.Timestamp time, int state) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_user (id, state, last_login) VALUES (?, ?, ?);");
+			stmt2.setString(1, id);
+			stmt2.setInt(2, state);
+			stmt2.setTimestamp(3, time);
+			stmt2.executeQuery();
+			stmt2.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (1==1)
+			return ;
 		throw new Exception("NOT FOUND");
 	}
 }
