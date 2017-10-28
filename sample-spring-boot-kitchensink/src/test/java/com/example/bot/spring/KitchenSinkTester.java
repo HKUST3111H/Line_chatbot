@@ -45,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.example.bot.spring.DatabaseEngine;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 @RunWith(SpringRunner.class)
 //@SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
@@ -144,7 +145,7 @@ public class KitchenSinkTester {
 	@Test
 	public void testUser() throws Exception {
 		//for testing this class
-		Calendar calendar = Calendar.getInstance();
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 		java.util.Date now = calendar.getTime();
 		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
 		User userA = new User("Xiaofeng","Xiaofeng","Xiaofeng","Xiaofeng",0,time);
@@ -177,17 +178,25 @@ public class KitchenSinkTester {
 	@Test
 	public void testSQL() throws Exception {
 		//for testing this class
-		Calendar calendar = Calendar.getInstance();
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 		java.util.Date now = calendar.getTime();
 		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
-		this.databaseEngine.updateTime("test", time);
+		this.databaseEngine.setUserTime("test", time);
 		
 	}
 	
 	@Test
 	public void testSQL_2() throws Exception {
 		//for testing this class
-		this.databaseEngine.setUserState("test", 1);
+		this.databaseEngine.setUserState("test", 2);
+	}
+	
+	public void testSQL_3() throws Exception {
+		//for testing this class
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		java.util.Date now = calendar.getTime();
+		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
+		this.databaseEngine.createUser("test3",time, 0);
 	}
 
 }
