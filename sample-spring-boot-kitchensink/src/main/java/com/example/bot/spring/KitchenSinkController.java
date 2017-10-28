@@ -240,15 +240,14 @@ public class KitchenSinkController {
         String userId = event.getSource().getUserId();
         User user = database.getUserInformation(userId);
         
-        if(user.getUserID.equals("null")) {
+        if(user.getUserID().equals("null")) {
         		String reply = "Thanks for your first use of our app!";
         		log.info("Returns message {}: {}", replyToken, reply);
         		this.replyText(replyToken,reply);
-        		//database.createUser(userId);
-        		//database.setUserState(userId, FAQ1);
-        		user.setState(FAQ1);
-        		//database.setUserTime(userId,time);
+        		database.createUser(userId,time,FAQ1);
+        		user.setUserID(userId);
         		user.setTime(time);
+        		user.setState(FAQ1);
         }
         
         int state = user.getState();
@@ -256,9 +255,9 @@ public class KitchenSinkController {
         
         long difference = (time.getTime()-last_time.getTime())/(60*1000);
         
-        // check whether the time gap is larger than 10 minutes
+        // check whether the time gapping is larger than 10 minutes
         if(difference>10) {
-        		String answer = faqDatabase.search(text);
+        		String answer = database.search(text);
         		if(!answer.equals("Hello!")) {
         			String reply = "Hello!";
             		log.info("Returns message {}: {}", replyToken, reply);
@@ -268,6 +267,29 @@ public class KitchenSinkController {
         
         // update last_time
         database.setUserTime(userId,time);
+        
+        if(state == FAQ1 || state == FAQ2) {
+        		// if the text does not indicate booking
+        		if(!text.contains("book")) {
+        			String answer = database.search(text);
+        			if(!answer.equals("null")) {
+        				log.info("Returns answer message {}: {}", replyToken, answer);
+        				this.replyText(replyToken,answer);
+        			}
+        			else {
+        				String reply = "Sorry! We cannot answer your question.";
+        				
+        				
+        				
+                		log.info("Returns message {}: {}", replyToken, reply);
+                		this.replyText(replyToken,reply);
+        			}
+        		}
+        		else {
+        			
+        		}
+        	
+        }
         
         
         

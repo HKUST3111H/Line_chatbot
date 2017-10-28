@@ -62,7 +62,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		return connection;
 	}
 	
-	User getUserInormation(String id) throws Exception {
+	User getUserInformation(String id) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
 		User result=new User();

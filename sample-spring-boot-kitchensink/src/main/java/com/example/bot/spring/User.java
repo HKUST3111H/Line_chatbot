@@ -21,16 +21,24 @@ public class User {
 	private List<String> tripHistory;
 	private String age;
 	private int state;//chatting or booking state
+	private java.sql.Timestamp time;
 	
-	public User (String id,String name, String phoneno, String age, int state ){//except for tripHistory
+	public User (String id,String name, String phoneno, String age, int state, java.sql.Timestamp time ){//except for tripHistory
 		tripHistory = new ArrayList<String>();
 		this.userID = id;
 		this.userName = name;
 		this.phoneNumber = phoneno;
 		this.age = age;
 		this.state = state;
-		
-		
+		this.time = time;
+	}
+	public User (){//except for tripHistory
+		tripHistory = new ArrayList<String>();
+		this.userID = "null";
+		this.userName = "null";
+		this.phoneNumber = "null";
+		this.age = "0";
+		this.state = -1;	
 	}
 	
 	//getter
@@ -49,6 +57,11 @@ public class User {
 	int getState(){
 		return this.state;
 	}
+	
+	java.sql.Timestamp getTime(){
+		return this.time;
+	}
+	
 	void outputTripHistory(){
 		for(int i = 0; i <this.tripHistory.size();i++){
 			System.out.println(tripHistory.get(i));
@@ -56,8 +69,8 @@ public class User {
 	}
 	
 	//mutator
-	void setState(){
-		this.state = 0; //chatting => 0 , booking => 1
+	void setState(int state){
+		this.state = state; //chatting => 0 , booking => 1
 	}
 
 	void setAge(String Age){
@@ -66,9 +79,19 @@ public class User {
 	void setPhoneNumber(String PhoneNo){
 		this.phoneNumber = PhoneNo;
 	}
+	void setID(String userID){
+		this.userID = userID;
+	}
+	void setName(String userName){
+		this.userName = userName;
+	}
 	void addTripHistory(String tripID){
 		this.tripHistory.add(tripID);
 		
+	}
+	
+	void setTime(java.sql.Timestamp time){
+		this.time = time;
 	}
 	
 
