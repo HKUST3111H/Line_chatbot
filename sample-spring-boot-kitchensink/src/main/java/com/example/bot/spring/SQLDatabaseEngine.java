@@ -61,5 +61,42 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 
 		return connection;
 	}
+	
+	User getUserInormation(String id) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		User result=new User();
+		try {
+			PreparedStatement stmt = connection.prepareStatement("SELECT id = ? FROM line_user;");
+			stmt.setString(1, id);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+					result.setID(rs.getString(0));
+					result.setName(rs.getString(1));
+					result.setPhoneNumber(rs.getString(2));
+					result.setAge(rs.getString(3));
+					result.setState(rs.getInt(4));
+					// train offering
+					PreparedStatement stmt2 = connection.prepareStatement("SELECT id = ? FROM line_user;");
+					int hits = rs.getInt(3)+1;
+					String keyword=rs.getString(1);
+					//stmt2.setInt(1, hits);
+					stmt2.setString(1, keyword);
+					stmt2.executeQuery();
+					stmt2.close();
+			}
+			rs.close();
+			stmt.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (1==1)
+			return result;
+		throw new Exception("NOT FOUND");
+	}
+	
 
 }
