@@ -76,14 +76,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 					result.setPhoneNumber(rs.getString(2));
 					result.setAge(rs.getString(3));
 					result.setState(rs.getInt(4));
+					result.setTime(rs.getTimestamp(5));
 					// train offering
-					PreparedStatement stmt2 = connection.prepareStatement("SELECT id = ? FROM line_user;");
-					int hits = rs.getInt(3)+1;
-					String keyword=rs.getString(1);
-					//stmt2.setInt(1, hits);
-					stmt2.setString(1, keyword);
-					stmt2.executeQuery();
-					stmt2.close();
 			}
 			rs.close();
 			stmt.close();
@@ -98,5 +92,44 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 	
-
+	void updateTime(String id, java.sql.Timestamp time) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_user SET last_login = ? WHERE id = ?;");
+			stmt2.setTimestamp(1, time);
+			stmt2.setString(2, id);
+			stmt2.executeQuery();
+			stmt2.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (1==1)
+			return ;
+		throw new Exception("NOT FOUND");
+	}
+	
+	void setUserState(String id, int FAQ1) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_user SET state = ? WHERE id = ?;");
+			stmt2.setInt(1, FAQ1);
+			stmt2.setString(2, id);
+			stmt2.executeQuery();
+			stmt2.close();
+			connection.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (1==1)
+			return;
+		throw new Exception("NOT FOUND");
+	}
 }

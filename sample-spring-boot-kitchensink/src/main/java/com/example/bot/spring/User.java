@@ -21,14 +21,16 @@ public class User {
 	private List<String> tripHistory;
 	private String age;
 	private int state;//chatting or booking state
+	private java.sql.Timestamp time;
 	
-	public User (String id,String name, String phoneno, String age, int state ){//except for tripHistory
+	public User (String id,String name, String phoneno, String age, int state, java.sql.Timestamp time ){//except for tripHistory
 		tripHistory = new ArrayList<String>();
 		this.userID = id;
 		this.userName = name;
 		this.phoneNumber = phoneno;
 		this.age = age;
-		this.state = state;	
+		this.state = state;
+		this.time = time;
 	}
 	public User (){//except for tripHistory
 		tripHistory = new ArrayList<String>();
@@ -55,6 +57,11 @@ public class User {
 	int getState(){
 		return this.state;
 	}
+	
+	java.sql.Timestamp getTime(){
+		return this.time;
+	}
+	
 	void outputTripHistory(){
 		for(int i = 0; i <this.tripHistory.size();i++){
 			System.out.println(tripHistory.get(i));
@@ -81,6 +88,10 @@ public class User {
 	void addTripHistory(String tripID){
 		this.tripHistory.add(tripID);
 		
+	}
+	
+	void setTime(java.sql.Timestamp time){
+		this.time = time;
 	}
 	
 
