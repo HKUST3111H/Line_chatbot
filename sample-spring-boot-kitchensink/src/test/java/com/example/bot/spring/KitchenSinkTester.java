@@ -43,6 +43,9 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import com.example.bot.spring.DatabaseEngine;
+import java.util.Date;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 @RunWith(SpringRunner.class)
 //@SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
@@ -113,7 +116,7 @@ public class KitchenSinkTester {
 			thrown = true;
 		}
 		assertThat(!thrown);
-		assertThat(result.equals("def"));
+		assertThat(result).isEqualTo("def");
 	}
 	@Test
 	public void testFound_1() throws Exception {
@@ -125,7 +128,7 @@ public class KitchenSinkTester {
 			thrown = true;
 		}
 		assertThat(!thrown);
-		assertThat(result.equals("def"));
+		assertThat(result).isEqualTo("def");
 	}
 	@Test
 	public void testFound_2() throws Exception {
@@ -142,7 +145,10 @@ public class KitchenSinkTester {
 	@Test
 	public void testUser() throws Exception {
 		//for testing this class
-		User userA = new User("Xiaofeng","Xiaofeng","Xiaofeng","Xiaofeng",0);
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		java.util.Date now = calendar.getTime();
+		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
+		User userA = new User("Xiaofeng","Xiaofeng","Xiaofeng","Xiaofeng",0,time);
 		userA.setAge("45");
 		userA.setPhoneNumber("888888");
 		System.out.println(userA.getAge());
@@ -168,5 +174,38 @@ public class KitchenSinkTester {
 		assertThat(offering.getOfferingID()).isEqualTo("offeringID");
 		
 	}
+	
+	@Test
+	public void testSQL() throws Exception {
+		//for testing this class
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		java.util.Date now = calendar.getTime();
+		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
+		this.databaseEngine.setUserTime("test", time);
+		
+	}
+	
+	@Test
+	public void testSQL_2() throws Exception {
+		//for testing this class
+		this.databaseEngine.setUserState("test", 2);
+	}
+	
+	@Test
+	public void testSQL_3() throws Exception {
+		//for testing this class
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		java.util.Date now = calendar.getTime();
+		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
+		this.databaseEngine.createUser("test4",time, 0);
+	}
 
+	@Test
+	public void testSQL_4() throws Exception {
+		//for testing this class
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		java.util.Date now = calendar.getTime();
+		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
+		this.databaseEngine.createUser("test4",time, 0);
+	}
 }

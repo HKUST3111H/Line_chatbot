@@ -15,6 +15,7 @@ public class TourOffering {
 	private int maxCapacity;
 	private int minCapacity;
 	private List<User> users;
+	private int state;
 	
 	// constructor
 	public TourOffering(String offeringID, String date, String guideName, String guideAccount,
@@ -69,6 +70,10 @@ public class TourOffering {
 		return minCapacity;
 	}
 	
+	public int getState() {
+		return state;
+	}
+	
 	public List<User> getUsers() {
 		return users;
 	}
@@ -104,5 +109,9 @@ public class TourOffering {
 	
 	public void setUsers(List<User> users) {
 		this.users = users;
+	}
+	
+	public void setState(int state) {
+		this.state = state;
 	}
 }
