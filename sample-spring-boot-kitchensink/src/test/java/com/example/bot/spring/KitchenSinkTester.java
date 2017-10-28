@@ -99,4 +99,20 @@ public class KitchenSinkTester {
 		assertThat(!thrown);
 		assertThat(result.equals("Great!"));
 	}
+	@Test
+	public void testUser() throws Exception {
+		//for testing this class
+		User userA = new User("Xiaofeng","Xiaofeng","Xiaofeng","Xiaofeng",0);
+		userA.setAge("45");
+		userA.setPhoneNumber("888888");
+		System.out.println(userA.getAge());
+		System.out.println(userA.getAge());
+		userA.addTripHistory("hkust");
+		userA.addTripHistory("hongkong");
+		userA.addTripHistory("tomorrowland");
+		userA.outputTripHistory();
+		
+	}
+	
+
 }
