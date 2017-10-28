@@ -209,9 +209,31 @@ public class KitchenSinkController {
 
 	private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
+		// state constants
+		
+		// no user information
+		private static final int FAQ1 = 100;
+		
+		// no user
+		private static final int FAQ2 = 300;
+		private static final int FAQ3 = 500;
+		
+		
         String text = content.getText();
 
         log.info("Got text message from {}: {}", replyToken, text);
+        
+        
+        String userId = event.getSource().getUserId();
+        User user = SQLDatabaseEngine.getUserInformation(userId);
+        
+        
+        
+        
+        
+        
+        
+        
         switch (text) {
             case "profile": {
                 String userId = event.getSource().getUserId();
