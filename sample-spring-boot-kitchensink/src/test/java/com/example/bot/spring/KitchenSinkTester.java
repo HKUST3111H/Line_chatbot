@@ -116,7 +116,7 @@ public class KitchenSinkTester {
 			thrown = true;
 		}
 		assertThat(!thrown);
-		assertThat(result.equals("def"));
+		assertThat(result).isEqualTo("def");
 	}
 	@Test
 	public void testFound_1() throws Exception {
@@ -128,7 +128,7 @@ public class KitchenSinkTester {
 			thrown = true;
 		}
 		assertThat(!thrown);
-		assertThat(result.equals("def"));
+		assertThat(result).isEqualTo("def");
 	}
 	@Test
 	public void testFound_2() throws Exception {
@@ -199,8 +199,9 @@ public class KitchenSinkTester {
 		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
 		this.databaseEngine.createUser("test4",time, 0);
 	}
+
 	@Test
-	public void testSQL_3() throws Exception {
+	public void testSQL_4() throws Exception {
 		//for testing this class
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 		java.util.Date now = calendar.getTime();

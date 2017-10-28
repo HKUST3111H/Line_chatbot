@@ -18,19 +18,19 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		Connection connection = getConnection();
 		String result = null;
 		try {
-			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_faq;");
+			PreparedStatement stmt = connection.prepareStatement("SELECT answer, hit FROM line_faq WHERE ? like concat('%',question,'%')");
+			stmt.setString(1, text);
 			ResultSet rs = stmt.executeQuery();
-			while (result == null && rs.next()) {
-				if (text.toLowerCase().contains(rs.getString(1).toLowerCase())) {
-					result = rs.getString(2)+" //"+rs.getInt(3);
-					PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_faq SET hit = ? WHERE question = ?;");
-					int hits = rs.getInt(3)+1;
-					String keyword=rs.getString(1);
-					stmt2.setInt(1, hits);
-					stmt2.setString(2, keyword);
-					stmt2.executeQuery();
-					stmt2.close();
-				}
+			if(rs.next()) {
+				result=rs.getString(1);
+				int hit =rs.getInt(2);
+				hit=hit+1;
+				PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_faq SET hit = ? WHERE answer = ?;");
+				
+				stmt2.setInt(1, hit);
+				stmt2.setString(2, result);
+				stmt2.executeUpdate();
+				stmt2.close();
 			}
 			rs.close();
 			stmt.close();
@@ -123,7 +123,6 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			stmt2.setString(2, id);
 			stmt2.executeQuery();
 			stmt2.close();
-			connection.close();
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
