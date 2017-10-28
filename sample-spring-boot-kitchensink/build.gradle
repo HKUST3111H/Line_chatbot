@@ -24,3 +24,5 @@ dependencies {
 test {
     environment "DATABASE_URL", "postgres://urvfkjykdbmgxl:b5dcf40eb86bdc37046867a9d218fe37276c5c41abd6fe0b1ca7216fe7e51b26@ec2-23-21-245-156.compute-1.amazonaws.com:5432/d1u7qhtgvfnmgb" 
 }
+
+//heroku pg:psql postgresql-angular-13616 --app comp3111h-line-chatbot
