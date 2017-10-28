@@ -114,5 +114,19 @@ public class KitchenSinkTester {
 		
 	}
 	
+	@Test
+	public void testTour() throws Exception {
+		//for testing this class
+		Tour tour = new Tour("ID","Name","Description",2);
+		TourOffering offering = new TourOffering("offeringID", "date", "guideName", "guideAccount",
+				"hotel", 40, 5);
+		tour.addTourOffering(offering);
+		tour.removeTourOffering(offering);
+		System.out.println(tour.getTourID());
+		System.out.println(offering.getGuideName());
+		assertThat(tour.getTourID()).isEqualTo("ID");
+		assertThat(offering.getOfferingID()).isEqualTo("offeringID");
+		
+	}
 
 }
