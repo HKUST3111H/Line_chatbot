@@ -214,9 +214,12 @@ public class KitchenSinkController {
 		// no user information
 		private static final int FAQ1 = 100;
 		
-		// no user
+		// no confirmation but has use information
 		private static final int FAQ2 = 300;
+		
+		// 
 		private static final int FAQ3 = 500;
+		
 		
 		
         String text = content.getText();
