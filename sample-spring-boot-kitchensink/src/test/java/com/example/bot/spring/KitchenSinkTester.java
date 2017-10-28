@@ -43,6 +43,8 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import com.example.bot.spring.DatabaseEngine;
+import java.util.Date;
+import java.util.Calendar;
 
 @RunWith(SpringRunner.class)
 //@SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
@@ -142,7 +144,10 @@ public class KitchenSinkTester {
 	@Test
 	public void testUser() throws Exception {
 		//for testing this class
-		User userA = new User("Xiaofeng","Xiaofeng","Xiaofeng","Xiaofeng",0);
+		Calendar calendar = Calendar.getInstance();
+		java.util.Date now = calendar.getTime();
+		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
+		User userA = new User("Xiaofeng","Xiaofeng","Xiaofeng","Xiaofeng",0,time);
 		userA.setAge("45");
 		userA.setPhoneNumber("888888");
 		System.out.println(userA.getAge());
@@ -167,6 +172,22 @@ public class KitchenSinkTester {
 		assertThat(tour.getTourID()).isEqualTo("ID");
 		assertThat(offering.getOfferingID()).isEqualTo("offeringID");
 		
+	}
+	
+	@Test
+	public void testSQL() throws Exception {
+		//for testing this class
+		Calendar calendar = Calendar.getInstance();
+		java.util.Date now = calendar.getTime();
+		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
+		this.databaseEngine.updateTime("test", time);
+		
+	}
+	
+	@Test
+	public void testSQL_2() throws Exception {
+		//for testing this class
+		this.databaseEngine.setUserState("test", 1);
 	}
 
 }
