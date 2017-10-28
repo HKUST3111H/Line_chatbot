@@ -44,13 +44,53 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.example.bot.spring.DatabaseEngine;
 
-
 @RunWith(SpringRunner.class)
 //@SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
-@SpringBootTest(classes = { KitchenSinkTester.class, SQLDatabaseEngine.class })
+@SpringBootTest(classes = { KitchenSinkTester.class, SQLDatabaseEngine.class, FaqDatabase.class })
 public class KitchenSinkTester {
 	@Autowired
 	private SQLDatabaseEngine databaseEngine;
+	
+	@Autowired
+	private FaqDatabase faqEngine;
+	
+	
+	@Test
+	public void testFaqNotFound() throws Exception {
+		boolean thrown = false;
+		try {
+			this.faqEngine.search("i wanna eat an apple");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		assertThat(thrown).isEqualTo(true);
+	}
+	
+	@Test
+	public void testFaqFound() throws Exception {
+		boolean thrown = false;
+		String result = null;
+		try {
+			result=this.faqEngine.search("How to apply?");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		assertThat(thrown).isEqualTo(false);
+		assertThat(result).contains("Customers shall approach the company by phone or visit our store (in Clearwater bay) with the choosen tour code and departure date. If it is not full, customers will be advised by the staff to pay the tour fee. Tour fee is non refundable. Customer can pay their fee by ATM to 123-345-432-211 of ABC Bank or by cash in our store. Customer shall send their pay-in slip to us by email or LINE.");
+
+	}
+	@Test
+	public void testFaqFound2() throws Exception {
+		boolean thrown = false;
+		String result = null;
+		try {
+			result=this.faqEngine.search("serve vegeterian");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		assertThat(thrown).isEqualTo(false);
+		assertThat(result).contains("No");
+	}
 	
 	@Test
 	public void testNotFound() throws Exception {
