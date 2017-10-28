@@ -31,6 +31,8 @@ import java.util.function.Consumer;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import com.linecorp.bot.model.profile.UserProfileResponse;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -209,34 +211,67 @@ public class KitchenSinkController {
 
 	private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
+		
 		// state constants
 		
 		// no user information
-		private static final int FAQ1 = 100;
+		final int FAQ1 = 100;
 		
-		// no confirmation but has use information
-		private static final int FAQ2 = 300;
+		// no confirmation but has user information
+		final int FAQ2 = 300;
 		
-		// 
-		private static final int FAQ3 = 500;
+		// after confirmation
+		final int FAQ3 = 500;
 		
+		// tell user to fill in his personal information
+		final int FILL_INFORMATION = 200;
+		
+		// tell user to provide booking information
+		final int BOOKING = 400;
+		
+		// tell user to add a new booking or review
+		final int ADD_BOOKING_OR_REVIEW = 600;
 		
 		
         String text = content.getText();
-
         log.info("Got text message from {}: {}", replyToken, text);
         
-        
+        java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
         String userId = event.getSource().getUserId();
-        User user = SQLDatabaseEngine.getUserInformation(userId);
+        User user = database.getUserInformation(userId);
+        
+        if(user.getUserID.equals("null")) {
+        		String reply = "Thanks for your first use of our app!";
+        		log.info("Returns message {}: {}", replyToken, reply);
+        		this.replyText(replyToken,reply);
+        		//database.createUser(userId);
+        		//database.setUserState(userId, FAQ1);
+        		user.setState(FAQ1);
+        		//database.setUserTime(userId,time);
+        		user.setTime(time);
+        }
+        
+        int state = user.getState();
+        java.sql.Timestamp last_time = user.getTime();
+        
+        long difference = (time.getTime()-last_time.getTime())/(60*1000);
+        
+        // check whether the time gap is larger than 10 minutes
+        if(difference>10) {
+        		String answer = faqDatabase.search(text);
+        		if(!answer.equals("Hello!")) {
+        			String reply = "Hello!";
+            		log.info("Returns message {}: {}", replyToken, reply);
+            		this.replyText(replyToken,reply);
+        		}
+        }
+        
+        // update last_time
+        database.setUserTime(userId,time);
         
         
         
-        
-        
-        
-        
-        
+        /*
         switch (text) {
             case "profile": {
                 String userId = event.getSource().getUserId();
@@ -296,6 +331,7 @@ public class KitchenSinkController {
                 );
                 break;
         }
+        */
     }
 
 	static String createUri(String path) {
@@ -342,10 +378,12 @@ public class KitchenSinkController {
 
 	public KitchenSinkController() {
 		database = new SQLDatabaseEngine();
+		faqDatabase = new FaqDatabase();
 		itscLOGIN = System.getenv("ITSC_LOGIN");
 	}
 
 	private SQLDatabaseEngine database;
+	private FaqDatabase faqDatabase;
 	private String itscLOGIN;
 	
 
