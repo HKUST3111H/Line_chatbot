@@ -69,16 +69,16 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		Connection connection = getConnection();
 		User result=new User();
 		try {
-			PreparedStatement stmt = connection.prepareStatement("SELECT id = ? FROM line_user;");
+			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_user WHERE id = ?;");
 			stmt.setString(1, id);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
-					result.setID(rs.getString(0));
-					result.setName(rs.getString(1));
-					result.setPhoneNumber(rs.getString(2));
-					result.setAge(rs.getString(3));
-					result.setState(rs.getInt(4));
-					result.setTime(rs.getTimestamp(5));
+					result.setID(rs.getString(1));
+					result.setName(rs.getString(2));
+					result.setPhoneNumber(rs.getString(3));
+					result.setAge(rs.getString(4));
+					result.setState(rs.getInt(5));
+					result.setTime(rs.getTimestamp(6));
 					// train offering
 			}
 			rs.close();

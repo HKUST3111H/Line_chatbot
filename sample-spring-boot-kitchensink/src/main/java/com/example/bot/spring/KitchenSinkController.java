@@ -241,7 +241,7 @@ public class KitchenSinkController {
         User user = database.getUserInformation(userId);
         
         if(user.getUserID().equals("null")) {
-        		String reply = userId;
+        		String reply = "Thanks for your first use of our app!";
         		log.info("Returns message {}: {}", replyToken, reply);
         		this.replyText(replyToken,reply);
         		database.createUser(userId,time,FAQ1);

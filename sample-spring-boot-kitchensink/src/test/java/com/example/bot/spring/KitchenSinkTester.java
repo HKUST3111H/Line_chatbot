@@ -199,5 +199,12 @@ public class KitchenSinkTester {
 		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
 		this.databaseEngine.createUser("test4",time, 0);
 	}
-
+	@Test
+	public void testSQL_3() throws Exception {
+		//for testing this class
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+		java.util.Date now = calendar.getTime();
+		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
+		this.databaseEngine.createUser("test4",time, 0);
+	}
 }
