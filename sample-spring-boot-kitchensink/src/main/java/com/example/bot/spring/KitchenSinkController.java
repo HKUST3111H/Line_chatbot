@@ -33,6 +33,7 @@ import java.util.function.BiConsumer;
 import com.linecorp.bot.model.profile.UserProfileResponse;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -198,11 +199,38 @@ public class KitchenSinkController {
 		if (replyToken.isEmpty()) {
 			throw new IllegalArgumentException("replyToken must not be empty");
 		}
-		if (message.length() > 1000) {
-			message = message.substring(0, 1000 - 2) + "..";
-		}
+		//if (message.length() > 1000) {
+			//message = message.substring(0, 1000 - 2) + "..";
+		//}
 		this.reply(replyToken, new TextMessage(message));
 	}
+/*
+	private boolean checkQuit(String text, String userID, int state, String reply,String replyToken) {
+		  if (text.equals("0")){
+		   this.database.setUserState(userID, state);
+		   this.database.deleteBookingEntry(userID);
+		   reply += "Successfully exiting booking!";
+		   log.info("Returns message {}: {}", replyToken, reply);
+		   this.replyText(replyToken,reply);
+		   return true;
+		  }
+		  else {
+		   return false;
+		  }
+		 }
+*/
+	public static boolean isNumeric(String str)  
+		 {  
+		   try  
+		   {  
+		     int d = Integer.parseInt(str);  
+		   }  
+		   catch(NumberFormatException nfe)  
+		   {  
+		     return false;  
+		   }  
+		   return true;  
+		 }
 
 
 	private void handleSticker(String replyToken, StickerMessageContent content) {
@@ -234,6 +262,15 @@ public class KitchenSinkController {
 		// tell user to provide booking information
 		final int BOOKING = 400;
 		
+		final int BOOKING1 = 401;
+		final int BOOKING2 = 402;
+		final int BOOKING3 = 403;
+		final int BOOKING4 = 404;
+		final int BOOKING5 = 405;
+		final int BOOKING6 = 406;
+		
+
+		
 		// tell user to add a new booking or review
 		final int ADD_BOOKING_OR_REVIEW = 600;
 		
@@ -244,11 +281,9 @@ public class KitchenSinkController {
         java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
         String userID = event.getSource().getUserId();
         User user = database.getUserInformation(userID);
-        
+        String reply = "";
         if(user.getUserID().equals("null")) {
-        		String reply = "Thanks for your first use of our app!";
-        		log.info("Returns message {}: {}", replyToken, reply);
-        		this.replyText(replyToken,reply);
+        		reply += "Thanks for your first use of our app! \n\n";      			
         		database.createUser(userID,time,FAQ1);
         		user.setID(userID);
         		user.setTime(time);
@@ -261,12 +296,20 @@ public class KitchenSinkController {
         long difference = (time.getTime()-last_time.getTime())/(60*1000);
         
         // check whether the time gapping is larger than 10 minutes
-        if(difference>10) {
+        if(difference > 10) {
         		String answer = database.search(text);
         		if(!answer.equals("Hello!")) {
-        			String reply = "Hello!";
-            		log.info("Returns message {}: {}", replyToken, reply);
-            		this.replyText(replyToken,reply);
+        			
+        			Calendar now = Calendar.getInstance();
+        			int hour = now.get(Calendar.HOUR_OF_DAY);
+        			
+        	        if((hour+8)%24 < 12)
+        	        		reply += "Good morning! \n";
+        	        else if((hour+8)%24 >= 18) {
+        	        		reply += "Good evening! \n";
+        	        }else
+        	        		reply += "Good afternoon \n";
+        			
         		}
         }
         
@@ -275,14 +318,16 @@ public class KitchenSinkController {
         
         if(state == FAQ1 || state == FAQ2) {
         		// if the text does not indicate booking
-        		if(!text.contains("book")) {
+        		if(!text.toLowerCase().contains("book")) {
         			String answer = database.search(text);
         			if(!answer.equals("null")) {
-        				log.info("Returns answer message {}: {}", replyToken, answer);
-        				this.replyText(replyToken,answer);
+        				reply += answer;
+        				//reply += "\n";
+        				log.info("Returns answer message {}: {}", replyToken, reply);
+        				this.replyText(replyToken,reply);
         			}
         			else {
-        				String reply = "Sorry! We cannot answer your question.";
+        				reply += "Sorry! We cannot answer your question.";
         				//.unanswered question, add to unknown question database
         				database.addToUnknownDatatabse(text);
                 		log.info("Returns message {}: {}", replyToken, reply);
@@ -292,14 +337,14 @@ public class KitchenSinkController {
         		else {//indicate booking
         			if(state == FAQ1) {//no user info
         				database.setUserState(userID,FILL_INFORMATION);//set to 200
-                		String reply = "Thank you for your interest, we need some of your information. \n";
+                		reply += "Thank you for your interest, we need some of your information. \n";
                 		reply += "Please enter your name.";
                 		log.info("Returns message {}: {}", replyToken, reply);
                 		this.replyText(replyToken,reply);
          				
         			}else if(state == FAQ2)//
         				database.setUserState(userID,BOOKING);//set to 400 
-            			String reply = "Thank you for your interest, we need to fill in the booking information. \n";
+            			reply += "Thank you for your interest, we need to fill in the booking information. \n";
             			reply += "Attention: You can terminate the booking procedure by entering 0 at any time!\n";
             			reply += "Here is a list of tour names: \n";
             			reply +=database.getTourNames();//String database.getTourNames();
@@ -314,7 +359,7 @@ public class KitchenSinkController {
         		database.setUserState(userID,PHONE_NUM);
         		// store the name info
         		database.setUserName(userID,text);
-        		String reply = "Please also give us your phone number. \n";
+        		reply += "Please also give us your phone number. \n";
     			log.info("Returns message {}: {}", replyToken, reply);
     			this.replyText(replyToken,reply);
         
@@ -323,18 +368,44 @@ public class KitchenSinkController {
         		database.setUserState(userID,AGE);
         		// store phone number
         		database.setUserPhoneNum(userID,text);
-        		String reply = "Please also give us your age \n";
+        		reply += "Please also give us your age \n";
     			log.info("Returns message {}: {}", replyToken, reply);
     			this.replyText(replyToken,reply);
+
+    			
       
         }else if(state == AGE) {
         		database.setUserAge(userID,text);//extract number preferred here
         		database.setUserState(userID,BOOKING);//enter booking, information filled
-    			String reply = "Great! Let's move on to booking your tour \n";
+    			reply += "Great! Let's move on to booking your tour \n";
     			reply +="Attention: You can terminate the booking procedure by entering 0 at any time!\n";
     			reply += "Here is a list of tour names: \n";
-  
+    			
     			String tourNames = database.getTourNames();//String database.getTourNames();
+    			
+    			//================
+    			/*
+    			String [] parts = tourNames.split("\n\n"); 
+    			
+    			int i = 0;
+    			int count6 = 6;
+    			String tours=" ";    			
+    			while(i<parts.length){	
+    				tours += parts[i];
+    				tours +="\n";
+    				if(count6!=0) {
+    					count6--;
+    				}
+    				if(count6==0 ||i==parts.length-1) {
+    					count6 = 6;
+    	    				log.info("Returns message {}: {}", replyToken, reply);
+    	    				this.replyText(replyToken,tours);
+    	    				tours =" ";
+    				}
+    				i+=1;
+    			}
+    			*/
+    			//=================
     			reply += tourNames;
     			reply +="\n";
     			reply +="Please enter one of the tourIDs (Note: tourID only). \n";
@@ -342,6 +413,50 @@ public class KitchenSinkController {
     			this.replyText(replyToken,reply);	
         	
         }
+        /*
+        else if(state==FAQ3){
+            if(!text.toLowerCase().contains("book")) {
+                String answer = database.search(text);
+                if(!answer.equals("null")) {
+                 log.info("Returns answer message {}: {}", replyToken, answer);
+                 this.replyText(replyToken,answer);
+                }else {
+             String reply = "Sorry! We cannot answer your question.";
+             //.unanswered question, add to unknown question database
+             database.addToUnknownDatatabse(text);
+                   log.info("Returns message {}: {}", replyToken, reply);
+                   this.replyText(replyToken,reply);
+                }      
+               }else {
+                database.setUserState(userID,ADD_BOOKING_OR_REVIEW);
+                String reply = "Do you want to review your previous booking or do you want to start a new book?\n";
+                reply += "answer: review /  new booking ";
+                   log.info("Returns message {}: {}", replyToken, reply);
+                   this.replyText(replyToken,reply);    
+               }   
+             }else if(state==ADD_BOOKING_OR_REVIEW){
+               if(text.toLowerCase().contains("review")) {
+                database.setUserState(userID,FAQ3);
+                String reply = database.displaytBookingInformation(userID);
+                log.info("Returns message {}: {}", replyToken, reply);
+                this.replyText(replyToken,reply);    
+       
+                
+               }else {
+                database.setUserState(userID,BOOKING);
+                String reply = "Thank you for your interest, we need to fill in the booking information. \n";
+                reply += "Attention: You can terminate the booking procedure by entering 0 at any time!\n";
+                reply += "Here is a list of tour names: \n";
+                reply +=database.getTourNames();//String database.getTourNames();
+                reply +="\n";
+                reply +="Please enter one of the tour IDs.(Note: tourID only).  \n";
+                log.info("Returns message {}: {}", replyToken, reply);
+                this.replyText(replyToken,reply);
+                
+               }
+             }
+
+        */
         
 			
 		
