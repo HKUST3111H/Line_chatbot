@@ -203,9 +203,28 @@ public class KitchenSinkTester {
 	@Test
 	public void testSQL_4() throws Exception {
 		//for testing this class
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
-		java.util.Date now = calendar.getTime();
-		java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
-		this.databaseEngine.createUser("test4",time, 0);
+		this.databaseEngine.setUserName("test", "xxf");
+	}
+	@Test
+	public void testSQL_5() throws Exception {
+		//for testing this class
+		this.databaseEngine.setUserPhoneNum("test", "10086");
+	}
+	@Test
+	public void testSQL_6() throws Exception {
+		//for testing this class
+		this.databaseEngine.setUserAge("test", "100");
+	}
+	public void testSQL_7() throws Exception {
+		//for testing this class
+		boolean thrown = false;
+		String result = null;
+		try {
+			result = this.databaseEngine.getTourNames();
+		} catch (Exception e) {
+			thrown = true;
+		}
+		assertThat(!thrown);
+		assertThat(result).isNotEqualTo("null");
 	}
 }
