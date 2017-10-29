@@ -116,7 +116,7 @@ public class KitchenSinkTester {
 			thrown = true;
 		}
 		assertThat(!thrown);
-		assertThat(result.equals("def"));
+		assertThat(result).isEqualTo("def");
 	}
 	@Test
 	public void testFound_1() throws Exception {
@@ -128,7 +128,7 @@ public class KitchenSinkTester {
 			thrown = true;
 		}
 		assertThat(!thrown);
-		assertThat(result.equals("def"));
+		assertThat(result).isEqualTo("def");
 	}
 	@Test
 	public void testFound_2() throws Exception {
@@ -200,4 +200,31 @@ public class KitchenSinkTester {
 		this.databaseEngine.createUser("test4",time, 0);
 	}
 
+	@Test
+	public void testSQL_4() throws Exception {
+		//for testing this class
+		this.databaseEngine.setUserName("test", "xxf");
+	}
+	@Test
+	public void testSQL_5() throws Exception {
+		//for testing this class
+		this.databaseEngine.setUserPhoneNum("test", "10086");
+	}
+	@Test
+	public void testSQL_6() throws Exception {
+		//for testing this class
+		this.databaseEngine.setUserAge("test", "100");
+	}
+	public void testSQL_7() throws Exception {
+		//for testing this class
+		boolean thrown = false;
+		String result = null;
+		try {
+			result = this.databaseEngine.getTourNames();
+		} catch (Exception e) {
+			thrown = true;
+		}
+		assertThat(!thrown);
+		assertThat(result).isNotEqualTo("null");
+	}
 }
