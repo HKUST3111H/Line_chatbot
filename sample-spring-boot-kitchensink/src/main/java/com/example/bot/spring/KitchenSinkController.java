@@ -226,6 +226,11 @@ public class KitchenSinkController {
 		// tell user to fill in his personal information
 		final int FILL_INFORMATION = 200;
 		
+		final int PHONE_NUM = 201; 
+
+		final int AGE = 202; 
+		
+		
 		// tell user to provide booking information
 		final int BOOKING = 400;
 		
@@ -237,15 +242,15 @@ public class KitchenSinkController {
         log.info("Got text message from {}: {}", replyToken, text);
         
         java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
-        String userId = event.getSource().getUserId();
-        User user = database.getUserInformation(userId);
+        String userID = event.getSource().getUserId();
+        User user = database.getUserInformation(userID);
         
         if(user.getUserID().equals("null")) {
         		String reply = "Thanks for your first use of our app!";
         		log.info("Returns message {}: {}", replyToken, reply);
         		this.replyText(replyToken,reply);
-        		database.createUser(userId,time,FAQ1);
-        		user.setID(userId);
+        		database.createUser(userID,time,FAQ1);
+        		user.setID(userID);
         		user.setTime(time);
         		user.setState(FAQ1);
         }
@@ -266,7 +271,7 @@ public class KitchenSinkController {
         }
         
         // update last_time
-        database.setUserTime(userId,time);
+        database.setUserTime(userID,time);
         
         if(state == FAQ1 || state == FAQ2) {
         		// if the text does not indicate booking
@@ -278,18 +283,68 @@ public class KitchenSinkController {
         			}
         			else {
         				String reply = "Sorry! We cannot answer your question.";
-        				
-        				
-        				
+        				//.unanswered question, add to unknown question database
+        				database.addToUnknownDatatabse(text);
                 		log.info("Returns message {}: {}", replyToken, reply);
                 		this.replyText(replyToken,reply);
         			}
         		}
-        		else {
-        			
+        		else {//indicate booking
+        			if(state == FAQ1) {//no user info
+        				database.setUserState(userID,FILL_INFORMATION);//set to 200
+                		String reply = "Thank you for your interest, we need some of your information. \n";
+                		reply += "Please enter your name.";
+                		log.info("Returns message {}: {}", replyToken, reply);
+                		this.replyText(replyToken,reply);
+         				
+        			}else if(state == FAQ2)//
+        				database.setUserState(userID,BOOKING);//set to 400 
+            			String reply = "Thank you for your interest, we need to fill in the booking information. \n";
+            			reply += "Attention: You can terminate the booking procedure by entering 0 at any time!\n";
+            			reply += "Here is a list of tour names: \n";
+            			reply +=database.getTourNames();//String database.getTourNames();
+            			reply +="\n";
+            			reply +="Please enter one of the tour IDs.(Note: tourID only).  \n";
+            			log.info("Returns message {}: {}", replyToken, reply);
+            			this.replyText(replyToken,reply);
         		}
         	
         }
+        else if(state == FILL_INFORMATION) {
+        		database.setUserState(userID,PHONE_NUM);
+        		// store the name info
+        		database.setUserName(userID,text);
+        		String reply = "Please also give us your phone number. \n";
+    			log.info("Returns message {}: {}", replyToken, reply);
+    			this.replyText(replyToken,reply);
+        
+        	
+        }else if(state == PHONE_NUM) {
+        		database.setUserState(userID,AGE);
+        		// store phone number
+        		database.setUserPhoneNum(userID,text);
+        		String reply = "Please also give us your age \n";
+    			log.info("Returns message {}: {}", replyToken, reply);
+    			this.replyText(replyToken,reply);
+      
+        }else if(state == AGE) {
+        		database.setUserAge(userID,text);//extract number preferred here
+        		database.setUserState(userID,BOOKING);//enter booking, information filled
+    			String reply = "Great! Let's move on to booking your tour \n";
+    			reply +="Attention: You can terminate the booking procedure by entering 0 at any time!\n";
+    			reply += "Here is a list of tour names: \n";
+  
+    			String tourNames = database.getTourNames();//String database.getTourNames();
+    			reply += tourNames;
+    			reply +="\n";
+    			reply +="Please enter one of the tourIDs (Note: tourID only). \n";
+    			log.info("Returns message {}: {}", replyToken, reply);
+    			this.replyText(replyToken,reply);	
+        	
+        }
+        
+			
+		
         
         
         
