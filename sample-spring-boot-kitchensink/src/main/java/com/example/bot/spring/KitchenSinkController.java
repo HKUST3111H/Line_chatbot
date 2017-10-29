@@ -207,7 +207,7 @@ public class KitchenSinkController {
 
 	
 	private boolean checkQuit(String text, String userID, int state, String reply, String replyToken) throws Exception{
-		if (text.equals("0")){
+		if (text.equals("Q")){
 			database.setUserState(userID, state);
 			database.deleteBookingEntry(userID);
 			reply += "Successfully exiting booking!";
@@ -297,7 +297,7 @@ public class KitchenSinkController {
         long difference = (time.getTime()-last_time.getTime())/(60*1000);
         
         // check whether the time gapping is larger than 10 minutes
-        if(difference > 10) {
+        if(difference > 0.5) {
         		String answer = database.search(text);
         		if(!answer.equals("Hello!")) {
         			
@@ -417,7 +417,7 @@ public class KitchenSinkController {
         
         
         else if(state == BOOKING){
-    			if (text.equals("0")){
+    			if (text.equals("Q")){
     				database.setUserState(userID, FAQ2);
     				reply += "Successfully exiting booking!";
     				log.info("Returns instruction message {}: {}", replyToken, reply);
@@ -446,7 +446,7 @@ public class KitchenSinkController {
         }
         
         else if(state == BOOKING1){
-			if (text.equals("0")){
+			if (text.equals("Q")){
 				database.setUserState(userID, FAQ2);
 				database.deleteBufferBookingEntry(userID);
 				reply += "Successfully exiting booking!";
@@ -558,7 +558,7 @@ public class KitchenSinkController {
     				database.setUserState(userID,BOOKING6);
     				database.setBookingSpecialRequest(userID,text);
     				reply += database.displaytBookingInformation(userID);	
-    				reply += "Do you confirm your booking information?";
+    				reply += ("Do you want to confirm your booking? \n"+"(yes/no)");
     				log.info("Returns instruction message {}: {}", replyToken, reply);
     				this.replyText(replyToken,reply);
     			}
@@ -566,7 +566,7 @@ public class KitchenSinkController {
         
         else if(state == BOOKING6){
     			if(!checkQuit(text,userID,FAQ2,reply,replyToken)) {
-    				if(text.toLowerCase().contains("yes") || text.toLowerCase().contains("confirmed")) {
+    				if(text.toLowerCase().contains("y")) {
     					database.setUserState(userID,FAQ3);
     					database.setBookingConfirmation(userID);
     					reply += ("Thanks for your interest! \n"
