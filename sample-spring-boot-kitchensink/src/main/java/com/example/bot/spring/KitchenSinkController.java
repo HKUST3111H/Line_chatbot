@@ -328,6 +328,10 @@ public class KitchenSinkController {
         		String reply = "Please also give us your age \n";
     			log.info("Returns message {}: {}", replyToken, reply);
     			this.replyText(replyToken,reply);
+    			//test 
+    			String reply2 = "Hey, you are too old!";
+    			this.replyText(replyToken,reply2);
+    			
       
         }else if(state == AGE) {
         		database.setUserAge(userID,text);//extract number preferred here
