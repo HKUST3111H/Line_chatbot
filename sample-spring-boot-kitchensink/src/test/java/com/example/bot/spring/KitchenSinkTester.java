@@ -282,7 +282,7 @@ public class KitchenSinkTester {
 		boolean thrown = false;
 		boolean result = false;
 		try {
-			result = this.databaseEngine.setBookingTourOfferingID("test",1);
+			result = this.databaseEngine.setBookingTourOfferingID("test4",1);
 		} catch (Exception e) {
 			thrown = true;
 		}
