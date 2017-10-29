@@ -210,21 +210,83 @@ public class KitchenSinkTester {
 		//for testing this class
 		this.databaseEngine.setUserPhoneNum("test", "10086");
 	}
+	
 	@Test
 	public void testSQL_6() throws Exception {
 		//for testing this class
 		this.databaseEngine.setUserAge("test", "100");
 	}
+	
+	@Test
 	public void testSQL_7() throws Exception {
+		//for testing this class
+		boolean thrown = false;
+		boolean result = false;
+		try {
+			result = this.databaseEngine.tourOfferingFound(12,1);
+		} catch (Exception e) {
+			thrown = true;
+		}
+		assertThat(!thrown);
+		assertThat(result).isEqualTo(true);
+	}
+	
+	@Test
+	public void testSQL_10() throws Exception {
 		//for testing this class
 		boolean thrown = false;
 		String result = null;
 		try {
-			result = this.databaseEngine.getTourNames();
+			result = this.databaseEngine.displayTourOffering(12);
 		} catch (Exception e) {
 			thrown = true;
 		}
 		assertThat(!thrown);
 		assertThat(result).isNotEqualTo("null");
+	}
+	
+	
+	@Test
+	public void testSQL_12() throws Exception {
+		//for testing this class
+		boolean thrown = false;
+		int result = -1;
+		boolean result2 = false;
+		try {
+			result2 = this.databaseEngine.setBufferTourID("test", 12);
+		} catch (Exception e) {
+			thrown = true;
+		}
+		assertThat(!thrown);
+		assertThat(result2).isEqualTo(true);
+		
+		try {
+			result = this.databaseEngine.getBufferTourID("test");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		assertThat(!thrown);
+		assertThat(result).isNotEqualTo(-1);
+		
+		try {
+			result2 = this.databaseEngine.deleteBufferBookingEntry("test");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		assertThat(!thrown);
+		assertThat(result2).isEqualTo(true);
+	}
+	@Test
+	public void testSQL_13() throws Exception {
+		//for testing this class
+		boolean thrown = false;
+		boolean result = false;
+		try {
+			result = this.databaseEngine.setBookingTourOfferingID("test",1);
+		} catch (Exception e) {
+			thrown = true;
+		}
+		assertThat(!thrown);
+		assertThat(result).isEqualTo(true);
 	}
 }
