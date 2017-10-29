@@ -434,7 +434,7 @@ public class KitchenSinkController {
             			}
             			else {
             				database.setUserState(userID,BOOKING1);
-            				atabase.setBufferTourID(userID,Integer.parseInt(text));
+            				database.setBufferTourID(userID,Integer.parseInt(text));
             				reply += result;
             				reply += "Please enter one of the tour offering IDs. (Note: tour offering ID only).";
                 			log.info("Returns instruction message {}: {}", replyToken, reply);
