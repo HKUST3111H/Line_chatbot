@@ -40,6 +40,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			} finally {
 				
 			}
+			if (result == null)
+				result ="null";
 			if (result != null)
 				return result;
 			throw new Exception("NOT FOUND");
@@ -592,13 +594,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		double price=0;
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
-					"SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num, line_booking.price, line_booking.special_request "//5
-					+ "line_touroffering.offer_date, line_touroffering.hotel, line_touroffering.capacity_max, line_touroffering.guide_name, line_touroffering.guide_line "//5
-					+ "line_tour.name, line_tour.decription, line_tour.duration "//3
-					+ "FROM line_booking, line_touroffering, line_tour "
-					+ "WHERE line_booking.user_id = ? AND line_booking.state = 0 "
-					+ "AND line_booking.\"tourOffering_id\"=line_touroffering.id "
-					+ "AND line_touroffering.tour_id=line_tour.id;");
+					"SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num, line_touroffering.price, "
+					+ "line_booking.special_request, line_touroffering.offer_date, line_touroffering.hotel, "
+					+ "line_touroffering.capacity_max, line_touroffering.guide_name, line_touroffering.guide_line, "
+					+ "line_tour.name, line_tour.description, line_tour.duration FROM line_booking, "
+					+ "line_touroffering, line_tour WHERE line_booking.user_id = ? AND line_booking.state = 0 AND "
+					+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id;");
 			stmt.setString(1, userID);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
