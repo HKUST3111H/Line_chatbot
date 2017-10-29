@@ -40,6 +40,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			} finally {
 				
 			}
+			if (result == null)
+				result ="null";
 			if (result != null)
 				return result;
 			throw new Exception("NOT FOUND");
@@ -592,13 +594,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		double price=0;
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
-					"SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num, line_booking.price, line_booking.special_request "//5
-					+ "line_touroffering.offer_date, line_touroffering.hotel, line_touroffering.capacity_max, line_touroffering.guide_name, line_touroffering.guide_line "//5
-					+ "line_tour.name, line_tour.decription, line_tour.duration "//3
-					+ "FROM line_booking, line_touroffering, line_tour "
-					+ "WHERE line_booking.user_id = ? AND line_booking.state = 0 "
-					+ "AND line_booking.\"tourOffering_id\"=line_touroffering.id "
-					+ "AND line_touroffering.tour_id=line_tour.id;");
+					"SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num, line_touroffering.price, "
+					+ "line_booking.special_request, line_touroffering.offer_date, line_touroffering.hotel, "
+					+ "line_touroffering.capacity_max, line_touroffering.guide_name, line_touroffering.guide_line, "
+					+ "line_tour.name, line_tour.description, line_tour.duration FROM line_booking, "
+					+ "line_touroffering, line_tour WHERE line_booking.user_id = ? AND line_booking.state = 0 AND "
+					+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id;");
 			stmt.setString(1, userID);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
@@ -612,7 +613,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
-				result+=("\n\nTotal fee: "+fee);
+				result+=("\n\nTotal fee: "+fee+"\n\n");
 			}
 			rs.close();
 			stmt.close();
@@ -624,6 +625,61 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			result2=stmt2.executeUpdate();
 			stmt2.close();
 			
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (result == "")
+			result ="null";
+		if (result != "")
+			return result;
+		throw new Exception("NOT FOUND");
+	}
+	
+	String reviewBookingInformation(String userID) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		String result="";
+		int result2=0;
+		String special="";
+		int adult=0;
+		int child=0;
+		int toddler=0;
+		double fee=0;
+		double price=0;
+		try {
+			PreparedStatement stmt = connection.prepareStatement(
+					"SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num, line_touroffering.price, "
+					+ "line_booking.special_request, line_touroffering.offer_date, line_touroffering.hotel, "
+					+ "line_touroffering.capacity_max, line_touroffering.guide_name, line_touroffering.guide_line, "
+					+ "line_tour.name, line_tour.description, line_tour.duration, line_booking.state FROM line_booking, "
+					+ "line_touroffering, line_tour WHERE line_booking.user_id = ? AND line_booking.state > 0 AND "
+					+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id;");
+			stmt.setString(1, userID);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				adult=rs.getInt(1);
+				child=rs.getInt(2);
+				toddler=rs.getInt(3);
+				price=rs.getDouble(4);
+				special=rs.getString(5);
+				result=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
+				+rs.getTimestamp(6)+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
+				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
+				+"\n\nSpecial request: "+special);
+				fee = price*adult + price*0.8*child;
+				int state=rs.getInt(14);
+				if(state==2) {
+					result+=("\n\nTotal fee: "+fee+"  PAID \n\n\n\n");
+				}
+				else {
+					result+=("\n\nTotal fee: "+fee+"  UNPAID \n\n\n\n");
+				}
+			}
+			rs.close();
+			stmt.close();	
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
