@@ -33,6 +33,7 @@ import java.util.function.BiConsumer;
 import com.linecorp.bot.model.profile.UserProfileResponse;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -203,6 +204,33 @@ public class KitchenSinkController {
 		//}
 		this.reply(replyToken, new TextMessage(message));
 	}
+/*	
+	private boolean checkQuit(String text, String userId, int state, String reply) {
+		  if (text.equals("0")){
+		   database.setUserState(userID, state);
+		   databse.deleteBookingEntry(userID)
+		   reply += "Successfully exiting booking!";
+		   log.info("Returns message {}: {}", replyToken, reply);
+		   this.replyText(replyToken,reply);
+		   return true;
+		  }
+		  else {
+		   return false;
+		  }
+		 }
+*/
+	public static boolean isNumeric(String str)  
+		 {  
+		   try  
+		   {  
+		     int d = Integer.parseInt(str);  
+		   }  
+		   catch(NumberFormatException nfe)  
+		   {  
+		     return false;  
+		   }  
+		   return true;  
+		 }
 
 
 	private void handleSticker(String replyToken, StickerMessageContent content) {
@@ -234,6 +262,13 @@ public class KitchenSinkController {
 		// tell user to provide booking information
 		final int BOOKING = 400;
 		
+		final int BOOKING1 = 401;
+		final int BOOKING2 = 402;
+		final int BOOKING3 = 403;
+		final int BOOKING4 = 404;
+		final int BOOKING5 = 405;
+		final int BOOKING6 = 406;
+		
 
 		
 		// tell user to add a new booking or review
@@ -248,7 +283,7 @@ public class KitchenSinkController {
         User user = database.getUserInformation(userID);
         String reply = "";
         if(user.getUserID().equals("null")) {
-        		reply += "Thanks for your first use of our app! \n\n";
+        		reply += "Thanks for your first use of our app! \n\n";      			
         		database.createUser(userID,time,FAQ1);
         		user.setID(userID);
         		user.setTime(time);
@@ -264,7 +299,17 @@ public class KitchenSinkController {
         if(difference>10) {
         		String answer = database.search(text);
         		if(!answer.equals("Hello!")) {
-        			reply += "Hello! \n";
+        			
+        			Calendar now = Calendar.getInstance();
+        			int hour = now.get(Calendar.HOUR_OF_DAY);
+        			
+        	        if(hour < 12)
+        	        		reply += "Good morning! \n";
+        	        else if(hour >= 18) {
+        	        		reply += "Good evening! \n";
+        	        }else
+        	        		reply += "Good afternoon \n";
+        			
         		}
         }
         
