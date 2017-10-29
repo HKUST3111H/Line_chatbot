@@ -333,7 +333,9 @@ public class KitchenSinkController {
     			String reply = "Great! Let's move on to booking your tour \n";
     			reply +="Attention: You can terminate the booking procedure by entering 0 at any time!\n";
     			reply += "Here is a list of tour names: \n";
-    			reply +=database.getTourNames();//String database.getTourNames();
+  
+    			String tourNames = database.getTourNames();//String database.getTourNames();
+    			reply += tourNames;
     			reply +="\n";
     			reply +="Please enter one of the tourIDs (Note: tourID only). \n";
     			log.info("Returns message {}: {}", replyToken, reply);
@@ -341,6 +343,8 @@ public class KitchenSinkController {
         	
         }
         
+			
+		
         
         
         
