@@ -346,7 +346,7 @@ public class KitchenSinkController {
     			String tours=" ";    			
     			while(i<parts.length){	
     				tours += parts[i];
-    				while(count6!=0) {
+    				if(count6!=0) {
     					count6--;
     				}
     				if(count6==0 ||i==parts.length-1) {
