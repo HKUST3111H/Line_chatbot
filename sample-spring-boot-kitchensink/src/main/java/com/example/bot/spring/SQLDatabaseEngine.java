@@ -14,38 +14,35 @@ import java.net.URI;
 public class SQLDatabaseEngine extends DatabaseEngine {
 	@Override
 	String search(String text) throws Exception {
-		//Write your code here
-		Connection connection = getConnection();
-		String result = null;
-		int result2=0;
-		try {
-			PreparedStatement stmt = connection.prepareStatement("SELECT answer, hit FROM line_faq WHERE ? like concat('%',question,'%')");
-			stmt.setString(1, text);
-			ResultSet rs = stmt.executeQuery();
-			if(rs.next()) {
-				result=rs.getString(1);
-				int hit =rs.getInt(2);
-				hit=hit+1;
-				PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_faq SET hit = ? WHERE answer = ?;");
+			//Write your code here
+			Connection connection = getConnection();
+			String result = null;
+			try {
+				PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_faq;");
+				ResultSet rs = stmt.executeQuery();
+				while (result == null && rs.next()) {
+					if (text.toLowerCase().contains(rs.getString(2).toLowerCase())) {
+						result = rs.getString(3);
+						PreparedStatement stmt2 = connection.prepareStatement("UPDATE keywords SET hit = ? WHERE question = ?;");
+						int hits = rs.getInt(4)+1;
+						String keyword=rs.getString(2);
+						stmt2.setInt(1, hits);
+						stmt2.setString(2, keyword);
+						stmt2.executeQuery();
+						stmt2.close();
+					}
+				}
+				rs.close();
+				stmt.close();
+				connection.close();
+			} catch (Exception e) {
+				log.info(e.toString());
+			} finally {
 				
-				stmt2.setInt(1, hit);
-				stmt2.setString(2, result);
-				result2=stmt2.executeUpdate();
-				stmt2.close();
 			}
-			rs.close();
-			stmt.close();
-			connection.close();
-		} catch (Exception e) {
-			log.info(e.toString());
-		} finally {
-			
-		}
-		if (result == null)
-			result ="null";
-		if (result != null)
-			return result;
-		throw new Exception("NOT FOUND");
+			if (result != null)
+				return result;
+			throw new Exception("NOT FOUND");
 	}
 	
 	
@@ -471,9 +468,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		Connection connection = getConnection();
 		int result=0;
 		try {
-			PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_booking (user_id, \"tourOffering_id\") VALUES (?, ?);");
+			PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_booking (user_id, \"tourOffering_id\",state) VALUES (?, ?, ?);");
 			stmt2.setString(1, userID);
 			stmt2.setInt(2, tourOfferingID);
+			stmt2.setInt(3, 0);
 			result=stmt2.executeUpdate();
 			stmt2.close();
 			connection.close();
