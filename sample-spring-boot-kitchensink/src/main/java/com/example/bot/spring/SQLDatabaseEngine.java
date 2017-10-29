@@ -281,13 +281,13 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 	
-	boolean tourFound(String tourID) throws Exception {
+	boolean tourFound(int tourID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
 		boolean result=false;
 		try {
 			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_tour WHERE id = ?;");
-			stmt.setString(1, tourID);
+			stmt.setInt(1, tourID);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
 				result=true;
@@ -305,15 +305,25 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 	
-	String displayTourOffering(String tourID) throws Exception {
+	String displayTourOffering(int tourID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
 		String result="";
 		try {
-			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_touroffering;");
+			PreparedStatement stmt = connection.prepareStatement(
+					"SELECT id,offer_date,hotel,capacity_max FROM line_touroffering WHERE tour_id = ? AND state < 2 AND id IN "
+					+ "(SELECT id FROM line_touroffering WHERE tour_id = ? EXCEPT "
+					+ "SELECT line_touroffering.id FROM line_touroffering, line_booking "
+					+ "WHERE line_touroffering.tour_id = ? AND line_touroffering.id=line_booking.\"tourOffering_id\" "
+					+ "AND line_booking.state=2 "
+					+ "GROUP BY line_touroffering.id "
+					+ "HAVING COUNT(*) >= line_touroffering.capacity_max);");
+			stmt.setInt(1, tourID);
+			stmt.setInt(2, tourID);
+			stmt.setInt(3, tourID);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				result += (rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" max people:"+rs.getInt(5)+"\n\n");
+				result += (rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" max people: "+rs.getInt(4)+"\n\n");
 			}
 			rs.close();
 			stmt.close();
@@ -330,14 +340,14 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 	
-	boolean setBookingTourID(String userID, String tourID) throws Exception {
+	boolean setBufferTourID(String userID, int tourID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
 		int result=0;
 		try {
 			PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_userchoose (user_id, tour_id) VALUES (?, ?);");
 			stmt2.setString(1, userID);
-			stmt2.setString(2, tourID);
+			stmt2.setInt(2, tourID);
 			result=stmt2.executeUpdate();
 			stmt2.close();
 			connection.close();
@@ -353,5 +363,302 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 	
+	boolean deleteBufferBookingEntry(String userID) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		int result=0;
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("DELETE FROM line_userchoose WHERE user_id = ?;");
+			stmt2.setString(1, userID);
+			result=stmt2.executeUpdate();
+			stmt2.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (result!=0)
+			return true;
+		if (result==0)
+			return false;
+		throw new Exception("NOT FOUND");
+	}
+	
+	boolean deleteBookingEntry(String userID) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		int result=0;
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("DELETE FROM line_booking WHERE user_id = ? AND state = 0;");
+			stmt2.setString(1, userID);
+			result=stmt2.executeUpdate();
+			stmt2.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (result!=0)
+			return true;
+		if (result==0)
+			return false;
+		throw new Exception("NOT FOUND");
+	}
+	
+	int getBufferTourID(String userID) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		int result=-1;
+		try {
+			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_userchoose WHERE user_id = ?;");
+			stmt.setString(1, userID);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+					result=rs.getInt(2);
+			}
+			rs.close();
+			stmt.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		
+		if (1==1)
+			return result;
+		throw new Exception("NOT FOUND");
+	}
+	
+	boolean tourOfferingFound(int tourID,int tourOfferingID)throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		boolean result=false;
+		try {
+			PreparedStatement stmt = connection.prepareStatement(
+					"SELECT id,offer_date,hotel,capacity_max FROM line_touroffering WHERE tour_id = ? AND state < 2 AND id = ? AND id IN "
+					+ "(SELECT id FROM line_touroffering WHERE tour_id = ? EXCEPT "
+					+ "SELECT line_touroffering.id FROM line_touroffering, line_booking "
+					+ "WHERE line_touroffering.tour_id = ? AND line_touroffering.id=line_booking.\"tourOffering_id\" "
+					+ "AND line_booking.state=2 "
+					+ "GROUP BY line_touroffering.id "
+					+ "HAVING COUNT(*) >= line_touroffering.capacity_max);");
+			stmt.setInt(1, tourID);
+			stmt.setInt(2, tourOfferingID);
+			stmt.setInt(3, tourID);
+			stmt.setInt(4, tourID);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				result=true;
+			}
+			rs.close();
+			stmt.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (1==1)
+			return result;
+		throw new Exception("NOT FOUND");
+	}
+	
+	boolean setBookingTourOfferingID(String userID, int tourOfferingID) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		int result=0;
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_booking (user_id, \"tourOffering_id\") VALUES (?, ?);");
+			stmt2.setString(1, userID);
+			stmt2.setInt(2, tourOfferingID);
+			result=stmt2.executeUpdate();
+			stmt2.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (result!=0)
+			return true;
+		if (result==0)
+			return false;
+		throw new Exception("NOT FOUND");
+	}
+	
+	boolean setBookingAdultNumber(String userID,int number) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		int result=0;
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_booking SET adult_num = ? WHERE user_id = ? AND state = 0;");
+			stmt2.setInt(1, number);
+			stmt2.setString(2, userID);
+			result=stmt2.executeUpdate();
+			stmt2.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (result!=0)
+			return true;
+		if (result==0)
+			return false;
+		throw new Exception("NOT FOUND");
+	}
+	
+	boolean setBookingChildrenNumber(String userID,int number) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		int result=0;
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_booking SET child_num = ? WHERE user_id = ? AND state = 0;");
+			stmt2.setInt(1, number);
+			stmt2.setString(2, userID);
+			result=stmt2.executeUpdate();
+			stmt2.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (result!=0)
+			return true;
+		if (result==0)
+			return false;
+		throw new Exception("NOT FOUND");
+	}
+	
+	boolean setBookingToddlerNumber(String userID,int number) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		int result=0;
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_booking SET toddler_num = ? WHERE user_id = ? AND state = 0;");
+			stmt2.setInt(1, number);
+			stmt2.setString(2, userID);
+			result=stmt2.executeUpdate();
+			stmt2.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (result!=0)
+			return true;
+		if (result==0)
+			return false;
+		throw new Exception("NOT FOUND");
+	}
+	
+	boolean setBookingSpecialRequest(String userID,String request) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		int result=0;
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_booking SET special_request = ? WHERE user_id = ? AND state = 0;");
+			stmt2.setString(1, request);
+			stmt2.setString(2, userID);
+			result=stmt2.executeUpdate();
+			stmt2.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (result!=0)
+			return true;
+		if (result==0)
+			return false;
+		throw new Exception("NOT FOUND");
+	}
+	
+	String displaytBookingInformation(String userID) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		String result="";
+		int result2=0;
+		String special="";
+		int adult=0;
+		int child=0;
+		int toddler=0;
+		double fee=0;
+		double price=0;
+		try {
+			PreparedStatement stmt = connection.prepareStatement(
+					"SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num, line_booking.price, line_booking.special_request "//5
+					+ "line_touroffering.offer_date, line_touroffering.hotel, line_touroffering.capacity_max, line_touroffering.guide_name, line_touroffering.guide_line "//5
+					+ "line_tour.name, line_tour.decription, line_tour.duration "//3
+					+ "FROM line_booking, line_touroffering, line_tour "
+					+ "WHERE line_booking.user_id = ? AND line_booking.state = 0 "
+					+ "AND line_booking.\"tourOffering_id\"=line_touroffering.id "
+					+ "AND line_touroffering.tour_id=line_tour.id;");
+			stmt.setString(1, userID);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				adult=rs.getInt(1);
+				child=rs.getInt(2);
+				toddler=rs.getInt(3);
+				price=rs.getDouble(4);
+				special=rs.getString(5);
+				result=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
+				+rs.getTimestamp(6)+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
+				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
+				+"\n\nSpecial request: "+special);
+				fee = price*adult + price*0.8*child;
+				result+=("\n\nTotal fee: "+fee);
+			}
+			rs.close();
+			stmt.close();
+			PreparedStatement stmt2 = connection.prepareStatement(
+					"UPDATE line_booking SET tour_fee = ?, paid_fee = ? WHERE user_id = ? AND state = 0;");
+			stmt2.setDouble(1, fee);
+			stmt2.setDouble(2, 0.0);
+			stmt2.setString(3, userID);
+			result2=stmt2.executeUpdate();
+			stmt2.close();
+			
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (result == "")
+			result ="null";
+		if (result != "")
+			return result;
+		throw new Exception("NOT FOUND");
+	}
+	
+	boolean setBookingConfirmation(String userID) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		int result=0;
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_booking SET state = 1 WHERE user_id = ? AND state = 0;");
+			stmt2.setString(1, userID);
+			result=stmt2.executeUpdate();
+			stmt2.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			
+		}
+		if (result!=0)
+			return true;
+		if (result==0)
+			return false;
+		throw new Exception("NOT FOUND");
+	}
 	
 }
