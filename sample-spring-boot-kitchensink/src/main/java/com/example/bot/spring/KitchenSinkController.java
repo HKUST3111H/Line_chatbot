@@ -234,6 +234,8 @@ public class KitchenSinkController {
 		// tell user to provide booking information
 		final int BOOKING = 400;
 		
+
+		
 		// tell user to add a new booking or review
 		final int ADD_BOOKING_OR_REVIEW = 600;
 		
@@ -275,7 +277,7 @@ public class KitchenSinkController {
         
         if(state == FAQ1 || state == FAQ2) {
         		// if the text does not indicate booking
-        		if(!text.contains("book")) {
+        		if(!text.toLowerCase().contains("book")) {
         			String answer = database.search(text);
         			if(!answer.equals("null")) {
         				log.info("Returns answer message {}: {}", replyToken, answer);
@@ -333,15 +335,39 @@ public class KitchenSinkController {
     			String reply = "Great! Let's move on to booking your tour \n";
     			reply +="Attention: You can terminate the booking procedure by entering 0 at any time!\n";
     			reply += "Here is a list of tour names: \n";
-  
+    			
     			String tourNames = database.getTourNames();//String database.getTourNames();
-    			reply += tourNames;
+    			
+    			//================
+    			String [] parts = tourNames.split("\n\n"); 
+    			
+    			int i = 0;
+    			int count6 = 6;
+    			String tours=" ";    			
+    			while(i<parts.length){	
+    				tours += parts[i];
+    				while(count6!=0) {
+    					count6--;
+    				}
+    				if(count6==0 ||i==parts.length-1) {
+    					count6 = 6;
+    	    				log.info("Returns message {}: {}", replyToken, reply);
+    	    				this.replyText(replyToken,tours);
+    	    				tours =" ";
+    				}
+    				i+=1;
+    			}
+    			
+    			//=================
+
     			reply +="\n";
     			reply +="Please enter one of the tourIDs (Note: tourID only). \n";
     			log.info("Returns message {}: {}", replyToken, reply);
     			this.replyText(replyToken,reply);	
         	
         }
+
+        
         
 			
 		
