@@ -204,11 +204,11 @@ public class KitchenSinkController {
 		//}
 		this.reply(replyToken, new TextMessage(message));
 	}
-/*	
-	private boolean checkQuit(String text, String userId, int state, String reply) {
+/*
+	private boolean checkQuit(String text, String userID, int state, String reply,String replyToken) {
 		  if (text.equals("0")){
-		   database.setUserState(userID, state);
-		   databse.deleteBookingEntry(userID)
+		   this.database.setUserState(userID, state);
+		   this.database.deleteBookingEntry(userID);
 		   reply += "Successfully exiting booking!";
 		   log.info("Returns message {}: {}", replyToken, reply);
 		   this.replyText(replyToken,reply);
@@ -296,16 +296,16 @@ public class KitchenSinkController {
         long difference = (time.getTime()-last_time.getTime())/(60*1000);
         
         // check whether the time gapping is larger than 10 minutes
-        if(difference > 0) {
+        if(difference > 10) {
         		String answer = database.search(text);
         		if(!answer.equals("Hello!")) {
         			
         			Calendar now = Calendar.getInstance();
         			int hour = now.get(Calendar.HOUR_OF_DAY);
         			
-        	        if(hour < 12)
+        	        if((hour+8)%24 < 12)
         	        		reply += "Good morning! \n";
-        	        else if(hour >= 18) {
+        	        else if((hour+8)%24 >= 18) {
         	        		reply += "Good evening! \n";
         	        }else
         	        		reply += "Good afternoon \n";
