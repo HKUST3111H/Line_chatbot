@@ -296,7 +296,7 @@ public class KitchenSinkController {
         long difference = (time.getTime()-last_time.getTime())/(60*1000);
         
         // check whether the time gapping is larger than 10 minutes
-        if(difference>10) {
+        if(difference > 0) {
         		String answer = database.search(text);
         		if(!answer.equals("Hello!")) {
         			
