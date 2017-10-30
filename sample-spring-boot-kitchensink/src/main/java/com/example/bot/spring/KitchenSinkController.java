@@ -327,7 +327,7 @@ public class KitchenSinkController {
         			String imageURL=faqDatabase.replyImage(answer);
         			if (imageURL!=null) {
         				imageURL=createUri("static/pictures/"+imageURL);
-        				reply(replyToken, new ImageMessage(imageURL, imageURL));
+        				this.reply(replyToken, new ImageMessage(imageURL, imageURL));
                 		log.info("Replied image message {}: {}", replyToken, reply);
 
         			}
