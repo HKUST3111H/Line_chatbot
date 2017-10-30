@@ -35,7 +35,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	}
 	
 	private List<faqEntry> loadQuestionSQL() throws Exception{
-		Connection connection = getConnection();
+		Connection connection = super.getConnection();
 		List<faqEntry> listOfEntry = new ArrayList<faqEntry>();
 		try {
 			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_faq;");
