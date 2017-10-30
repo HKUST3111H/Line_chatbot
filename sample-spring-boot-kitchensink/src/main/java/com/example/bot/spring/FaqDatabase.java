@@ -16,6 +16,19 @@ import java.util.*;
 @Slf4j
 public class FaqDatabase {
 	
+	
+	public String replyImage(String answer) {
+        //String pattern = "(\\d+)[.](.*[?])[\\n][>](.*)[\\n]";
+        String pattern = "see the picture (.*)[)]";
+		Pattern r = Pattern.compile(pattern);
+		Matcher m = r.matcher(answer);
+	    if (m.find()) {
+	    	return m.group(1);
+	    }
+	    else return null;
+	}
+	
+	
 	List<faqEntry> loadQuestion() throws Exception{
 		
 		List<faqEntry> listOfEntry = new ArrayList<faqEntry>();

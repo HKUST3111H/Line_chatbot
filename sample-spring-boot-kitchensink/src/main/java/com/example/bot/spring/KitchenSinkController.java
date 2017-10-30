@@ -298,8 +298,8 @@ public class KitchenSinkController {
         
         // check whether the time gapping is larger than 10 minutes
         if(difference > 10) {
-        		String answer = database.search(text);
-        		if(!answer.equals("Hello!")) {
+        		if (text=="hi") reply+="Hello!";
+        		else {
         			
         			Calendar now = Calendar.getInstance();
         			int hour = now.get(Calendar.HOUR_OF_DAY);
@@ -320,19 +320,26 @@ public class KitchenSinkController {
         if(state == FAQ1 || state == FAQ2) {
         		// if the text does not indicate booking
         		if(!text.toLowerCase().contains("book")) {
-        			String answer = database.search(text);
-        			if(!answer.equals("null")) {
-        				reply += answer;
-        				//reply += "\n";
-        				log.info("Returns answer message {}: {}", replyToken, reply);
-        				this.replyText(replyToken,reply);
+        			try {
+        			String answer = faqDatabase.search(text);
+        			reply += answer;
+        			String imageURL=faqDatabase.replyImage(answer);
+        			if (imageURL!=null) {
+        				imageURL=createUri("static/pictures/"+imageURL);
+        				this.reply(replyToken, Arrays.asList(new TextMessage(reply),new ImageMessage(imageURL, imageURL)));
+                		log.info("Replied image message {}: {}", replyToken, reply);
+
         			}
-        			else {
-        				reply += "Sorry! We cannot answer your question.";
+        			
+        			log.info("Returns answer message {}: {}", replyToken, reply);
+    				this.replyText(replyToken,reply);
+        			}catch(Exception e) {
+        				reply += "Sorry! We don't have relevant information.";
         				//.unanswered question, add to unknown question database
         				database.addToUnknownDatatabse(text);
                 		log.info("Returns message {}: {}", replyToken, reply);
-                		this.replyText(replyToken,reply);
+                		this.replyText(replyToken,reply);       				
+        				
         			}
         		}
         		else {//indicate booking
@@ -722,14 +729,14 @@ public class KitchenSinkController {
                                         new URIAction("Go to line.me",
                                                       "https://line.me"),
                                         new PostbackAction("Say hello1",
-                                                           "hello 鑼敓瑙ｏ拷婧嶏絺锟芥埃锟芥簫锝忔嫹鑺﹁尗閿熼摪鈭讹綇鎷风倝")
+                                                           "hello é‘¼î‚¦æ•“ç‘™ï½�æ‹·å©§å¶�çµºé”ŸèŠ¥åŸƒé”ŸèŠ¥ç°«é”�å¿”å«¹é‘ºï¹�å°—é–¿ç†¼æ‘ªéˆ­è®¹ç¶‡éŽ·é£Žå€�")
                                 )),
                                 new CarouselColumn(imageUrl, "hoge", "fuga", Arrays.asList(
-                                        new PostbackAction("鐚瘬閳э拷 hello2",
-                                                           "hello 鑼敓瑙ｏ拷婧嶏絺锟芥埃锟芥簫锝忔嫹鑺﹁尗閿熼摪鈭讹綇鎷风倝",
-                                                           "hello 鑼敓瑙ｏ拷婧嶏絺锟芥埃锟芥簫锝忔嫹鑺﹁尗閿熼摪鈭讹綇鎷风倝"),
+                                        new PostbackAction("é�šî‚¤ç˜¬é–³Ñ�æ‹· hello2",
+                                                           "hello é‘¼î‚¦æ•“ç‘™ï½�æ‹·å©§å¶�çµºé”ŸèŠ¥åŸƒé”ŸèŠ¥ç°«é”�å¿”å«¹é‘ºï¹�å°—é–¿ç†¼æ‘ªéˆ­è®¹ç¶‡éŽ·é£Žå€�",
+                                                           "hello é‘¼î‚¦æ•“ç‘™ï½�æ‹·å©§å¶�çµºé”ŸèŠ¥åŸƒé”ŸèŠ¥ç°«é”�å¿”å«¹é‘ºï¹�å°—é–¿ç†¼æ‘ªéˆ­è®¹ç¶‡éŽ·é£Žå€�"),
                                         new MessageAction("Say message",
-                                                          "Rice=鑾藉崵椴�")
+                                                          "Rice=é‘¾è—‰å´µæ¤´ï¿½")
                                 ))
                         ));
                 TemplateMessage templateMessage = new TemplateMessage("Carousel alt text", carouselTemplate);
