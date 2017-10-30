@@ -614,7 +614,6 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
 				result+=("\n\nTotal fee: "+fee+"\n\n");
-				result+=("========================================\n");
 				
 			}
 			rs.close();
@@ -679,14 +678,15 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				else {
 					result+=("\n\nTotal fee: "+fee+"  UNPAID \n\n\n\n");
 				}
+				result+=("=====\n");
+
 			}
 			rs.close();
 			stmt.close();	
-			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+			connection.close();
 		}
 		if (result == "")
 			result ="null";
