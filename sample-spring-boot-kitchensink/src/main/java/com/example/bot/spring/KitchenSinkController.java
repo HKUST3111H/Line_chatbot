@@ -298,7 +298,7 @@ public class KitchenSinkController {
         
         // check whether the time gapping is larger than 10 minutes
         if(difference > 10) {
-        		if (text=="hi"||text=="Hi") reply+="Hello!";
+        		if (text="hi") reply+="Hello!";
         		if(!answer.equals("Hello!")) {
         			
         			Calendar now = Calendar.getInstance();
