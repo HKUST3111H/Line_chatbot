@@ -19,7 +19,7 @@ public class FaqDatabase {
 	
 	public String replyImage(String answer) {
         //String pattern = "(\\d+)[.](.*[?])[\\n][>](.*)[\\n]";
-        String pattern = "[(see the picture ](gather.jpg)[)]";
+        String pattern = "[(see the picture ](.*)[)]";
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(answer);
 	    if (m.find()) {
