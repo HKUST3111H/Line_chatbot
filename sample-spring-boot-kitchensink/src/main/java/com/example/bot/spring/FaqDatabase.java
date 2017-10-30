@@ -29,7 +29,9 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	}
 	
 	private List<faqEntry> loadQuestion() throws Exception{
-		return loadQuestionStatic();
+		//return loadQuestionStatic();
+		return loadQuestionSQL();
+		
 	}
 	
 	private List<faqEntry> loadQuestionSQL() throws Exception{
@@ -55,7 +57,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		throw new Exception("EMPTY DATABASE");
 		
 
-}
+	}
 	
 
 	
