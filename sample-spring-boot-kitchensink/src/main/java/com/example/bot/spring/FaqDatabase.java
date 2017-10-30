@@ -47,10 +47,11 @@ public class FaqDatabase extends SQLDatabaseEngine {
 			}
 			rs.close();
 			stmt.close();
-			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} 
+		} finally {
+			connection.close();		
+		}
 		if (listOfEntry != null && !listOfEntry.isEmpty())
 			return listOfEntry;
 		log.info("faq database probably empty");
