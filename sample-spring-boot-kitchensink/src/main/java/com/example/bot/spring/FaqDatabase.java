@@ -23,10 +23,7 @@ public class FaqDatabase {
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(answer);
 	    if (m.find()) {
-	   	 System.out.println(m.group(1));
-
 	    	return m.group(1);
-	    	
 	    }
 	    else return null;
 	}

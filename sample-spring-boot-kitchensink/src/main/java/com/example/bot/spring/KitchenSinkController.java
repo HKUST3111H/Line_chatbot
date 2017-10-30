@@ -323,7 +323,10 @@ public class KitchenSinkController {
         			try {
         			String answer = faqDatabase.search(text);
         			String imageURL=faqDatabase.replyImage(answer);
-        			if (imageURL!=null) reply+=imageURL;
+        			if (imageURL!=null) {
+        				imageURL="static/pictures/"+imageURL;
+        				reply(replyToken, new ImageMessage(imageURL, imageURL));
+        			}
         			reply += answer;
         			log.info("Returns answer message {}: {}", replyToken, reply);
     				this.replyText(replyToken,reply);
