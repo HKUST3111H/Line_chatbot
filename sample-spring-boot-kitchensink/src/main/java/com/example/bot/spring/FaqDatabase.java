@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import java.util.*;
 
 @Slf4j
-public class FaqDatabase {
+public class FaqDatabase extends SQLDatabaseEngine {
 	
 	
 	public String replyImage(String answer) {
@@ -28,8 +28,38 @@ public class FaqDatabase {
 	    else return null;
 	}
 	
+	private List<faqEntry> loadQuestion() throws Exception{
+		return loadQuestionStatic();
+	}
 	
-	List<faqEntry> loadQuestion() throws Exception{
+	private List<faqEntry> loadQuestionSQL() throws Exception{
+		Connection connection = getConnection();
+		List<faqEntry> listOfEntry = new ArrayList<faqEntry>();
+		try {
+			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_faq;");
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+		    	faqEntry entry=new faqEntry(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getInt(4));
+		    	listOfEntry.add(entry);
+					//PreparedStatement stmt2 = connection.prepareStatement("UPDATE keywords SET hit = ? WHERE question = ?;");
+			}
+			rs.close();
+			stmt.close();
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			if (listOfEntry != null && !listOfEntry.isEmpty())
+				return listOfEntry;
+			log.info("faq database probably empty");
+			throw new Exception("EMPTY DATABASE");
+		}
+
+}
+	
+
+	
+	private List<faqEntry> loadQuestionStatic() throws Exception{
 		
 		List<faqEntry> listOfEntry = new ArrayList<faqEntry>();
 		
@@ -60,7 +90,7 @@ public class FaqDatabase {
 			Pattern r = Pattern.compile(pattern);
 			Matcher m = r.matcher(para);
 		    while(m.find()) {
-		    	faqEntry entry=new faqEntry(Integer.parseInt(m.group(1)),m.group(2),m.group(3));
+		    	faqEntry entry=new faqEntry(Integer.parseInt(m.group(1)),m.group(2),m.group(3),0);
 		    	listOfEntry.add(entry);
 		    }
 		      return listOfEntry;
@@ -73,14 +103,17 @@ public class FaqDatabase {
 		
 
 	
-	String search(String text)throws Exception{
+	public String search(String text)throws Exception{
 
 		
 		
 		String result = null;
 		
 		List<faqEntry> listOfEntry=loadQuestion();
-		if (listOfEntry!=null) {
+		
+		
+		// using wagnerFischer Algorithm to select question within 10 unit distance
+		if (!listOfEntry.isEmpty()) {
 			int dist;
 			int minDistance=1000000;
 			for (faqEntry entry:listOfEntry) {
@@ -108,12 +141,14 @@ public class FaqDatabase {
 
 
 class faqEntry{
-	faqEntry(int questionID, String Question, String Answer){
+	faqEntry(int questionID, String Question, String Answer, int hit){
 		this.questionID=questionID;
 		this.Question=Question;
 		this.Answer=Answer;
+		this.hit=hit;
 	}
 	public int questionID;
 	public String Question;
 	public String Answer;
+	public int hit;
 }
