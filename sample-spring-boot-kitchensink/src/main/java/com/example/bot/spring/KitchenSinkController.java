@@ -520,13 +520,23 @@ public class KitchenSinkController {
 		}
         
         else if(state == BOOKING5){
-    			if(!checkQuit(text,userID,FAQ2,reply,replyToken)) {
+    			if(!checkQuit(text,userID,FAQ2,reply,replyToken)) {	
+
     				database.setUserState(userID,BOOKING6);
     				database.setBookingSpecialRequest(userID,text);
     				reply += database.displaytBookingInformation(userID);	
-    				reply += ("Do you want to confirm your booking? \n"+"(yes/no)");
-    				log.info("Returns instruction message {}: {}", replyToken, reply);
-    				this.replyText(replyToken,reply);
+    				
+                    ConfirmTemplate confirmTemplate = new ConfirmTemplate(
+                            "Do you want to confirm your booking?",
+                            new MessageAction("Yes", "Yes!"),
+                            new MessageAction("No", "No!")
+                    );
+                    TemplateMessage confirmMessageBlock = new TemplateMessage("Confirm alt text", confirmTemplate);
+  				
+    				log.info("Returns instruction message {}: {}", replyToken, reply);				
+    			
+                    this.reply(replyToken,
+                            Arrays.asList(new TextMessage(reply),confirmMessageBlock);
     			}
         }
         
