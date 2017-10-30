@@ -614,6 +614,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
 				result+=("\n\nTotal fee: "+fee+"\n\n");
+				result+=("========================================\n");
+				
 			}
 			rs.close();
 			stmt.close();
