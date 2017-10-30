@@ -532,7 +532,7 @@ public class KitchenSinkController {
                 database.setUserState(userID,ADD_BOOKING_OR_REVIEW);
                 ConfirmTemplate confirmTemplate = new ConfirmTemplate(
                         "Do you want to review your previous booking or do you want to start a new book?",
-                        new MessageAction("Review Booking", "Review Booking"),
+                        new MessageAction("Review", "Review"),
                         new MessageAction("New Booking", "New Booking")
                 );
                 TemplateMessage whichBook = new TemplateMessage("Review Booking/New Booking", confirmTemplate);
@@ -540,7 +540,7 @@ public class KitchenSinkController {
                 log.info("Returns review/new button {}: {}", replyToken);			
                 this.reply(replyToken,whichBook);
                 
-             }   
+             }
         }
         
         else if(state==ADD_BOOKING_OR_REVIEW){
