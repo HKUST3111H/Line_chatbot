@@ -322,6 +322,7 @@ public class KitchenSinkController {
         		if(!text.toLowerCase().contains("book")) {
         			try {
         			String answer = faqDatabase.search(text);
+        			reply +=faqDatabase.replyImage(answer);
         			reply += answer;
         			log.info("Returns answer message {}: {}", replyToken, reply);
     				this.replyText(replyToken,reply);
