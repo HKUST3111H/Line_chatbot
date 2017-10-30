@@ -48,12 +48,12 @@ public class FaqDatabase extends SQLDatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-			if (listOfEntry != null && !listOfEntry.isEmpty())
-				return listOfEntry;
-			log.info("faq database probably empty");
-			throw new Exception("EMPTY DATABASE");
-		}
+		} 
+		if (listOfEntry != null && !listOfEntry.isEmpty())
+			return listOfEntry;
+		log.info("faq database probably empty");
+		throw new Exception("EMPTY DATABASE");
+		
 
 }
 	
