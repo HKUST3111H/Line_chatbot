@@ -483,8 +483,7 @@ public class KitchenSinkController {
         
         else if(state == BOOKING3){
     		if(!checkQuit(text,userID,FAQ2,reply,replyToken)) {
-    			if(isNumeric(text)) {
-    				if(Integer.parseInt(text)>=0) {
+    			if(isNumeric(text)) && Integer.parseInt(text)>=0) {
     					database.setUserState(userID,BOOKING4);
     					database.setBookingChildrenNumber(userID,Integer.parseInt(text));
     					reply += "Please input the number of toddlers (age not larger than 3) for this tour offering.";
@@ -496,20 +495,14 @@ public class KitchenSinkController {
         				log.info("Returns instruction message {}: {}", replyToken, reply);
         				this.replyText(replyToken,reply);
     				}
-    			}
-    			else {
-    				reply += "Invalid number! Please reinput the number of children.";
-    				log.info("Returns instruction message {}: {}", replyToken, reply);
-    				this.replyText(replyToken,reply);
-    			}
+    			
     			
     		}
         }
         
         	else if(state == BOOKING4){
         		if(!checkQuit(text,userID,FAQ2,reply,replyToken)) {
-        			if(isNumeric(text)) {
-        				if(Integer.parseInt(text)>=0) {
+        			if(isNumeric(text) && Integer.parseInt(text)>=0) {
         					database.setUserState(userID,BOOKING5);
         					database.setBookingToddlerNumber(userID,Integer.parseInt(text));
         					reply += "Please leave your special request.";
@@ -521,12 +514,7 @@ public class KitchenSinkController {
             				log.info("Returns instruction message {}: {}", replyToken, reply);
             				this.replyText(replyToken,reply);
         				}
-        			}
-        			else {
-        				reply += "Invalid number! Please reinput the number of toddlers.";
-        				log.info("Returns instruction message {}: {}", replyToken, reply);
-        				this.replyText(replyToken,reply);
-        			}
+        			
         			
         		}
 		}
