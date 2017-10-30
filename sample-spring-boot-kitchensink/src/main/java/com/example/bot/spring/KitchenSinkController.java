@@ -483,7 +483,7 @@ public class KitchenSinkController {
         
         else if(state == BOOKING3){
     		if(!checkQuit(text,userID,FAQ2,reply,replyToken)) {
-    			if(isNumeric(text)) && Integer.parseInt(text)>=0) {
+    			if(isNumeric(text) && Integer.parseInt(text)>=0) {
     					database.setUserState(userID,BOOKING4);
     					database.setBookingChildrenNumber(userID,Integer.parseInt(text));
     					reply += "Please input the number of toddlers (age not larger than 3) for this tour offering.";
