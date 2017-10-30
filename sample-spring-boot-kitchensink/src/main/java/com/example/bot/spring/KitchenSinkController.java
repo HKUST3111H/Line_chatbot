@@ -535,11 +535,10 @@ public class KitchenSinkController {
                         new MessageAction("Review Booking", "Review Booking"),
                         new MessageAction("New Booking", "New Booking")
                 );
-                TemplateMessage confirmMessageBlock = new TemplateMessage("Review Booking/New Booking", confirmTemplate);
+                TemplateMessage whichBook = new TemplateMessage("Review Booking/New Booking", confirmTemplate);
 				
-                log.info("Returns message {}: {}", replyToken, reply);			
-                this.reply(replyToken,
-                        Arrays.asList(new TextMessage(reply),confirmMessageBlock));
+                log.info("Returns review/new button {}: {}", replyToken);			
+                this.reply(replyToken,whichBook);
                 
              }   
         }
@@ -673,7 +672,7 @@ public class KitchenSinkController {
 
 	private void listTourForBooking(String replyToken, String reply) throws Exception {
 		reply += "Thank you for your interest, here is a list of tours:\n";
-		reply += "Attention: You can terminate the booking procedure by entering Q at any time!\n";
+		reply += "Attention: You can terminate the booking procedure by entering Q at any time!\n\n";
 		reply +=database.getTourNames();//String database.getTourNames();
 		reply +="\n";
 		reply +="Please enter one of the tour IDs.(Note: tourID only).  \n";
