@@ -530,13 +530,6 @@ public class KitchenSinkController {
             }
             else{
                 database.setUserState(userID,ADD_BOOKING_OR_REVIEW);
-                reply += "Do you want to review your previous booking or do you want to start a new book?\n";
-                reply += "(review/new booking)";
-                this.replyText(replyToken,reply);
-                
-                
-                
-            
                 ConfirmTemplate confirmTemplate = new ConfirmTemplate(
                         "Do you want to review your previous booking or do you want to start a new book?",
                         new MessageAction("Review Booking", "Review Booking"),
@@ -547,13 +540,6 @@ public class KitchenSinkController {
                 log.info("Returns message {}: {}", replyToken, reply);			
                 this.reply(replyToken,
                         Arrays.asList(new TextMessage(reply),confirmMessageBlock));
-                
-                
-                
-                
-                
-                
-                
                 
              }   
         }
