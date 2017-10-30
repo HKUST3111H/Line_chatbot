@@ -320,27 +320,7 @@ public class KitchenSinkController {
         if(state == FAQ1 || state == FAQ2) {
         		// if the text does not indicate booking
         		if(!text.toLowerCase().contains("book")) {
-        			try {
-        			String answer = faqDatabase.search(text);
-        			reply += answer;
-        			String imageURL=faqDatabase.replyImage(answer);
-        			if (imageURL!=null) {
-        				imageURL=createUri("static/pictures/"+imageURL);
-        				this.reply(replyToken, Arrays.asList(new TextMessage(reply),new ImageMessage(imageURL, imageURL)));
-                		log.info("Replied image message {}: {}", replyToken, reply);
-
-        			}
-        			
-        			log.info("Returns answer message {}: {}", replyToken, reply);
-    				this.replyText(replyToken,reply);
-        			}catch(Exception e) {
-        				reply += "Sorry! We don't have relevant information.";
-        				//.unanswered question, add to unknown question database
-        				database.addToUnknownDatatabse(text);
-                		log.info("Returns message {}: {}", replyToken, reply);
-                		this.replyText(replyToken,reply);       				
-        				
-        			}
+        			faqsearch(replyToken, text, reply);
         		}
         		else {//indicate booking
         			if(state == FAQ1) {//no user info
@@ -604,19 +584,7 @@ public class KitchenSinkController {
         
         else if(state==FAQ3){
             if(!text.toLowerCase().contains("book")) {
-                String answer = database.search(text);
-                if(!answer.equals("null")) {
-                		reply += answer;
-                		log.info("Returns answer message {}: {}", replyToken, reply);
-                		this.replyText(replyToken,reply);
-                }
-                else{
-                		reply += "Sorry! We cannot answer your question.";
-                		//unanswered question, add to unknown question database
-                		database.addToUnknownDatatabse(text);
-                		log.info("Returns message {}: {}", replyToken, reply);
-                		this.replyText(replyToken,reply);
-                	}      
+    			faqsearch(replyToken, text, reply);   
             }
             else{
                 database.setUserState(userID,ADD_BOOKING_OR_REVIEW);
@@ -760,6 +728,30 @@ public class KitchenSinkController {
         }
         */
     }
+
+	private void faqsearch(String replyToken, String text, String reply) throws Exception {
+		try {
+		String answer = faqDatabase.search(text);
+		reply += answer;
+		String imageURL=faqDatabase.replyImage(answer);
+		if (imageURL!=null) {
+			imageURL=createUri("static/pictures/"+imageURL);
+			this.reply(replyToken, Arrays.asList(new TextMessage(reply),new ImageMessage(imageURL, imageURL)));
+			log.info("Replied image message {}: {}", replyToken, reply);
+
+		}
+		
+		log.info("Returns answer message {}: {}", replyToken, reply);
+		this.replyText(replyToken,reply);
+		}catch(Exception e) {
+			reply += "Sorry! We don't have relevant information.";
+			//.unanswered question, add to unknown question database
+			database.addToUnknownDatatabse(text);
+			log.info("Returns message {}: {}", replyToken, reply);
+			this.replyText(replyToken,reply);       				
+			
+		}
+	}
 
 	static String createUri(String path) {
 		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
