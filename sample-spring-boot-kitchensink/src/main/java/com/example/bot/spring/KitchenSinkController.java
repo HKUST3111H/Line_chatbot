@@ -410,8 +410,7 @@ public class KitchenSinkController {
     				log.info("Returns instruction message {}: {}", replyToken, reply);
     				this.replyText(replyToken,reply);
     			}
-    			else if(isNumeric(text)) {
-    				if(database.tourFound(Integer.parseInt(text))) {
+    			else if(isNumeric(text) && database.tourFound(Integer.parseInt(text))) {
          			String result = database.displayTourOffering(Integer.parseInt(text));
             			if(result.equals("null")) {
             				reply += "Sorry, currently we do not provide any offerings for this tour!\n"+
@@ -433,12 +432,7 @@ public class KitchenSinkController {
             			log.info("Returns instruction message {}: {}", replyToken, reply);
             			this.replyText(replyToken,reply);	
     				}
-    			}
-    			else {
-    				reply += "Invalid tour ID! Please reinput tour ID.";
-        			log.info("Returns instruction message {}: {}", replyToken, reply);
-        			this.replyText(replyToken,reply);	
-    			}
+    			
         }
         
         else if(state == BOOKING1){
@@ -450,8 +444,7 @@ public class KitchenSinkController {
 				this.replyText(replyToken,reply);
 			}
 			
-			else if(isNumeric(text)){
-				if(database.tourOfferingFound(database.getBufferTourID(userID),Integer.parseInt(text))) {
+			else if(isNumeric(text) && database.tourOfferingFound(database.getBufferTourID(userID),Integer.parseInt(text))) {
 					database.setUserState(userID,BOOKING2);
 					database.deleteBufferBookingEntry(userID);
 					database.setBookingTourOfferingID(userID,Integer.parseInt(text));
@@ -464,19 +457,13 @@ public class KitchenSinkController {
 					log.info("Returns instruction message {}: {}", replyToken, reply);
 					this.replyText(replyToken,reply);
 				}
-			}
-			else {
-				reply += "Invalid tour offering ID! Please reinput tour offering ID.";
-				log.info("Returns instruction message {}: {}", replyToken, reply);
-				this.replyText(replyToken,reply);
-			}
+		
 		      		
         }
         
         else if(state == BOOKING2){
         		if(!checkQuit(text,userID,FAQ2,reply,replyToken)) {
-        			if(isNumeric(text)) {
-        				if(Integer.parseInt(text)>=0) {
+        			if(isNumeric(text) && Integer.parseInt(text)>=0) {
         					database.setUserState(userID,BOOKING3);
         					database.setBookingAdultNumber(userID,Integer.parseInt(text));
         					reply += "Please input the number of childrens (age between 4 and 11) for this tour offering.";
@@ -488,12 +475,7 @@ public class KitchenSinkController {
             				log.info("Returns instruction message {}: {}", replyToken, reply);
             				this.replyText(replyToken,reply);
         				}
-        			}
-        			else {
-        				reply += "Invalid number! Please reinput the number of adults.";
-        				log.info("Returns instruction message {}: {}", replyToken, reply);
-        				this.replyText(replyToken,reply);
-        			}
+        
         			
         		}
    		
