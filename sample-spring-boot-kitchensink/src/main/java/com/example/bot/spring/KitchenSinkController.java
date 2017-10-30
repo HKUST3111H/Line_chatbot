@@ -536,7 +536,7 @@ public class KitchenSinkController {
     				log.info("Returns instruction message {}: {}", replyToken, reply);				
     			
                     this.reply(replyToken,
-                            Arrays.asList(new TextMessage(reply),confirmMessageBlock);
+                            Arrays.asList(new TextMessage(reply),confirmMessageBlock));
     			}
         }
         
