@@ -25,7 +25,7 @@ public class FaqDatabase {
 	    if (m.find()) {
 	    	return m.group(1);
 	    }
-		
+	    return null;
 	}
 	
 	
