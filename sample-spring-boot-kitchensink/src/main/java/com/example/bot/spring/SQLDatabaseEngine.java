@@ -48,7 +48,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	}
 	
 	
-	private Connection getConnection() throws URISyntaxException, SQLException {
+	protected Connection getConnection() throws URISyntaxException, SQLException {
 		Connection connection;
 		URI dbUri = new URI(System.getenv("DATABASE_URL"));
 
@@ -614,6 +614,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
 				result+=("\n\nTotal fee: "+fee+"\n\n");
+				result+=("========================================\n");
+				
 			}
 			rs.close();
 			stmt.close();

@@ -530,11 +530,17 @@ public class KitchenSinkController {
             }
             else{
                 database.setUserState(userID,ADD_BOOKING_OR_REVIEW);
-                reply += "Do you want to review your previous booking or do you want to start a new book?\n";
-                reply += "(review/new booking)";
-                log.info("Returns message {}: {}", replyToken, reply);
-                this.replyText(replyToken,reply);    
-             }   
+                ConfirmTemplate confirmTemplate = new ConfirmTemplate(
+                        "Do you want to review your previous booking or do you want to start a new book?",
+                        new MessageAction("Review", "Review"),
+                        new MessageAction("New Booking", "New Booking")
+                );
+                TemplateMessage whichBook = new TemplateMessage("Review Booking/New Booking", confirmTemplate);
+				
+                log.info("Returns review/new button {}: {}", replyToken);			
+                this.reply(replyToken,whichBook);
+                
+             }
         }
         
         else if(state==ADD_BOOKING_OR_REVIEW){
@@ -666,7 +672,7 @@ public class KitchenSinkController {
 
 	private void listTourForBooking(String replyToken, String reply) throws Exception {
 		reply += "Thank you for your interest, here is a list of tours:\n";
-		reply += "Attention: You can terminate the booking procedure by entering Q at any time!\n";
+		reply += "Attention: You can terminate the booking procedure by entering Q at any time!\n\n";
 		reply +=database.getTourNames();//String database.getTourNames();
 		reply +="\n";
 		reply +="Please enter one of the tour IDs.(Note: tourID only).  \n";
