@@ -118,7 +118,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 			int minDistance=1000000;
 			for (faqEntry entry:listOfEntry) {
 				dist=new WagnerFischer(entry.Question,text).getDistance();
-				if ( dist<=3 && dist<minDistance) {
+				if ( dist<=2 && dist<minDistance) {
 					minDistance=dist;
 					result=entry.Answer;
 				}
@@ -127,7 +127,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 				for (faqEntry entry:listOfEntry) {
 					if (text.toLowerCase().contains(entry.Keyword.toLowerCase())) {
 						dist=new WagnerFischer(entry.Question,text).getDistance();
-						if (dist<=23 && dist<minDistance) {
+						if (dist<=30 && dist<minDistance) {
 							minDistance=dist;
 							result=entry.Answer;
 						}
