@@ -16,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -107,6 +108,10 @@ public class KitchenSinkTester {
 	}
 	
 	/*@Test
+=======
+	/*
+	@Test
+>>>>>>> upstream/develop
 	public void testFound() throws Exception {
 		boolean thrown = false;
 		String result = null;
@@ -140,7 +145,11 @@ public class KitchenSinkTester {
 			thrown = true;
 		}
 		assertThat(!thrown);
+<<<<<<< HEAD
 		assertThat(result.equals("null"));
+=======
+		assertThat(result.equals("Great!"));
+>>>>>>> upstream/develop
 	}*/
 	@Test
 	public void testUser() throws Exception {
