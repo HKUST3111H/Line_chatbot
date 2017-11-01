@@ -38,10 +38,12 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		Connection connection = super.getConnection();
 		List<faqEntry> listOfEntry = new ArrayList<faqEntry>();
 		try {
-			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_faq;");
+			PreparedStatement stmt = connection.prepareStatement("SELECT line_faq.id, line_faq.question, line_faq.answer, line_faq.hit, line_keyword.keyword_text "
+					+ "FROM line_faq, line_keyword, line_faq_keyword WHERE line_faq.id=line_faq_keyword.faq_id AND "
+					+ "line_keyword.id=line_faq_keyword.keyword_id;");
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-		    	faqEntry entry=new faqEntry(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getInt(4));
+		    	faqEntry entry=new faqEntry(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(5),rs.getInt(4));
 		    	listOfEntry.add(entry);
 					//PreparedStatement stmt2 = connection.prepareStatement("UPDATE keywords SET hit = ? WHERE question = ?;");
 			}
@@ -56,11 +58,9 @@ public class FaqDatabase extends SQLDatabaseEngine {
 			return listOfEntry;
 		log.info("faq database probably empty");
 		throw new Exception("EMPTY DATABASE");
-		
-
 	}
 	
-
+	
 	
 	private List<faqEntry> loadQuestionStatic() throws Exception{
 		
@@ -107,23 +107,31 @@ public class FaqDatabase extends SQLDatabaseEngine {
 
 	
 	public String search(String text)throws Exception{
-
-		
 		
 		String result = null;
 		
 		List<faqEntry> listOfEntry=loadQuestion();
-		
-		
+
 		// using wagnerFischer Algorithm to select question within 10 unit distance
 		if (!listOfEntry.isEmpty()) {
 			int dist;
 			int minDistance=1000000;
 			for (faqEntry entry:listOfEntry) {
 				dist=new WagnerFischer(entry.Question,text).getDistance();
-				if ( dist<=10 && dist<minDistance) {
+				if ( dist<=3 && dist<minDistance) {
 					minDistance=dist;
 					result=entry.Answer;
+				}
+			}
+			if (result == null) {
+				for (faqEntry entry:listOfEntry) {
+					if (text.toLowerCase().contains(entry.Keyword.toLowerCase())) {
+						dist=new WagnerFischer(entry.Question,text).getDistance();
+						if (dist<=23 && dist<minDistance) {
+							minDistance=dist;
+							result=entry.Answer;
+						}
+					}
 				}
 			}
 		}
@@ -142,7 +150,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	
 }
 
-
+@Slf4j
 class faqEntry{
 	faqEntry(int questionID, String Question, String Answer, int hit){
 		this.questionID=questionID;
@@ -150,8 +158,16 @@ class faqEntry{
 		this.Answer=Answer;
 		this.hit=hit;
 	}
+	faqEntry(int questionID, String Question, String Answer, String Keyword, int hit){
+		this.questionID=questionID;
+		this.Question=Question;
+		this.Answer=Answer;
+		this.Keyword=Keyword;
+		this.hit=hit;
+	}
 	public int questionID;
 	public String Question;
 	public String Answer;
+	public String Keyword;
 	public int hit;
 }
