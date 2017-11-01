@@ -343,25 +343,43 @@ public class KitchenSinkController {
         		reply += "Please also give us your phone number. \n";
     			log.info("Returns message {}: {}", replyToken, reply);
     			this.replyText(replyToken,reply);
+    			
         
         	
         }else if(state == PHONE_NUM) {
+        	
         		database.setUserState(userID,AGE);
         		// store phone number
         		database.setUserPhoneNum(userID,text);
         		reply += "Please also give us your age. \n";
     			log.info("Returns message {}: {}", replyToken, reply);
     			this.replyText(replyToken,reply);
-
-    			
-      
+		
         }else if(state == AGE) {
+        	
+    		/*
+	        	if(isNumeric(text) && Integer.parseInt(text)>=0) {
+	        		database.setUserAge(userID,text);//extract number preferred here
+	        		database.setUserState(userID,BOOKING);
+	        		reply += "Great! Basic information registered!\n";
+	    			// use function here
+	    			listTourForBooking(replyToken, reply);
+	        		
+			}
+			else {
+				reply += "Invalid age! Please input a number.";
+				log.info("Returns instruction message {}: {}", replyToken, reply);
+				this.replyText(replyToken,reply);
+			}
+    */
         		database.setUserAge(userID,text);//extract number preferred here
         		database.setUserState(userID,BOOKING);//enter booking, information filled
         		reply += "Great! Basic information registered!\n";
     			// use function here
     			listTourForBooking(replyToken, reply);
     			//
+    			
+    		
         }
         
         
@@ -376,7 +394,7 @@ public class KitchenSinkController {
          			String result = database.displayTourOffering(Integer.parseInt(text));
             			if(result.equals("null")) {
             				reply += "Sorry, currently we do not provide any offerings for this tour!\n"+
-            						"Please choose another tour!";
+            						"Please choose another tour id!";
             				log.info("Returns instruction message {}: {}", replyToken, reply);
                 			this.replyText(replyToken,reply);			
             			}
