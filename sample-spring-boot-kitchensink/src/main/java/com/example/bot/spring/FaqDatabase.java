@@ -60,6 +60,26 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		throw new Exception("EMPTY DATABASE");
 	}
 	
+	private boolean updateHit(int qid, int hit) throws Exception{
+		Connection connection = super.getConnection();
+		int result=0;
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_faq SET hit = ? WHERE id = ?;");
+			stmt2.setInt(1, hit);
+			stmt2.setInt(2, qid);
+			result=stmt2.executeUpdate();
+			stmt2.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+			connection.close();		
+		}
+		if (result!=0)
+			return true;
+		if (result==0)
+			return false;
+		throw new Exception("fail");
+	}
 	
 	
 	private List<faqEntry> loadQuestionStatic() throws Exception{
@@ -111,7 +131,8 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		String result = null;
 		
 		List<faqEntry> listOfEntry=loadQuestion();
-
+		int qid=-1;
+		int hit=0;
 		// using wagnerFischer Algorithm to select question within 10 unit distance
 		if (!listOfEntry.isEmpty()) {
 			int dist;
@@ -121,6 +142,8 @@ public class FaqDatabase extends SQLDatabaseEngine {
 				if ( dist<=2 && dist<minDistance) {
 					minDistance=dist;
 					result=entry.Answer;
+					qid=entry.questionID;
+					hit=entry.hit;
 				}
 			}
 			if (result == null) {
@@ -130,10 +153,15 @@ public class FaqDatabase extends SQLDatabaseEngine {
 						if (dist<=30 && dist<minDistance) {
 							minDistance=dist;
 							result=entry.Answer;
+							qid=entry.questionID;
+							hit=entry.hit;
 						}
 					}
 				}
 			}
+		}
+		if(qid!=-1) {
+			updateHit(qid, hit+1);
 		}
 		
 		if (result != null)
