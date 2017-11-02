@@ -65,7 +65,8 @@ public class KitchenSinkTester {
 		boolean result = false;
 		try {
 			KitchenSinkController kit = new KitchenSinkController();
-			List<String> tests = kit.splitMessagesTest("absshdkjf\n\n\nsahkfhdkjh\n\n\nakjdfh\nfrfrfr","\n\n\n");
+			List<String> tests = kit.splitMessagesTest("absshdkjf\nsahkfhdkjh\nakjdfh\nfrfrfr\nfrfr\nfrfr\nfrfr\nfrf\nfrf\nfrf"
+					+ "\nfrf\nfrf\nfrf\nfrf\nfrf\nfrf\nfrf\nfrf\nfrf\nfrf","\n");
 			for(int i = 0; i<tests.size();i++) {
 				System.out.print(tests.get(i));
 				System.out.print("    ");

@@ -694,11 +694,22 @@ public class KitchenSinkController {
 
 	private List<Message> splitMessages(String longstring,String splitter){
 		if(longstring!=null) {
+			
 			List<Message> messages = new ArrayList<Message>();
 			String [] shortStrings = longstring.split(splitter);
-			for(int i = 0; i<5;i++ ) {
-				Message message = new TextMessage(shortStrings[i]);
-				messages.add(message);
+			int numPerGroup = (shortStrings.length/5)+1;
+			String groupString = "";
+			for(int i = 0; i<shortStrings.length;i++ ) {
+				groupString += shortStrings[i];
+				if((i+1)%numPerGroup==0) {
+					Message message = new TextMessage(groupString);
+					messages.add(message);
+					groupString = "";//clear the groupString
+				}else if(i+1 ==shortStrings.length) { //dealing with boundary case, e.g 27/5=5 5+1=6, the last one does not give 0 
+					Message message = new TextMessage(groupString);
+					messages.add(message);
+					groupString = "";//clear the groupString	
+				}
 			}
 			return messages;	
 		}
@@ -714,9 +725,18 @@ public class KitchenSinkController {
 		if(longstring!=null) {
 			List<String> messages = new ArrayList<String>();
 			String [] shortStrings = longstring.split(splitter);
+			int numPerGroup = (shortStrings.length/5)+1;
+			String groupString = "";
 			for(int i = 0; i<shortStrings.length;i++ ) {
-				String message = shortStrings[i];
-				messages.add(message);
+				groupString += shortStrings[i];
+				if((i+1)%numPerGroup==0) {
+					messages.add(groupString);
+					groupString = "";//clear the groupString
+				}else if(i+1 ==shortStrings.length) { //dealing with boundary case, e.g 27/5=5 5+1=6, the last one does not give 0 
+					messages.add(groupString);
+					groupString = "";//clear the groupString	
+				}
+				
 			}
 			return messages;	
 		}
@@ -735,7 +755,10 @@ public class KitchenSinkController {
 				
 		//reply += "Thank you for your interest, here is a list of tours:\n";
 		//reply += "Attention: You can terminate the booking procedure by entering Q at any time!\n\n";
+		String starter = "Thank you for your interest, here is a list of tours:\n";
+		starter += "Attention: You can terminate the booking procedure by entering Q at any time!\n";
 		String tourNames = database.getTourNames();//String database.getTourNames();
+		starter += tourNames;
 		List<Message> messages = splitMessages(tourNames,"\n\n");
 		
 		
