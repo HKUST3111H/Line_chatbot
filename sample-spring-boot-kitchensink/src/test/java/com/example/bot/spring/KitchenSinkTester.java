@@ -48,6 +48,20 @@ import java.util.Date;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+<<<<<<< HEAD
+// @RunWith(SpringRunner.class)
+// // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
+// @SpringBootTest(classes = { KitchenSinkTester.class,  FaqDatabase.class })
+// public class KitchenSinkTester {
+// 	@Autowired
+// 	private SQLDatabaseEngine databaseEngine;
+//
+// 	@Autowired
+// 	private FaqDatabase faqEngine;
+//
+//
+// }
+=======
 @RunWith(SpringRunner.class)
 //@SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
 @SpringBootTest(classes = { KitchenSinkTester.class,  FaqDatabase.class })
@@ -301,3 +315,4 @@ public class KitchenSinkTester {
 	}
 	
 }
+>>>>>>> upstream/develop
