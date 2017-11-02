@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.math.*;
 
 @Slf4j
 public class SQLDatabaseEngine extends DatabaseEngine {
@@ -325,7 +326,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			stmt.setInt(3, tourID);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				result += (rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" max people: "+rs.getInt(4)+"\n\n");
+				Timestamp time=rs.getTimestamp(2);
+				String time_change_2=""+time;
+				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
+				result += (rs.getString(1)+" "+ time_change +" "+rs.getString(3)+" max people: "+rs.getInt(4)+"\n\n");
 			}
 			rs.close();
 			stmt.close();
@@ -620,7 +624,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
-				result+=("\n\nTotal fee: "+fee+"\n\n");
+				int fee_int = (int)fee;
+				result+=("\n\nTotal fee: "+fee_int+"\n\n");
 				
 			}
 			rs.close();
@@ -682,12 +687,13 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
+				int fee_int = (int)fee;
 				int state=rs.getInt(14);
 				if(state==2) {
-					result+=("\n\nTotal fee: "+fee+"  PAID \n\n\n\n");
+					result+=("\n\nTotal fee: "+fee_int+"  PAID \n\n\n\n");
 				}
 				else {
-					result+=("\n\nTotal fee: "+fee+"  UNPAID \n\n\n\n");
+					result+=("\n\nTotal fee: "+fee_int+"  UNPAID \n\n\n\n");
 				}
 				result+=("=====\n");
 
