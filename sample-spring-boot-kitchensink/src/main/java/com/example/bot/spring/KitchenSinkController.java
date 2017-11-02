@@ -357,7 +357,6 @@ public class KitchenSinkController {
 		
         }else if(state == AGE) {
         	
-    		/*
 	        	if(isNumeric(text) && Integer.parseInt(text)>=0) {
 	        		database.setUserAge(userID,text);//extract number preferred here
 	        		database.setUserState(userID,BOOKING);
@@ -371,13 +370,16 @@ public class KitchenSinkController {
 				log.info("Returns instruction message {}: {}", replyToken, reply);
 				this.replyText(replyToken,reply);
 			}
-    */
+    
+        	/*
         		database.setUserAge(userID,text);//extract number preferred here
         		database.setUserState(userID,BOOKING);//enter booking, information filled
         		reply += "Great! Basic information registered!\n";
     			// use function here
     			listTourForBooking(replyToken, reply);
     			//
+    			 * 
+    			 */
     			
     		
         }
