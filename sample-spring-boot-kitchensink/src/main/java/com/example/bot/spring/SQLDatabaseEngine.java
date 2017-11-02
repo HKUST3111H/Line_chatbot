@@ -218,10 +218,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		Connection connection = getConnection();
 		int result=0;
 		try {
-			PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_user (id, state, last_login) VALUES (?, ?, ?);");
+			PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_user (id, state, last_login, name) VALUES (?, ?, ?, ?);");
 			stmt2.setString(1, id);
 			stmt2.setInt(2, state);
 			stmt2.setTimestamp(3, time);
+			stmt2.setString(4, "null");
 			result=stmt2.executeUpdate();
 			stmt2.close();
 			connection.close();
