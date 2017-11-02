@@ -351,7 +351,7 @@ public class KitchenSinkController {
         		database.setUserState(userID,AGE);
         		// store phone number
         		database.setUserPhoneNum(userID,text);
-        		reply += "Please also give us your age. \n";
+        		reply += "Please also give us your age.(Number Only) \n";
     			log.info("Returns message {}: {}", replyToken, reply);
     			this.replyText(replyToken,reply);
 		
@@ -366,7 +366,7 @@ public class KitchenSinkController {
 	        		
 			}
 			else {
-				reply += "Invalid age! Please input a number.";
+				reply += "Invalid input! Please input your age. (Number only).";
 				log.info("Returns instruction message {}: {}", replyToken, reply);
 				this.replyText(replyToken,reply);
 			}
