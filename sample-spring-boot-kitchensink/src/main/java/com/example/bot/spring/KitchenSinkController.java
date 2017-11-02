@@ -552,9 +552,9 @@ public class KitchenSinkController {
 	
 	private String welcomeBack(long difference, User user){
 		String result = "";
-		if(difference > 10){
+		if(difference > 0.1){
+			result += greeting();
 			if(!user.getUserName().equals("null")) {
-				result += greeting();
 				result += ", ";
 				result += user.getUserName();
 			}
