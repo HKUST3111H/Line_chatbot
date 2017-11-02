@@ -701,6 +701,7 @@ public class KitchenSinkController {
 			String groupString = "";
 			for(int i = 0; i<shortStrings.length;i++ ) {
 				groupString += shortStrings[i];
+				groupString += '\n';
 				if((i+1)%numPerGroup==0) {
 					Message message = new TextMessage(groupString);
 					messages.add(message);
@@ -729,6 +730,7 @@ public class KitchenSinkController {
 			String groupString = "";
 			for(int i = 0; i<shortStrings.length;i++ ) {
 				groupString += shortStrings[i];
+				groupString += '\n';
 				if((i+1)%numPerGroup==0) {
 					messages.add(groupString);
 					groupString = "";//clear the groupString
