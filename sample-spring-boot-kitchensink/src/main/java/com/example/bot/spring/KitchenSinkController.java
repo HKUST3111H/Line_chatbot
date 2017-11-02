@@ -234,7 +234,7 @@ public class KitchenSinkController {
 	
 	private String welcomeBack(long difference, User user){
 		String result = "";
-		if(difference > 10){
+		if(difference > 1){
 			Calendar now = Calendar.getInstance();
 			int hour = now.get(Calendar.HOUR_OF_DAY);
 			
