@@ -701,7 +701,7 @@ public class KitchenSinkController {
 			String groupString = "";
 			for(int i = 0; i<shortStrings.length;i++ ) {
 				groupString += shortStrings[i];
-				groupString += '\n';
+				groupString += '\n\n';
 				if((i+1)%numPerGroup==0) {
 					Message message = new TextMessage(groupString);
 					messages.add(message);
@@ -757,11 +757,11 @@ public class KitchenSinkController {
 				
 		//reply += "Thank you for your interest, here is a list of tours:\n";
 		//reply += "Attention: You can terminate the booking procedure by entering Q at any time!\n\n";
-		String starter = "Thank you for your interest, here is a list of tours:\n";
-		starter += "Attention: You can terminate the booking procedure by entering Q at any time!\n";
+		String starter = "Thank you for your interest, here is a list of tours:\n\n";
+		starter += "Attention: You can terminate the booking procedure by entering Q at any time!\n\n";
 		String tourNames = database.getTourNames();//String database.getTourNames();
 		starter += tourNames;
-		List<Message> messages = splitMessages(tourNames,"\n\n");
+		List<Message> messages = splitMessages(starter,"\n\n");
 		
 		
 	//	reply +="\n";
