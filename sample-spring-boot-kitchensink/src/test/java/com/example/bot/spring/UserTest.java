@@ -1,7 +1,8 @@
 package com.example.bot.spring;
 
 
-import static org.assertj.core.api.Assertions.assertThat;
+import lombok.extern.slf4j.Slf4j;
+import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -13,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,102 +51,114 @@ import java.util.Date;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+@Slf4j
 @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
-@SpringBootTest(classes = { KitchenSinkTester.class,  FaqDatabase.class })
-public class KitchenSinkTester {
+@SpringBootTest(classes = { UserTest.class,  SQLDatabaseEngine.class })
+public class UserTest {
 	@Autowired
 	private SQLDatabaseEngine databaseEngine;
 
-	@Autowired
-	private FaqDatabase faqEngine;
+	private static final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+	private static final java.util.Date now = calendar.getTime();
+	private static final java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
+	private static final String test_id = "test_id";
+	private static final String test_name = "test_name";
+	private static final String test_phoneno = "00001111";
+	private static final String test_age = "20";
+	private static final int test_state = 1;
+	private static boolean thrown = false;
+	private static String query_result = null;
+	private static boolean update_result = false;
 
+	public UserTest() {
+		try {
+			databaseEngine.createUser(test_id, time, 0);
+		} catch (Exception e) {
+			log.info("Test User Exist!");
+		}
+	}
 
-	@Test
-	public void testTour() throws Exception {
-		//for testing this class
-		Tour tour = new Tour("ID","Name","Description",2);
-		TourOffering offering = new TourOffering("offeringID", "date", "guideName", "guideAccount",
-				"hotel", 40, 5);
-		tour.addTourOffering(offering);
-		tour.removeTourOffering(offering);
-		System.out.println(tour.getTourID());
-		System.out.println(offering.getGuideName());
-		assertThat(tour.getTourID()).isEqualTo("ID");
-		assertThat(offering.getOfferingID()).isEqualTo("offeringID");
+	@Before
+	public void setUp() {
+		thrown = false;
+		update_result = false;
+	}
 
+	@After
+	public void check() {
+		assertFalse(thrown);
+		log.info("No Exception");
+		assertTrue(update_result);
+		log.info("Update Succeed");
 	}
 
 	@Test
-	public void testSQL_7() throws Exception {
-		//for testing this class
-		boolean thrown = false;
-		boolean result = false;
+	public void testCreateUser() throws Exception {
+		//for testing User class createUser function
 		try {
-			result = this.databaseEngine.tourOfferingFound(12,1);
+			databaseEngine.deleteUser(test_id);
+			update_result = databaseEngine.createUser(test_id, time, 0);
 		} catch (Exception e) {
+			log.info(e.toString());
 			thrown = true;
 		}
-		assertThat(!thrown);
-		assertThat(result).isEqualTo(true);
 	}
 
 	@Test
-	public void testSQL_10() throws Exception {
-		//for testing this class
-		boolean thrown = false;
-		String result = null;
+	public void testSetUserTime() throws Exception {
+		//for testing User class setUserTime function
 		try {
-			result = this.databaseEngine.displayTourOffering(12);
+			update_result = databaseEngine.setUserTime(test_id, time);
 		} catch (Exception e) {
+			log.info(e.toString());
 			thrown = true;
 		}
-		assertThat(!thrown);
-		assertThat(result).isNotEqualTo("null");
+	}
+
+	@Test
+	public void testSetUserState() throws Exception {
+		//for testing User class setUserState function
+		try {
+			update_result = databaseEngine.setUserState(test_id, test_state);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
 	}
 
 
 	@Test
-	public void testSQL_12() throws Exception {
-		//for testing this class
-		boolean thrown = false;
-		int result = -1;
-		boolean result2 = false;
+	public void testSetUserName() throws Exception {
+		//for testing User class setUserName function
 		try {
-			result2 = this.databaseEngine.setBufferTourID("test", 12);
+			update_result = databaseEngine.setUserName(test_id, test_name);
 		} catch (Exception e) {
+			log.info(e.toString());
 			thrown = true;
 		}
-		assertThat(!thrown);
-		assertThat(result2).isEqualTo(true);
-
-		try {
-			result = this.databaseEngine.getBufferTourID("test");
-		} catch (Exception e) {
-			thrown = true;
-		}
-		assertThat(!thrown);
-		assertThat(result).isNotEqualTo(-1);
-
-		try {
-			result2 = this.databaseEngine.deleteBufferBookingEntry("test");
-		} catch (Exception e) {
-			thrown = true;
-		}
-		assertThat(!thrown);
-		assertThat(result2).isEqualTo(true);
 	}
+
 	@Test
-	public void testSQL_13() throws Exception {
-		//for testing this class
-		boolean thrown = false;
-		boolean result = false;
+	public void testSetUserPhoneNum() throws Exception {
+		//for testing User class setUserPhoneNum function
 		try {
-			result = this.databaseEngine.setBookingTourOfferingID("test4",1);
+			update_result = databaseEngine.setUserPhoneNum(test_id, test_phoneno);
 		} catch (Exception e) {
+			log.info(e.toString());
 			thrown = true;
 		}
-		assertThat(!thrown);
-		assertThat(result).isEqualTo(true);
 	}
+
+	@Test
+	public void testSetUSerAge() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			update_result = databaseEngine.setUserAge(test_id, test_age);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+
 }
