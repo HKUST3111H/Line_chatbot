@@ -566,7 +566,7 @@ public class KitchenSinkController {
 
 	private boolean checkQuit(String text, String userID, String reply, String replyToken, int choice) throws Exception{	
 		if (text.equals("Q")){
-			String result = database.displaytBookingInformation(userID);
+			String result = database.reviewBookingInformation(userID);
 			if(result.equals("null")) {
 				database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION);
 			}
