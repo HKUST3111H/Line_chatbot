@@ -625,7 +625,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
 				int fee_int = (int)fee;
-				result+=("\n\nTotal fee: "+fee_int+"\n\n");
+				result+=("\n\nTotal fee: HKD "+fee_int+"\n\n");
 				
 			}
 			rs.close();
@@ -690,10 +690,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				int fee_int = (int)fee;
 				int state=rs.getInt(14);
 				if(state==2) {
-					result+=("\n\nTotal fee: "+fee_int+"  PAID \n\n\n\n");
+					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nPAID \n\n\n\n");
 				}
 				else {
-					result+=("\n\nTotal fee: "+fee_int+"  UNPAID \n\n\n\n");
+					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nUNPAID \n\n\n\n");
 				}
 				result+=("=====\n");
 
