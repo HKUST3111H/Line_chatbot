@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.Calendar;
 import java.net.URISyntaxException;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,6 +13,8 @@ import java.net.URI;
 
 @Slf4j
 public class SQLDatabaseEngine extends DatabaseEngine {
+	//booking state: 0 isBooking; 1 done; 2 confirmed;
+	//offering state: 0 not enough; 1 enough; 2 full; 3 old;	
 	@Override
 	String search(String text) throws Exception {
 			//Write your code here
@@ -608,8 +611,13 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				toddler=rs.getInt(3);
 				price=rs.getDouble(4);
 				special=rs.getString(5);
+				Timestamp time=rs.getTimestamp(6);
+				int hour =time.get(Calendar.HOUR_OF_DAY)+8;
+				time.set(Calendar.HOUR_OF_DAY, hour);
+				
+				time.set
 				result=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
-				+rs.getTimestamp(6)+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
+				+time+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
@@ -666,8 +674,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				toddler=rs.getInt(3);
 				price=rs.getDouble(4);
 				special=rs.getString(5);
+				Timestamp time=rs.getTimestamp(6);
+				int hour =time.get(Calendar.HOUR_OF_DAY)+8;
+				time.set(Calendar.HOUR_OF_DAY, hour);
+				
 				result+=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
-				+rs.getTimestamp(6)+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
+				+time+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
