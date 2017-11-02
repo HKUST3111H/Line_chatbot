@@ -62,25 +62,35 @@ public class UserTest {
 	private static final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 	private static final java.util.Date now = calendar.getTime();
 	private static final java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
-	private static final String test_id = "test_id";
+
+	private static final String test_user_id = "test_user_id";
 	private static final String test_name = "test_name";
 	private static final String test_phoneno = "00001111";
 	private static final String test_age = "20";
 	private static final int test_state = 1;
+
+	private static boolean init = false;
 	private static boolean thrown = false;
 	private static String query_result = null;
 	private static boolean update_result = true;
 
 	// public UserTest() {
 	// 	try {
-	// 		databaseEngine.createUser(test_id, time, test_state);
+	// 		databaseEngine.createUser(test_user_id, time, test_state);
 	// 	} catch (Exception e) {
 	// 		log.info("Test User Exist!");
 	// 	}
 	// }
-
 	@Before
 	public void setUp() {
+		if (!init) {
+			try {
+				init = true;
+				databaseEngine.createUser(test_user_id, time, test_state);
+			} catch (Exception e) {
+				log.info("Test User Exist!");
+			}
+		}
 		thrown = false;
 		update_result = true;
 	}
@@ -97,9 +107,9 @@ public class UserTest {
 	public void testCreateUser() throws Exception {
 		//for testing User class createUser function
 		try {
-			log.info(test_id);
-			databaseEngine.deleteUser(test_id);
-			update_result = databaseEngine.createUser(test_id, time, test_state);
+			log.info(test_user_id);
+			databaseEngine.deleteUser(test_user_id);
+			update_result = databaseEngine.createUser(test_user_id, time, test_state);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -110,7 +120,7 @@ public class UserTest {
 	public void testSetUserTime() throws Exception {
 		//for testing User class setUserTime function
 		try {
-			update_result = databaseEngine.setUserTime(test_id, time);
+			update_result = databaseEngine.setUserTime(test_user_id, time);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -121,7 +131,7 @@ public class UserTest {
 	public void testSetUserState() throws Exception {
 		//for testing User class setUserState function
 		try {
-			update_result = databaseEngine.setUserState(test_id, test_state);
+			update_result = databaseEngine.setUserState(test_user_id, test_state);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -133,7 +143,7 @@ public class UserTest {
 	public void testSetUserName() throws Exception {
 		//for testing User class setUserName function
 		try {
-			update_result = databaseEngine.setUserName(test_id, test_name);
+			update_result = databaseEngine.setUserName(test_user_id, test_name);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -144,7 +154,7 @@ public class UserTest {
 	public void testSetUserPhoneNum() throws Exception {
 		//for testing User class setUserPhoneNum function
 		try {
-			update_result = databaseEngine.setUserPhoneNum(test_id, test_phoneno);
+			update_result = databaseEngine.setUserPhoneNum(test_user_id, test_phoneno);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -155,7 +165,7 @@ public class UserTest {
 	public void testSetUSerAge() throws Exception {
 		//for testing User class setUserAge function
 		try {
-			update_result = databaseEngine.setUserAge(test_id, test_age);
+			update_result = databaseEngine.setUserAge(test_user_id, test_age);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;

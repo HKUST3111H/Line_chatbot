@@ -59,14 +59,29 @@ public class BookingTest {
 	@Autowired
 	private SQLDatabaseEngine databaseEngine;
 
-	private static final String test_user_id = "test_id";
+	private static final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+	private static final java.util.Date now = calendar.getTime();
+	private static final java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
+
 	private static final int test_tour_id = 12;
 	private static final int test_tour_offering_id = 1;
+	private static final String test_user_id = "test_id";
+	private static final int test_state = 1;
+
+	private static boolean init = false;
 	private static boolean thrown = false;
 	private static boolean result = false;
 
 	@Before
 	public void setUp() {
+		if (!init) {
+			try {
+				init = true;
+				databaseEngine.createUser(test_user_id, time, test_state);
+			} catch (Exception e) {
+				log.info("Test User Exist!");
+			}
+		}
 		thrown = false;
 		result = true;
 	}
