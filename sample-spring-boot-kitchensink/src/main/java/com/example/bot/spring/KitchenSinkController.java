@@ -385,9 +385,10 @@ public class KitchenSinkController {
 			throws Exception {
 		if(text.toLowerCase().contains("review")) {
 			   	database.setUserState(userID,FAQ_AFTER_CONFIRMATION);
-			   	reply += database.reviewBookingInformation(userID);
-			   	log.info("Returns message {}: {}", replyToken, reply);
-			   	this.replyText(replyToken,reply);      
+			   	String review = database.reviewBookingInformation(userID);
+				List<Message> messages = splitMessages(review,"\n\n\n\n");			
+				log.info("Returns message {}: {}", replyToken, reply);
+				this.reply(replyToken,messages);
 		   }
 		   else {
 			   	database.setUserState(userID,BOOKING_TOUR_ID);
@@ -442,6 +443,7 @@ public class KitchenSinkController {
 
 	private void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken)) {
+			 text=text.replaceAll(" ","");
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
 					database.setUserState(userID,BOOKING_CONFIRMATION);
 					database.setBookingToddlerNumber(userID,Integer.parseInt(text));
@@ -462,6 +464,7 @@ public class KitchenSinkController {
 	private void BOOKINF_CHILDREN_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken)) {
+			text=text.replaceAll(" ","");
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
 					database.setUserState(userID,BOOKING_TODDLER);
 					database.setBookingChildrenNumber(userID,Integer.parseInt(text));
@@ -481,6 +484,7 @@ public class KitchenSinkController {
 
 	private void BOOKING_ADULT_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken)) {
+			text=text.replaceAll(" ","");
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
 					database.setUserState(userID,BOOKING_CHILDREN);
 					database.setBookingAdultNumber(userID,Integer.parseInt(text));
@@ -500,6 +504,7 @@ public class KitchenSinkController {
 
 	private void BOOKING_OFFERING_ID_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
+		text=text.replaceAll(" ","");
 		if (text.equals("Q")){
 			database.setUserState(userID, FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION);
 			database.deleteBufferBookingEntry(userID);
@@ -509,6 +514,7 @@ public class KitchenSinkController {
 		}
 		
 		else if(isNumeric(text) && database.tourOfferingFound(database.getBufferTourID(userID),Integer.parseInt(text))) {
+			
 				database.setUserState(userID,BOOKING_ADULT);
 				database.deleteBufferBookingEntry(userID);
 				database.setBookingTourOfferingID(userID,Integer.parseInt(text));
@@ -524,6 +530,7 @@ public class KitchenSinkController {
 	}
 
 	private void BOOKING_TOUR_ID_handler(String replyToken, String text, String userID, String reply) throws Exception {
+		text=text.replaceAll(" ","");
 		if (text.equals("Q")){
 			database.setUserState(userID, FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION);
 			reply += "Successfully exiting booking!";
@@ -555,6 +562,7 @@ public class KitchenSinkController {
 	}
 
 	private void FILL_AGE_handler(String replyToken, String text, String userID, String reply) throws Exception {
+		text=text.replaceAll(" ","");
 		if(isNumeric(text) && Integer.parseInt(text)>=0) {
     		database.setUserAge(userID,text);//extract number preferred here
     		database.setUserState(userID,BOOKING_TOUR_ID);
@@ -615,7 +623,7 @@ public class KitchenSinkController {
 			
 			List<Message> messages = new ArrayList<Message>();
 			String [] shortStrings = longstring.split(splitter);
-			int numPerGroup = (shortStrings.length/5)+1;
+			int numPerGroup = (shortStrings.length/4)+1; //split into 4 groups
 			String groupString = "";
 			for(int i = 0; i<shortStrings.length;i++ ) {
 				groupString += shortStrings[i];
@@ -668,11 +676,10 @@ public class KitchenSinkController {
 	private void listTourForBooking(String replyToken, String reply) throws Exception {
 		String starter = "Thank you for your interest, here is a list of tours:\n\n";
 		starter += "Attention: You can terminate the booking procedure by entering Q at any time!\n\n";
+		Message heading = new TextMessage(starter);
 		String tourNames = database.getTourNames();//String database.getTourNames();
-		starter += tourNames;
-		List<Message> messages = splitMessages(starter,"\n\n");
-		
-		
+		List<Message> messages = splitMessages(tourNames,"\n\n");
+		messages.add(0, heading);
 		log.info("Returns message {}: {}", replyToken, reply);
 		this.reply(replyToken,messages);
 	}
