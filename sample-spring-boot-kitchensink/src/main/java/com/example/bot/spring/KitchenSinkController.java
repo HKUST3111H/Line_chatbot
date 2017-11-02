@@ -421,7 +421,7 @@ public class KitchenSinkController {
 	}
 	
 	private void BOOKING_ADULT_handler(String replyToken, String text, String userID, String reply) throws Exception {
-		if(!checkQuit(text,userID,reply,replyToken)) {
+		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 			text=text.replaceAll(" ","");
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
 					database.setUserState(userID,Constant.BOOKING_CHILDREN);
@@ -442,7 +442,7 @@ public class KitchenSinkController {
 	
 	private void BOOKING_CHILDREN_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
-		if(!checkQuit(text,userID,reply,replyToken)) {
+		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 			text=text.replaceAll(" ","");
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
 					database.setUserState(userID,Constant.BOOKING_TODDLER);
@@ -463,7 +463,7 @@ public class KitchenSinkController {
 	
 	
 	private void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
-		if(!checkQuit(text,userID,reply,replyToken)) {
+		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 			text=text.replaceAll(" ","");
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
 					database.setUserState(userID,Constant.BOOKING_CONFIRMATION);
@@ -484,7 +484,7 @@ public class KitchenSinkController {
 	
 	private void BOOKING_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
-		if(!checkQuit(text,userID,reply,replyToken)) {	
+		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {	
 
 			database.setUserState(userID,Constant.BOOKING_PAYMENT);
 			database.setBookingSpecialRequest(userID,text);
@@ -505,7 +505,7 @@ public class KitchenSinkController {
 	}
 	
 	private void BOOKING_PAYMENT_handler(String replyToken, String text, String userID, String reply) throws Exception {
-		if(!checkQuit(text,userID,reply,replyToken)) {
+		 
 			if(text.toLowerCase().contains("y")) {
 				database.setUserState(userID,Constant.FAQ_AFTER_CONFIRMATION);
 				database.setBookingConfirmation(userID);
@@ -514,9 +514,9 @@ public class KitchenSinkController {
 	    			this.replyText(replyToken,reply);    			
 			}
 			else {
-				checkQuit("Q",userID,reply,replyToken);
+				checkQuit("Q",userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY);
 			}
-		}
+		
 	}
 	
 	
@@ -564,7 +564,7 @@ public class KitchenSinkController {
         }
 	}
 
-	private boolean checkQuit(String text, String userID, String reply, String replyToken, int choice=0) throws Exception{	
+	private boolean checkQuit(String text, String userID, String reply, String replyToken, int choice) throws Exception{	
 		if (text.equals("Q")){
 			String result = database.displaytBookingInformation(userID);
 			if(result=="null") {
