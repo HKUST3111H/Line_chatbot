@@ -78,7 +78,7 @@ public class KitchenSinkTester {
 		//assertThat(result).isEqualTo(true);
 	}
 	
-	/* Xu:
+	
 	@Test
 	public void testFaqNotFound() throws Exception {
 		boolean thrown = false;
@@ -171,7 +171,7 @@ public class KitchenSinkTester {
 		assertThat(result.equals("Great!"));
 >>>>>>> upstream/develop
 	}*/
-	/*
+	
 	@Test
 	public void testUser() throws Exception {
 		//for testing this class
@@ -319,5 +319,5 @@ public class KitchenSinkTester {
 		assertThat(!thrown);
 		assertThat(result).isEqualTo(true);
 	}
-	*/
+	
 }

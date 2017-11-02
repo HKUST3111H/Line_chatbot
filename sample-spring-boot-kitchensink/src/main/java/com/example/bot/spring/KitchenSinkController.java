@@ -696,7 +696,7 @@ public class KitchenSinkController {
 		if(longstring!=null) {
 			List<Message> messages = new ArrayList<Message>();
 			String [] shortStrings = longstring.split(splitter);
-			for(int i = 0; i<shortStrings.length;i++ ) {
+			for(int i = 0; i<5;i++ ) {
 				Message message = new TextMessage(shortStrings[i]);
 				messages.add(message);
 			}
