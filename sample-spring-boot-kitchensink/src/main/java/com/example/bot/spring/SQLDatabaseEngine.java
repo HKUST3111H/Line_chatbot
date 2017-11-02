@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.math.*;
 
 @Slf4j
 public class SQLDatabaseEngine extends DatabaseEngine {
@@ -325,7 +326,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			stmt.setInt(3, tourID);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				result += (rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" max people: "+rs.getInt(4)+"\n\n");
+				Timestamp time=rs.getTimestamp(2);
+				String time_change_2=""+time;
+				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
+				result += (rs.getString(1)+" "+ time_change +" "+rs.getString(3)+" max people: "+rs.getInt(4)+"\n\n");
 			}
 			rs.close();
 			stmt.close();
@@ -612,16 +616,16 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				price=rs.getDouble(4);
 				special=rs.getString(5);
 				Timestamp time=rs.getTimestamp(6);
-				int hour =time.get(Calendar.HOUR_OF_DAY)+8;
-				time.set(Calendar.HOUR_OF_DAY, hour);
+				String time_change_2=""+time;
+				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
 				
-				time.set
 				result=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
-				+time+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
+				+time_change+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
-				result+=("\n\nTotal fee: "+fee+"\n\n");
+				int fee_int = (int)fee;
+				result+=("\n\nTotal fee: HKD "+fee_int+"\n\n");
 				
 			}
 			rs.close();
@@ -675,20 +679,21 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				price=rs.getDouble(4);
 				special=rs.getString(5);
 				Timestamp time=rs.getTimestamp(6);
-				int hour =time.get(Calendar.HOUR_OF_DAY)+8;
-				time.set(Calendar.HOUR_OF_DAY, hour);
+				String time_change_2=""+time;
+				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
 				
 				result+=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
-				+time+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
+				+time_change+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
+				int fee_int = (int)fee;
 				int state=rs.getInt(14);
 				if(state==2) {
-					result+=("\n\nTotal fee: "+fee+"  PAID \n\n\n\n");
+					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nPAID \n\n\n\n");
 				}
 				else {
-					result+=("\n\nTotal fee: "+fee+"  UNPAID \n\n\n\n");
+					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nUNPAID \n\n\n\n");
 				}
 				result+=("=====\n");
 
