@@ -329,7 +329,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				Timestamp time=rs.getTimestamp(2);
 				String time_change_2=""+time;
 				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
-				result += (rs.getString(1)+" "+ time_change +" "+rs.getString(3)+" max people: "+rs.getInt(4)+"\n\n");
+				result += (rs.getString(1)+" "+ time_change +"\nHotel: "+rs.getString(3)+"\nMax people: "+rs.getInt(4)+"\n\n");
 			}
 			rs.close();
 			stmt.close();
@@ -690,12 +690,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				int fee_int = (int)fee;
 				int state=rs.getInt(14);
 				if(state==2) {
-					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nPAID \n\n\n\n");
+					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nPAID \n\n");
 				}
 				else {
-					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nUNPAID \n\n\n\n");
+					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nUNPAID \n\n");
 				}
-				result+=("=====\n");
+				result+=("=====\n\n\n\n");
 
 			}
 			rs.close();
