@@ -377,7 +377,7 @@ public class KitchenSinkController {
 		text=text.replaceAll(" ","");
 		if (text.equals("Q")){
 			database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION);
-			reply += Constant.EXIT;
+			reply += Constant.CANCEL;
 			log.info("Returns instruction message {}: {}", replyToken, reply);
 			this.replyText(replyToken,reply);
 		}
@@ -410,7 +410,7 @@ public class KitchenSinkController {
 		if (text.equals("Q")){
 			database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION);
 			database.deleteBufferBookingEntry(userID);
-			reply += Constant.EXIT;
+			reply += Constant.CANCEL;
 			log.info("Returns message {}: {}", replyToken, reply);
 			this.replyText(replyToken,reply);
 		}
