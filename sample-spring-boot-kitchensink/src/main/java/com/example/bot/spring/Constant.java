@@ -1,3 +1,4 @@
+package com.example.bot.spring;
 
 public  class Constant {
 	
@@ -7,7 +8,7 @@ public  class Constant {
 	public static final int FAQ_AFTER_CONFIRMATION = 500;
 	
 	// tell user to fill in his personal information
-	public static final int FILL_INFORMATION = 200;
+	public static final int FILL_NAME = 200;
 	public static final int FILL_PHONE_NUM = 201; 
 	public static final int FILL_AGE = 202; 
 	
@@ -42,22 +43,26 @@ public  class Constant {
 			+ "Attention: You can terminate the booking procedure by texting \"Q\" at any time!\n\n";
 	public static final String INSTRTUCTION_ENTER_TOUR_ID = "\nPlease enter one of the tour IDs (number only).\n";
 	public static final String ERROR_REENTER_TOUR_ID = "Invalid tour ID! Please reinput tour ID.";
+	public static final String INFORMATION_NO_TOUR_OFFERING = "Sorry, currently we do not provide any offerings for this tour!\n"
+			+ "Please choose another tour id!";
+	public static final String INSTRTUCTION_ENTER_TOUR_OFFERING_ID = "Please enter one of the tour offering IDs (number only).";
+	public static final String ERROR_REENTER_TOUR_OFFERING_ID = "Invalid tour offering ID! Please reinput tour offering ID.";
 	public static final String INSTRTUCTION_ENTER_ADULT_NUMBER = "Please input the number of adults for this tour offering.";
 	public static final String ERROR_REENTER_ADULT_NUMBER = "Invalid number! Please reinput the number of adults.";
 	public static final String INSTRTUCTION_ENTER_CHILDREN_NUMBER = "Please input the number of childrens (age between 4 and 11) for this tour offering.";
 	public static final String ERROR_REENTER_CHILDREN_NUMBER = "Invalid number! Please reinput the number of children.";
 	public static final String INSTRTUCTION_ENTER_TODDLER_NUMBER = "Please input the number of toddlers (age not larger than 3) for this tour offering.";
-	"Invalid number! Please reinput the number of toddlers."
-	
+	public static final String ERROR_REENTER_TODDLER_NUMBER = "Invalid number! Please reinput the number of toddlers.";
+	public static final String INSTRTUCTION_ENTER_SPECIAL_REQUEST = "Please leave your special request.";
 	public static final String CONFIRM_REGISTRATION = "Great! Basic information registered!\n";
-	public static final String INSTRUCTION_PAYMENT = "Thanks for your interest! \n"
+	public static final String INSTRUCTION_PAYMENT = "Thanks for your interest!\n"
 			+ "Please pay your tour fee by ATM to 123-345-432-211 of ABC Bank or by cash in our store.\n"
 			+ "You shall send you pay-in slip to us by email or LINE. \n"
 			+ "You are welcome to ask other questions!";
 	public static final String QUESTION_REVIEW_OR_BOOKING = "Do you want to review your previous booking or do you want to start a new booking?";
-
+	public static final String QUESTION_CONFIRM_OR_NOT = "Do you want to confirm your booking";
 	public static final String FAQ_NOT_FOUND = "Sorry! We don't have relevant information.";
-	
+	public static final String BOOKING_CANCELLED = "Booking cancelled!";
 	
 
 }
