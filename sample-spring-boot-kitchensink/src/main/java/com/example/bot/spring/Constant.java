@@ -45,7 +45,7 @@ public  class Constant {
 	public static final String AFTERNOON = "Good afternoon";
 	public static final String EVENING = "Good evening";
 	public static final String WELCOME_BACK = "!\nWelcome back!\n\n";
-	public static final String EXIT = "Exiting booking successfully!";
+	public static final String CANCEL = "Booking cancelled successfully!";
 	public static final String INSTRUCTION_FILL_INFORMATION = "Thank you for your interest, "
 			+ "we need some of your information.\n";
 	public static final String INSTRUCTION_ENTER_NAME = "Please enter your name.\n";

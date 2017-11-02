@@ -524,11 +524,7 @@ public class KitchenSinkController {
 	    			this.replyText(replyToken,reply);    			
 			}
 			else {
-				database.setUserState(userID,Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION);
-				database.deleteBookingEntry(userID);
-				reply += Constant.BOOKING_CANCELLED;
-	    			log.info("Returns message {}: {}", replyToken, reply);
-	    			this.replyText(replyToken,reply);
+				checkQuit("Q",userID,reply,replyToken);
 			}
 		}
 	}
@@ -588,7 +584,7 @@ public class KitchenSinkController {
 				database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION);
 			}
 			database.deleteBookingEntry(userID);
-			reply += Constant.EXIT;
+			reply += Constant.CANCEL;
 			log.info("Returns message {}: {}", replyToken, reply);
 			this.replyText(replyToken,reply);
 			return true;
