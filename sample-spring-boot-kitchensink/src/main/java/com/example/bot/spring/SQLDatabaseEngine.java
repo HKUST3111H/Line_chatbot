@@ -690,12 +690,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				int fee_int = (int)fee;
 				int state=rs.getInt(14);
 				if(state==2) {
-					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nPAID \n\n\n\n");
+					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nPAID \n\n");
 				}
 				else {
-					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nUNPAID \n\n\n\n");
+					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nUNPAID \n\n");
 				}
-				result+=("=====\n");
+				result+=("=====\n\n\n\n");
 
 			}
 			rs.close();
