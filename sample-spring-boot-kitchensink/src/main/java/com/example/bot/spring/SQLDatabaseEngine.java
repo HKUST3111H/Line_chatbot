@@ -4,14 +4,18 @@ import lombok.extern.slf4j.Slf4j;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.Calendar;
 import java.net.URISyntaxException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.math.*;
 
 @Slf4j
 public class SQLDatabaseEngine extends DatabaseEngine {
+	//booking state: 0 isBooking; 1 done; 2 confirmed;
+	//offering state: 0 not enough; 1 enough; 2 full; 3 old;
 	@Override
 	String search(String text) throws Exception {
 			//Write your code here
@@ -214,10 +218,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		Connection connection = getConnection();
 		int result=0;
 		try {
-			PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_user (id, state, last_login) VALUES (?, ?, ?);");
+			PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_user (id, state, last_login, name) VALUES (?, ?, ?, ?);");
 			stmt2.setString(1, id);
 			stmt2.setInt(2, state);
 			stmt2.setTimestamp(3, time);
+			stmt2.setString(4, "null");
 			result=stmt2.executeUpdate();
 			stmt2.close();
 			connection.close();
@@ -346,7 +351,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			stmt.setInt(3, tourID);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				result += (rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" max people: "+rs.getInt(4)+"\n\n");
+				Timestamp time=rs.getTimestamp(2);
+				String time_change_2=""+time;
+				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
+				result += (rs.getString(1)+" "+ time_change +"\nHotel: "+rs.getString(3)+"\nMax people: "+rs.getInt(4)+"\n\n");
 			}
 			rs.close();
 			stmt.close();
@@ -632,12 +640,17 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				toddler=rs.getInt(3);
 				price=rs.getDouble(4);
 				special=rs.getString(5);
+				Timestamp time=rs.getTimestamp(6);
+				String time_change_2=""+time;
+				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
+
 				result=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
-				+rs.getTimestamp(6)+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
+				+time_change+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
-				result+=("\n\nTotal fee: "+fee+"\n\n");
+				int fee_int = (int)fee;
+				result+=("\n\nTotal fee: HKD "+fee_int+"\n\n");
 
 			}
 			rs.close();
@@ -690,19 +703,24 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				toddler=rs.getInt(3);
 				price=rs.getDouble(4);
 				special=rs.getString(5);
+				Timestamp time=rs.getTimestamp(6);
+				String time_change_2=""+time;
+				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
+
 				result+=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
-				+rs.getTimestamp(6)+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
+				+time_change+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
+				int fee_int = (int)fee;
 				int state=rs.getInt(14);
 				if(state==2) {
-					result+=("\n\nTotal fee: "+fee+"  PAID \n\n\n\n");
+					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nPAID \n\n");
 				}
 				else {
-					result+=("\n\nTotal fee: "+fee+"  UNPAID \n\n\n\n");
+					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nUNPAID \n\n");
 				}
-				result+=("=====\n");
+				result+=("=====\n\n\n\n");
 
 			}
 			rs.close();
