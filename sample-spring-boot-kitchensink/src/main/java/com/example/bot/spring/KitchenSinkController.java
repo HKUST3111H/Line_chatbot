@@ -701,7 +701,7 @@ public class KitchenSinkController {
 			String groupString = "";
 			for(int i = 0; i<shortStrings.length;i++ ) {
 				groupString += shortStrings[i];
-				groupString += '\n\n';
+				groupString += "\n\n";
 				if((i+1)%numPerGroup==0) {
 					Message message = new TextMessage(groupString);
 					messages.add(message);
