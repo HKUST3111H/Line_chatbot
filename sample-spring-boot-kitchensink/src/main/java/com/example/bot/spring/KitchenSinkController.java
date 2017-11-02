@@ -375,13 +375,8 @@ public class KitchenSinkController {
 	
 	private void BOOKING_TOUR_ID_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		text=text.replaceAll(" ","");
-		if (text.equals("Q")){
-			database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION);
-			reply += Constant.CANCEL;
-			log.info("Returns instruction message {}: {}", replyToken, reply);
-			this.replyText(replyToken,reply);
-		}
-		else if(isNumeric(text) && database.tourFound(Integer.parseInt(text))) {
+		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_NOTHING)) {
+			if(isNumeric(text) && database.tourFound(Integer.parseInt(text))) {
  			String result = database.displayTourOffering(Integer.parseInt(text));
     			if(result.equals("null")) {
     				reply += Constant.INFORMATION_NO_TOUR_OFFERING;
@@ -402,20 +397,14 @@ public class KitchenSinkController {
     			log.info("Returns instruction message {}: {}", replyToken, reply);
     			this.replyText(replyToken,reply);	
 			}
+		}
 	}
 	
 	private void BOOKING_OFFERING_ID_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		text=text.replaceAll(" ","");
-		if (text.equals("Q")){
-			database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION);
-			database.deleteBufferBookingEntry(userID);
-			reply += Constant.CANCEL;
-			log.info("Returns message {}: {}", replyToken, reply);
-			this.replyText(replyToken,reply);
-		}
-		
-		else if(isNumeric(text) && database.tourOfferingFound(database.getBufferTourID(userID),Integer.parseInt(text))) {
+		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_BUFFER)) {
+			if(isNumeric(text) && database.tourOfferingFound(database.getBufferTourID(userID),Integer.parseInt(text))) {
 				database.setUserState(userID,Constant.BOOKING_ADULT);
 				database.deleteBufferBookingEntry(userID);
 				database.setBookingTourOfferingID(userID,Integer.parseInt(text));
@@ -428,6 +417,7 @@ public class KitchenSinkController {
 				log.info("Returns instruction message {}: {}", replyToken, reply);
 				this.replyText(replyToken,reply);
 			}
+		}
 	}
 	
 	private void BOOKING_ADULT_handler(String replyToken, String text, String userID, String reply) throws Exception {
@@ -574,7 +564,7 @@ public class KitchenSinkController {
         }
 	}
 
-	private boolean checkQuit(String text, String userID, String reply, String replyToken) throws Exception{	
+	private boolean checkQuit(String text, String userID, String reply, String replyToken, int choice=0) throws Exception{	
 		if (text.equals("Q")){
 			String result = database.displaytBookingInformation(userID);
 			if(result=="null") {
@@ -583,7 +573,12 @@ public class KitchenSinkController {
 			else {
 				database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION);
 			}
-			database.deleteBookingEntry(userID);
+			if(choice == Constant.DELETING_BOOKING_ENTRY) {
+				database.deleteBookingEntry(userID);
+			}
+			else if(choice == Constant.DELETING_BOOKING_BUFFER) {
+				database.deleteBufferBookingEntry(userID);
+			}
 			reply += Constant.CANCEL;
 			log.info("Returns message {}: {}", replyToken, reply);
 			this.replyText(replyToken,reply);

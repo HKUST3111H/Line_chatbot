@@ -37,6 +37,11 @@ public  class Constant {
 	// tell user to add a new booking or review
 	public static final int BOOKING_OR_REVIEW = 600;
 	
+	public static final int DELETING_BOOKING_ENTRY = 0;
+	public static final int DELETING_BOOKING_BUFFER = 1;
+	public static final int DELETING_NOTHING = 2;
+	
+	
 	public static final String GREETING_FIRST_USE = "Thanks for your first use of our app! "
 			+ "You can ask us some questions about touring information "
 			+ "and text \"book\" to book the tour offering which you are interested in!"
@@ -48,12 +53,12 @@ public  class Constant {
 	public static final String CANCEL = "Booking cancelled successfully!";
 	public static final String INSTRUCTION_FILL_INFORMATION = "Thank you for your interest, "
 			+ "we need some of your information.\n";
-	public static final String INSTRUCTION_ENTER_NAME = "Please enter your name.\n";
-	public static final String INSTRUCTION_ENTER_PHONE_NUM = "Please also give us your phone number.\n";
-	public static final String INSTRUCTION_ENTER_AGE = "Please also give us your age (number only).\n";
+	public static final String INSTRUCTION_ENTER_NAME = "Please enter your name.";
+	public static final String INSTRUCTION_ENTER_PHONE_NUM = "Please also give us your phone number.";
+	public static final String INSTRUCTION_ENTER_AGE = "Please also give us your age (number only).";
 	public static final String ERROR_REENTER_AGE = "Invalid input! Please input your age (number only).";
 	public static final String INSTRUCTION_BOOKING = "Thank you for your interest, here is a list of tours:\n"
-			+ "Attention: You can terminate the booking procedure by texting \"Q\" at any time!\n\n";
+			+ "Attention: You can terminate the booking procedure by texting \"Q\" at any time!\n";
 	public static final String INSTRTUCTION_ENTER_TOUR_ID = "\nPlease enter one of the tour IDs (number only).\n";
 	public static final String ERROR_REENTER_TOUR_ID = "Invalid tour ID! Please reinput tour ID.";
 	public static final String INFORMATION_NO_TOUR_OFFERING = "Sorry, currently we do not provide any offerings for this tour!\n"
