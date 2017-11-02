@@ -256,9 +256,21 @@ public class KitchenSinkController {
 		return result;
 	}
 
-	private boolean checkQuit(String text, String userID, int state, String reply, String replyToken) throws Exception{
+	private boolean checkQuit(String text, String userID, String reply, String replyToken) throws Exception{
+		
+		
 		if (text.equals("Q")){
-			database.setUserState(userID, state);
+			
+			
+			String result = database.displaytBookingInformation(userID);
+			
+			
+			if(result=="null") {
+				database.setUserState(userID, FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION);
+			}
+			else {
+				database.setUserState(userID, FAQ_AFTER_CONFIRMATION);
+			}
 			database.deleteBookingEntry(userID);
 			reply += "Successfully exiting booking!";
 			log.info("Returns message {}: {}", replyToken, reply);
@@ -383,7 +395,7 @@ public class KitchenSinkController {
 	}
 
 	private void BOOKING_PAYMENT_handler(String replyToken, String text, String userID, String reply) throws Exception {
-		if(!checkQuit(text,userID,FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION,reply,replyToken)) {
+		if(!checkQuit(text,userID,reply,replyToken)) {
 			if(text.toLowerCase().contains("y")) {
 				database.setUserState(userID,FAQ_AFTER_CONFIRMATION);
 				database.setBookingConfirmation(userID);
@@ -406,7 +418,7 @@ public class KitchenSinkController {
 
 	private void BOOKING_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
-		if(!checkQuit(text,userID,FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION,reply,replyToken)) {	
+		if(!checkQuit(text,userID,reply,replyToken)) {	
 
 			database.setUserState(userID,BOOKING_PAYMENT);
 			database.setBookingSpecialRequest(userID,text);
@@ -427,7 +439,7 @@ public class KitchenSinkController {
 	}
 
 	private void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
-		if(!checkQuit(text,userID,FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION,reply,replyToken)) {
+		if(!checkQuit(text,userID,reply,replyToken)) {
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
 					database.setUserState(userID,BOOKING_CONFIRMATION);
 					database.setBookingToddlerNumber(userID,Integer.parseInt(text));
@@ -447,7 +459,7 @@ public class KitchenSinkController {
 
 	private void BOOKINF_CHILDREN_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
-		if(!checkQuit(text,userID,FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION,reply,replyToken)) {
+		if(!checkQuit(text,userID,reply,replyToken)) {
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
 					database.setUserState(userID,BOOKING_TODDLER);
 					database.setBookingChildrenNumber(userID,Integer.parseInt(text));
@@ -466,7 +478,7 @@ public class KitchenSinkController {
 	}
 
 	private void BOOKING_ADULT_handler(String replyToken, String text, String userID, String reply) throws Exception {
-		if(!checkQuit(text,userID,FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION,reply,replyToken)) {
+		if(!checkQuit(text,userID,reply,replyToken)) {
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
 					database.setUserState(userID,BOOKING_CHILDREN);
 					database.setBookingAdultNumber(userID,Integer.parseInt(text));
