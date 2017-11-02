@@ -58,27 +58,6 @@ public class KitchenSinkTester {
 	@Autowired
 	private FaqDatabase faqEngine;
 	
-	@Test
-	public void testSplitter() throws Exception {
-		//for testing this class
-		boolean thrown = false;
-		boolean result = false;
-		try {
-			KitchenSinkController kit = new KitchenSinkController();
-			List<String> tests = kit.splitMessagesTest("absshdkjf\nsahkfhdkjh\nakjdfh\nfrfrfr\nfrfr\nfrfr\nfrfr\nfrf\nfrf\nfrf"
-					+ "\nfrf\nfrf\nfrf\nfrf\nfrf\nfrf\nfrf\nfrf\nfrf\nfrf","\n");
-			for(int i = 0; i<tests.size();i++) {
-				System.out.print(tests.get(i));
-				System.out.print("    ");
-			
-			}
-		} catch (Exception e) {
-			thrown = true;
-		}
-		//assertThat(!thrown);
-		//assertThat(result).isEqualTo(true);
-	}
-	
 	
 	@Test
 	public void testFaqNotFound() throws Exception {

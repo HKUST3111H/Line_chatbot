@@ -612,12 +612,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				price=rs.getDouble(4);
 				special=rs.getString(5);
 				Timestamp time=rs.getTimestamp(6);
-				int hour =time.get(Calendar.HOUR_OF_DAY)+8;
-				time.set(Calendar.HOUR_OF_DAY, hour);
+				String time_change_2=""+time;
+				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
 				
-				time.set
 				result=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
-				+time+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
+				+time_change+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
@@ -675,11 +674,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				price=rs.getDouble(4);
 				special=rs.getString(5);
 				Timestamp time=rs.getTimestamp(6);
-				int hour =time.get(Calendar.HOUR_OF_DAY)+8;
-				time.set(Calendar.HOUR_OF_DAY, hour);
+				String time_change_2=""+time;
+				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
 				
 				result+=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
-				+time+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
+				+time_change+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
