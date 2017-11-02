@@ -17,6 +17,7 @@
 package com.example.bot.spring;
 
 import java.io.IOException;
+
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -690,14 +692,57 @@ public class KitchenSinkController {
         */
     }
 
+	private List<Message> splitMessages(String longstring,String splitter){
+		if(longstring!=null) {
+			List<Message> messages = new ArrayList<Message>();
+			String [] shortStrings = longstring.split(splitter);
+			for(int i = 0; i<shortStrings.length;i++ ) {
+				Message message = new TextMessage(shortStrings[i]);
+				messages.add(message);
+			}
+			return messages;	
+		}
+		else {
+			return null;
+		}
+		
+	}
+	
+	
+
+	public List<String> splitMessagesTest(String longstring,String splitter){
+		if(longstring!=null) {
+			List<String> messages = new ArrayList<String>();
+			String [] shortStrings = longstring.split(splitter);
+			for(int i = 0; i<shortStrings.length;i++ ) {
+				String message = shortStrings[i];
+				messages.add(message);
+			}
+			return messages;	
+		}
+		else {
+			return null;
+		}
+		
+	}
+
+	
 	private void listTourForBooking(String replyToken, String reply) throws Exception {
-		reply += "Thank you for your interest, here is a list of tours:\n";
-		reply += "Attention: You can terminate the booking procedure by entering Q at any time!\n\n";
-		reply +=database.getTourNames();//String database.getTourNames();
-		reply +="\n";
-		reply +="Please enter one of the tour IDs.(Note: tourID only).  \n";
+//		List<com.sun.xml.internal.ws.wsdl.writer.document.Message> messages = new arrayList<Messagee>();
+		
+//		Message text1 = new TextMessage("Thank you for your interest, here is a list of tours:\\nAttention: You can terminate the booking procedure by entering Q at any time!\\n\\n\");
+//		messages.add(text1);
+				
+		//reply += "Thank you for your interest, here is a list of tours:\n";
+		//reply += "Attention: You can terminate the booking procedure by entering Q at any time!\n\n";
+		String tourNames = database.getTourNames();//String database.getTourNames();
+		List<Message> messages = splitMessages(tourNames,"\n\n");
+		
+		
+	//	reply +="\n";
+	//	reply +="Please enter one of the tour IDs.(Note: tourID only).  \n";
 		log.info("Returns message {}: {}", replyToken, reply);
-		this.replyText(replyToken,reply);
+		this.reply(replyToken,messages);
 	}
 
 	private void faqsearch(String replyToken, String text, String reply) throws Exception {
