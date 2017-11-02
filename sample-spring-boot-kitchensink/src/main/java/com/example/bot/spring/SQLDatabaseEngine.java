@@ -238,11 +238,13 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		Connection connection = getConnection();
 		int result=0;
 		try {
-			PreparedStatement stmt2 = connection.prepareStatement("DELETE FROM line_user WHERE id = ?;");
+			PreparedStatement stmt2 = connection.prepareStatement("DELETE FROM line_booking WHERE user_id = ?; DELETE FROM line_user WHERE id = ?;");
 			stmt2.setString(1, id);
+			stmt2.setString(2, id);
 			result=stmt2.executeUpdate();
 			stmt2.close();
 			connection.close();
+			log.info("Deleted!");
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
