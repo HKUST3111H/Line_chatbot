@@ -17,6 +17,7 @@
 package com.example.bot.spring;
 
 import java.io.IOException;
+
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -90,8 +92,6 @@ import java.net.URI;
 @Slf4j
 @LineMessageHandler
 public class KitchenSinkController {
-	
-
 
 	@Autowired
 	private LineMessagingClient lineMessagingClient;
@@ -205,12 +205,381 @@ public class KitchenSinkController {
 		this.reply(replyToken, new TextMessage(message));
 	}
 
+	private void handleSticker(String replyToken, StickerMessageContent content) {
+		reply(replyToken, new StickerMessage(content.getPackageId(), content.getStickerId()));
+	}
 	
-	private boolean checkQuit(String text, String userID, int state, String reply, String replyToken) throws Exception{
+
+	private void handleTextContent(String replyToken, Event event, TextMessageContent content)
+            throws Exception {
+				
+        String text = content.getText();
+        log.info("Got text message from {}: {}", replyToken, text);
+        
+        java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+        String userID = event.getSource().getUserId();
+        User user = database.getUserInformation(userID);
+        String reply = "";
+        
+        if(user.getUserID().equals("null")) {
+        		reply += greeting();
+        		reply += "!\n";
+        		reply += Constant.GREETING_FIRST_USE;    			
+        		database.createUser(userID,time,Constant.FAQ_NO_USER_INFORMATION);
+        		user.setUser(userID,time,Constant.FAQ_NO_USER_INFORMATION);
+        }
+        
+        int state = user.getState();
+        java.sql.Timestamp last_time = user.getTime();        
+        long difference = (time.getTime()-last_time.getTime())/(60*1000);
+        
+        // welcome user back if the time gapping is larger than 10 minutes
+        reply += welcomeBack(difference,user);
+        
+        // update last_time
+        database.setUserTime(userID,time);
+        
+        switch(state) {
+        case Constant.FAQ_NO_USER_INFORMATION:
+        		FAQ_NO_USER_INFORMATION_handler(replyToken, text, userID, reply);
+        		break;
+        case Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION:
+        		FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(replyToken, text, userID, reply);
+        		break;
+        case Constant.FAQ_AFTER_CONFIRMATION:
+            FAQ_AFTER_CONFIRMATION_handler(replyToken, text, userID, reply);
+        		break;
+        case Constant.FILL_NAME:
+        		FILL_NAME_handler(replyToken, text, userID, reply);
+        		break;
+        case Constant.FILL_PHONE_NUM:
+        		FILL_PHONE_NUM_handler(replyToken, text, userID, reply);
+        		break;
+        case Constant.FILL_AGE:
+        		FILL_AGE_handler(replyToken, text, userID, reply);
+        		break;
+        case Constant.BOOKING_TOUR_ID:
+    			BOOKING_TOUR_ID_handler(replyToken, text, userID, reply);
+    			break;
+        case Constant.BOOKING_OFFERING_ID:
+        		BOOKING_OFFERING_ID_handler(replyToken, text, userID, reply);
+        		break;
+        case Constant.BOOKING_ADULT:
+    			BOOKING_ADULT_handler(replyToken, text, userID, reply);
+    			break;
+        case Constant.BOOKING_CHILDREN:
+        		BOOKING_CHILDREN_handler(replyToken, text, userID, reply);
+        		break;
+        case Constant.BOOKING_TODDLER:
+    			BOOKING_TODDLER_handler(replyToken, text, userID, reply);
+    			break;
+        case Constant.BOOKING_CONFIRMATION:
+    			BOOKING_CONFIRMATION_handler(replyToken, text, userID, reply);
+    			break;
+        case Constant.BOOKING_PAYMENT:
+    			BOOKING_PAYMENT_handler(replyToken, text, userID, reply);
+    			break;
+        case Constant.BOOKING_OR_REVIEW:
+            BOOKING_OR_REVIEW_handler(replyToken, text, userID, reply);
+       		break;
+       	default:
+       		break;
+        }
+	}
+	
+
+	
+	private void FAQ_NO_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+		if(!text.toLowerCase().contains("book")) {
+			faqsearch(replyToken, text, reply);
+		}
+		else {
+			database.setUserState(userID,Constant.FILL_NAME);
+			reply += Constant.INSTRUCTION_FILL_INFORMATION;
+			reply += Constant.INSTRUCTION_ENTER_NAME;
+			log.info("Returns message {}: {}", replyToken, reply);
+			this.replyText(replyToken,reply);
+		}
+	}
+	
+	private void FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+		if(!text.toLowerCase().contains("book")) {
+			faqsearch(replyToken, text, reply);
+		}
+		else {
+			database.setUserState(userID,Constant.BOOKING_TOUR_ID);
+			listTourForBooking(replyToken, reply);
+		}
+	}
+	
+	private void FAQ_AFTER_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+		if(!text.toLowerCase().contains("book")) {
+			faqsearch(replyToken, text, reply);   
+		}
+		else{
+		    database.setUserState(userID,Constant.BOOKING_OR_REVIEW);
+		    ConfirmTemplate confirmTemplate = new ConfirmTemplate(
+		    		Constant.QUESTION_REVIEW_OR_BOOKING,
+		            new MessageAction("Review", "Review"),
+		            new MessageAction("New Booking", "New Booking")
+		    );
+		    TemplateMessage whichBook = new TemplateMessage("Review Booking/New Booking", confirmTemplate);
+			
+		    log.info("Returns review/new button {}: {}", replyToken);			
+		    this.reply(replyToken,whichBook);
+		    
+		 }
+	}
+	
+	private void FILL_NAME_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+		database.setUserState(userID,Constant.FILL_PHONE_NUM);
+		// store the name info
+		database.setUserName(userID,text);
+		reply += Constant.INSTRUCTION_ENTER_PHONE_NUM;
+		log.info("Returns message {}: {}", replyToken, reply);
+		this.replyText(replyToken,reply);
+	}
+	
+	
+	private void FILL_PHONE_NUM_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+		database.setUserState(userID,Constant.FILL_AGE);
+		// store phone number
+		database.setUserPhoneNum(userID,text);
+		reply += Constant.INSTRUCTION_ENTER_AGE;
+		log.info("Returns message {}: {}", replyToken, reply);
+		this.replyText(replyToken,reply);
+	}
+	
+	private void FILL_AGE_handler(String replyToken, String text, String userID, String reply) throws Exception {
+		text=text.replaceAll(" ","");
+		if(isNumeric(text) && Integer.parseInt(text)>=0) {
+    		database.setUserAge(userID,text);//extract number preferred here
+    		database.setUserState(userID,Constant.BOOKING_TOUR_ID);
+    		reply += Constant.CONFIRM_REGISTRATION;
+			// use function here
+			listTourForBooking(replyToken, reply);
+    		
+	}
+	else {
+		reply += Constant.ERROR_REENTER_AGE;
+		log.info("Returns instruction message {}: {}", replyToken, reply);
+		this.replyText(replyToken,reply);
+	}
+	}
+	
+	
+	private void BOOKING_TOUR_ID_handler(String replyToken, String text, String userID, String reply) throws Exception {
+		text=text.replaceAll(" ","");
+		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_NOTHING)) {
+			if(isNumeric(text) && database.tourFound(Integer.parseInt(text))) {
+ 			String result = database.displayTourOffering(Integer.parseInt(text));
+    			if(result.equals("null")) {
+    				reply += Constant.INFORMATION_NO_TOUR_OFFERING;
+    				log.info("Returns instruction message {}: {}", replyToken, reply);
+        			this.replyText(replyToken,reply);			
+    			}
+    			else {
+    				database.setUserState(userID,Constant.BOOKING_OFFERING_ID);
+    				database.setBufferTourID(userID,Integer.parseInt(text));
+    				reply += result;
+    				reply += Constant.INSTRTUCTION_ENTER_TOUR_OFFERING_ID;
+        			log.info("Returns instruction message {}: {}", replyToken, reply);
+        			this.replyText(replyToken,reply);	
+    			}    			
+			}
+			else {
+				reply += Constant.ERROR_REENTER_TOUR_ID;
+    			log.info("Returns instruction message {}: {}", replyToken, reply);
+    			this.replyText(replyToken,reply);	
+			}
+		}
+	}
+	
+	private void BOOKING_OFFERING_ID_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+		text=text.replaceAll(" ","");
+		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_BUFFER)) {
+			if(isNumeric(text) && database.tourOfferingFound(database.getBufferTourID(userID),Integer.parseInt(text))) {
+				database.setUserState(userID,Constant.BOOKING_ADULT);
+				database.deleteBufferBookingEntry(userID);
+				database.setBookingTourOfferingID(userID,Integer.parseInt(text));
+				reply += Constant.INSTRTUCTION_ENTER_ADULT_NUMBER;
+				log.info("Returns instruction message {}: {}", replyToken, reply);
+					this.replyText(replyToken,reply);
+			}
+			else {
+				reply += Constant.ERROR_REENTER_TOUR_OFFERING_ID;
+				log.info("Returns instruction message {}: {}", replyToken, reply);
+				this.replyText(replyToken,reply);
+			}
+		}
+	}
+	
+	private void BOOKING_ADULT_handler(String replyToken, String text, String userID, String reply) throws Exception {
+		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
+			text=text.replaceAll(" ","");
+			if(isNumeric(text) && Integer.parseInt(text)>=0) {
+					database.setUserState(userID,Constant.BOOKING_CHILDREN);
+					database.setBookingAdultNumber(userID,Integer.parseInt(text));
+					reply += Constant.INSTRTUCTION_ENTER_CHILDREN_NUMBER;
+					log.info("Returns instruction message {}: {}", replyToken, reply);
+	    				this.replyText(replyToken,reply);
+				}
+				else {
+					reply += Constant.ERROR_REENTER_ADULT_NUMBER;
+    				log.info("Returns instruction message {}: {}", replyToken, reply);
+    				this.replyText(replyToken,reply);
+				}
+
+			
+		}
+	}
+	
+	private void BOOKING_CHILDREN_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
+			text=text.replaceAll(" ","");
+			if(isNumeric(text) && Integer.parseInt(text)>=0) {
+					database.setUserState(userID,Constant.BOOKING_TODDLER);
+					database.setBookingChildrenNumber(userID,Integer.parseInt(text));
+					reply += Constant.INSTRTUCTION_ENTER_TODDLER_NUMBER;
+					log.info("Returns instruction message {}: {}", replyToken, reply);
+						this.replyText(replyToken,reply);
+				}
+				else {
+					reply += Constant.ERROR_REENTER_CHILDREN_NUMBER;
+					log.info("Returns instruction message {}: {}", replyToken, reply);
+					this.replyText(replyToken,reply);
+				}
+			
+			
+		}
+	}
+	
+	
+	private void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
+		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
+			text=text.replaceAll(" ","");
+			if(isNumeric(text) && Integer.parseInt(text)>=0) {
+					database.setUserState(userID,Constant.BOOKING_CONFIRMATION);
+					database.setBookingToddlerNumber(userID,Integer.parseInt(text));
+					reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
+					log.info("Returns instruction message {}: {}", replyToken, reply);
+	    				this.replyText(replyToken,reply);
+				}
+				else {
+					reply += Constant.ERROR_REENTER_TODDLER_NUMBER;
+    				log.info("Returns instruction message {}: {}", replyToken, reply);
+    				this.replyText(replyToken,reply);
+				}
+			
+			
+		}
+	}
+	
+	private void BOOKING_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {	
+
+			database.setUserState(userID,Constant.BOOKING_PAYMENT);
+			database.setBookingSpecialRequest(userID,text);
+			reply += database.displaytBookingInformation(userID);	
+			
+            ConfirmTemplate confirmTemplate = new ConfirmTemplate(
+                    Constant.QUESTION_CONFIRM_OR_NOT,
+                    new MessageAction("Yes", "Yes!"),
+                    new MessageAction("No", "No!")
+            );
+            TemplateMessage confirmMessageBlock = new TemplateMessage("Confirm booking?", confirmTemplate);
+			
+			log.info("Returns instruction message {}: {}", replyToken, reply);				
+		
+            this.reply(replyToken,
+                    Arrays.asList(new TextMessage(reply),confirmMessageBlock));
+		}
+	}
+	
+	private void BOOKING_PAYMENT_handler(String replyToken, String text, String userID, String reply) throws Exception {
+		 
+			if(text.toLowerCase().contains("y")||text.toLowerCase().contains("confirm")) {
+				database.setUserState(userID,Constant.FAQ_AFTER_CONFIRMATION);
+				database.setBookingConfirmation(userID);
+				reply += Constant.INSTRUCTION_PAYMENT;
+	    			log.info("Returns instruction message {}: {}", replyToken, reply);
+	    			this.replyText(replyToken,reply);    			
+			}
+			else {
+				checkQuit("Q",userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY);
+			}
+		
+	}
+	
+	
+	private void BOOKING_OR_REVIEW_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+		if(text.toLowerCase().contains("review")) {
+			   	database.setUserState(userID,Constant.FAQ_AFTER_CONFIRMATION);
+			   	String review = database.reviewBookingInformation(userID);
+			   	List<Message> messages = splitMessages(review,"\n\n\n\n");			
+			   	log.info("Returns message {}: {}", replyToken, reply);
+			   	this.reply(replyToken,messages);  
+		   }
+		   else {
+			   	database.setUserState(userID,Constant.BOOKING_TOUR_ID);
+			   	listTourForBooking(replyToken, reply);
+		    
+		   }
+	}
+	
+	private String welcomeBack(long difference, User user){
+		String result = "";
+		if(difference > 0.1){
+			result += greeting();
+			if(!user.getUserName().equals("null")) {
+				result += ", ";
+				result += user.getUserName();
+			}
+			result += Constant.WELCOME_BACK;
+		}
+		return result;
+	}
+	
+	private String greeting() {
+		Calendar now = Calendar.getInstance();
+		int hour = now.get(Calendar.HOUR_OF_DAY);
+		
+		if((hour+8)%24 < 12) {
+        		return Constant.MORNING;
+        }
+        else if((hour+8)%24 >= 18) {
+        		return Constant.EVENING;
+        }
+        else {
+        		return Constant.AFTERNOON;
+        }
+	}
+
+	private boolean checkQuit(String text, String userID, String reply, String replyToken, int choice) throws Exception{	
 		if (text.equals("Q")){
-			database.setUserState(userID, state);
-			database.deleteBookingEntry(userID);
-			reply += "Successfully exiting booking!";
+			String result = database.reviewBookingInformation(userID);
+			if(result.equals("null")) {
+				database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION);
+			}
+			else {
+				database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION);
+			}
+			if(choice == Constant.DELETING_BOOKING_ENTRY) {
+				database.deleteBookingEntry(userID);
+			}
+			else if(choice == Constant.DELETING_BOOKING_BUFFER) {
+				database.deleteBufferBookingEntry(userID);
+			}
+			reply += Constant.CANCEL;
 			log.info("Returns message {}: {}", replyToken, reply);
 			this.replyText(replyToken,reply);
 			return true;
@@ -219,6 +588,7 @@ public class KitchenSinkController {
 			return false;
 		}
 	}
+	
 	
 	public static boolean isNumeric(String str)  
 		 {  
@@ -232,527 +602,70 @@ public class KitchenSinkController {
 		   }  
 		   return true;  
 		 }
-
-
-	private void handleSticker(String replyToken, StickerMessageContent content) {
-		reply(replyToken, new StickerMessage(content.getPackageId(), content.getStickerId()));
+	
+	
+	
+	private List<Message> splitMessages(String longstring,String splitter){
+		if(longstring!=null) {
+			
+			List<Message> messages = new ArrayList<Message>();
+			String [] shortStrings = longstring.split(splitter);
+			int numPerGroup = (shortStrings.length/4)+1; //split into 4 groups
+			String groupString = "";
+			for(int i = 0; i<shortStrings.length;i++ ) {
+				groupString += shortStrings[i];
+				groupString += "\n\n";
+				if((i+1)%numPerGroup==0) {
+					Message message = new TextMessage(groupString);
+					messages.add(message);
+					groupString = "";//clear the groupString
+				}else if(i+1 ==shortStrings.length) { //dealing with boundary case, e.g 27/5=5 5+1=6, the last one does not give 0 
+					Message message = new TextMessage(groupString);
+					messages.add(message);
+					groupString = "";//clear the groupString	
+				}
+			}
+			return messages;	
+		}
+		else {
+			return null;
+		}
+		
+	}
+	
+	private void listTourForBooking(String replyToken, String reply) throws Exception {
+		String starter = Constant.INSTRUCTION_BOOKING;
+		Message heading = new TextMessage(starter);
+		String tourNames = database.getTourNames();//String database.getTourNames();
+		List<Message> messages = splitMessages(tourNames,"\n\n");
+		messages.add(0, heading);
+		log.info("Returns message {}: {}", replyToken, reply);
+		this.reply(replyToken,messages);
 	}
 
-	private void handleTextContent(String replyToken, Event event, TextMessageContent content)
-            throws Exception {
-		
-		// state constants
-		
-		// no user information
-		final int FAQ1 = 100;
-		
-		// no confirmation but has user information
-		final int FAQ2 = 300;
-		
-		// after confirmation
-		final int FAQ3 = 500;
-		
-		// tell user to fill in his personal information
-		final int FILL_INFORMATION = 200;
-		
-		final int PHONE_NUM = 201; 
+	private void faqsearch(String replyToken, String text, String reply) throws Exception {
+		try {
+		String answer = faqDatabase.search(text);
+		reply += answer;
+		String imageURL=faqDatabase.replyImage(answer);
+		if (imageURL!=null) {
+			imageURL=createUri("static/pictures/"+imageURL);
+			this.reply(replyToken, Arrays.asList(new TextMessage(reply),new ImageMessage(imageURL, imageURL)));
+			log.info("Replied image message {}: {}", replyToken, reply);
 
-		final int AGE = 202; 
-		
-		
-		// tell user to provide booking information
-		final int BOOKING = 400;
-		
-		final int BOOKING1 = 401;
-		final int BOOKING2 = 402;
-		final int BOOKING3 = 403;
-		final int BOOKING4 = 404;
-		final int BOOKING5 = 405;
-		final int BOOKING6 = 406;
-		
-
-		
-		// tell user to add a new booking or review
-		final int ADD_BOOKING_OR_REVIEW = 600;
-		
-		
-        String text = content.getText();
-        log.info("Got text message from {}: {}", replyToken, text);
-        
-        java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
-        String userID = event.getSource().getUserId();
-        User user = database.getUserInformation(userID);
-        String reply = "";
-        if(user.getUserID().equals("null")) {
-        		reply += "Thanks for your first use of our app! \n\n";      			
-        		database.createUser(userID,time,FAQ1);
-        		user.setID(userID);
-        		user.setTime(time);
-        		user.setState(FAQ1);
-        }
-        
-        int state = user.getState();
-        java.sql.Timestamp last_time = user.getTime();
-        
-        long difference = (time.getTime()-last_time.getTime())/(60*1000);
-        
-        // check whether the time gapping is larger than 10 minutes
-        if(difference > 10) {
-        		String answer = database.search(text);
-        		if(!answer.equals("Hello!")) {
-        			
-        			Calendar now = Calendar.getInstance();
-        			int hour = now.get(Calendar.HOUR_OF_DAY);
-        			
-        	        if((hour+8)%24 < 12)
-        	        		reply += "Good morning! \n";
-        	        else if((hour+8)%24 >= 18) {
-        	        		reply += "Good evening! \n";
-        	        }else
-        	        		reply += "Good afternoon \n";
-        			
-        		}
-        }
-        
-        // update last_time
-        database.setUserTime(userID,time);
-        
-        if(state == FAQ1 || state == FAQ2) {
-        		// if the text does not indicate booking
-        		if(!text.toLowerCase().contains("book")) {
-        			String answer = database.search(text);
-        			if(!answer.equals("null")) {
-        				reply += answer;
-        				//reply += "\n";
-        				log.info("Returns answer message {}: {}", replyToken, reply);
-        				this.replyText(replyToken,reply);
-        			}
-        			else {
-        				reply += "Sorry! We cannot answer your question.";
-        				//.unanswered question, add to unknown question database
-        				database.addToUnknownDatatabse(text);
-                		log.info("Returns message {}: {}", replyToken, reply);
-                		this.replyText(replyToken,reply);
-        			}
-        		}
-        		else {//indicate booking
-        			if(state == FAQ1) {//no user info
-        				database.setUserState(userID,FILL_INFORMATION);//set to 200
-                		reply += "Thank you for your interest, we need some of your information. \n";
-                		reply += "Please enter your name.";
-                		log.info("Returns message {}: {}", replyToken, reply);
-                		this.replyText(replyToken,reply);
-         				
-        			}else if(state == FAQ2)//
-        				database.setUserState(userID,BOOKING);//set to 400 
-            			reply += "Thank you for your interest, we need to fill in the booking information. \n";
-            			reply += "Attention: You can terminate the booking procedure by entering 0 at any time!\n";
-            			reply += "Here is a list of tour names: \n";
-            			reply +=database.getTourNames();//String database.getTourNames();
-            			reply +="\n";
-            			reply +="Please enter one of the tour IDs.(Note: tourID only).  \n";
-            			log.info("Returns message {}: {}", replyToken, reply);
-            			this.replyText(replyToken,reply);
-        		}
-        	
-        }
-        else if(state == FILL_INFORMATION) {
-        		database.setUserState(userID,PHONE_NUM);
-        		// store the name info
-        		database.setUserName(userID,text);
-        		reply += "Please also give us your phone number. \n";
-    			log.info("Returns message {}: {}", replyToken, reply);
-    			this.replyText(replyToken,reply);
-        
-        	
-        }else if(state == PHONE_NUM) {
-        		database.setUserState(userID,AGE);
-        		// store phone number
-        		database.setUserPhoneNum(userID,text);
-        		reply += "Please also give us your age. \n";
-    			log.info("Returns message {}: {}", replyToken, reply);
-    			this.replyText(replyToken,reply);
-
-    			
-      
-        }else if(state == AGE) {
-        		database.setUserAge(userID,text);//extract number preferred here
-        		database.setUserState(userID,BOOKING);//enter booking, information filled
-    			reply += "Great! Let's move on to booking your tour! \n";
-    			reply +="Attention: You can terminate the booking procedure by entering 0 at any time!\n";
-    			reply += "Here is a list of tour names: \n";
-    			
-    			String tourNames = database.getTourNames();//String database.getTourNames();
-    			
-    			//================
-    			/*
-    			String [] parts = tourNames.split("\n\n"); 
-    			
-    			int i = 0;
-    			int count6 = 6;
-    			String tours=" ";    			
-    			while(i<parts.length){	
-    				tours += parts[i];
-    				tours +="\n";
-    				if(count6!=0) {
-    					count6--;
-    				}
-    				if(count6==0 ||i==parts.length-1) {
-    					count6 = 6;
-    	    				log.info("Returns message {}: {}", replyToken, reply);
-    	    				this.replyText(replyToken,tours);
-    	    				tours =" ";
-    				}
-    				i+=1;
-    			}
-    			*/
-    			//=================
-    			reply += tourNames;
-    			reply +="\n";
-    			reply +="Please enter one of the tourIDs (Note: tourID only). \n";
-    			log.info("Returns message {}: {}", replyToken, reply);
-    			this.replyText(replyToken,reply);	
-        	
-        }
-        
-        
-        else if(state == BOOKING){
-    			if (text.equals("Q")){
-    				database.setUserState(userID, FAQ2);
-    				reply += "Successfully exiting booking!";
-    				log.info("Returns instruction message {}: {}", replyToken, reply);
-    				this.replyText(replyToken,reply);
-    			}
-    			else if(isNumeric(text)) {
-    				if(database.tourFound(Integer.parseInt(text))) {
-         			String result = database.displayTourOffering(Integer.parseInt(text));
-            			if(result.equals("null")) {
-            				reply += "Sorry, currently we do not provide any offerings for this tour!\n"+
-            						"Please choose another tour!";
-            				log.info("Returns instruction message {}: {}", replyToken, reply);
-                			this.replyText(replyToken,reply);			
-            			}
-            			else {
-            				database.setUserState(userID,BOOKING1);
-            				database.setBufferTourID(userID,Integer.parseInt(text));
-            				reply += result;
-            				reply += "Please enter one of the tour offering IDs. (Note: tour offering ID only).";
-                			log.info("Returns instruction message {}: {}", replyToken, reply);
-                			this.replyText(replyToken,reply);	
-            			}    			
-    				}
-    				else {
-    					reply += "Invalid tour ID! Please reinput tour ID.";
-            			log.info("Returns instruction message {}: {}", replyToken, reply);
-            			this.replyText(replyToken,reply);	
-    				}
-    			}
-    			else {
-    				reply += "Invalid tour ID! Please reinput tour ID.";
-        			log.info("Returns instruction message {}: {}", replyToken, reply);
-        			this.replyText(replyToken,reply);	
-    			}
-        }
-        
-        else if(state == BOOKING1){
-			if (text.equals("Q")){
-				database.setUserState(userID, FAQ2);
-				database.deleteBufferBookingEntry(userID);
-				reply += "Successfully exiting booking!";
-				log.info("Returns message {}: {}", replyToken, reply);
-				this.replyText(replyToken,reply);
-			}
-			
-			else if(isNumeric(text)){
-				if(database.tourOfferingFound(database.getBufferTourID(userID),Integer.parseInt(text))) {
-					database.setUserState(userID,BOOKING2);
-					database.deleteBufferBookingEntry(userID);
-					database.setBookingTourOfferingID(userID,Integer.parseInt(text));
-					reply += "Please input the number of adults for this tour offering.";
-					log.info("Returns instruction message {}: {}", replyToken, reply);
-	    				this.replyText(replyToken,reply);
-				}
-				else {
-					reply += "Invalid tour offering ID! Please reinput tour offering ID.";
-					log.info("Returns instruction message {}: {}", replyToken, reply);
-					this.replyText(replyToken,reply);
-				}
-			}
-			else {
-				reply += "Invalid tour offering ID! Please reinput tour offering ID.";
-				log.info("Returns instruction message {}: {}", replyToken, reply);
-				this.replyText(replyToken,reply);
-			}
-		      		
-        }
-        
-        else if(state == BOOKING2){
-        		if(!checkQuit(text,userID,FAQ2,reply,replyToken)) {
-        			if(isNumeric(text)) {
-        				if(Integer.parseInt(text)>=0) {
-        					database.setUserState(userID,BOOKING3);
-        					database.setBookingAdultNumber(userID,Integer.parseInt(text));
-        					reply += "Please input the number of childrens (age between 4 and 11) for this tour offering.";
-        					log.info("Returns instruction message {}: {}", replyToken, reply);
-        	    				this.replyText(replyToken,reply);
-        				}
-        				else {
-        					reply += "Invalid number! Please reinput the number of adults.";
-            				log.info("Returns instruction message {}: {}", replyToken, reply);
-            				this.replyText(replyToken,reply);
-        				}
-        			}
-        			else {
-        				reply += "Invalid number! Please reinput the number of adults.";
-        				log.info("Returns instruction message {}: {}", replyToken, reply);
-        				this.replyText(replyToken,reply);
-        			}
-        			
-        		}
-   		
-        }
-        
-        else if(state == BOOKING3){
-    		if(!checkQuit(text,userID,FAQ2,reply,replyToken)) {
-    			if(isNumeric(text)) {
-    				if(Integer.parseInt(text)>=0) {
-    					database.setUserState(userID,BOOKING4);
-    					database.setBookingChildrenNumber(userID,Integer.parseInt(text));
-    					reply += "Please input the number of toddlers (age not larger than 3) for this tour offering.";
-    					log.info("Returns instruction message {}: {}", replyToken, reply);
-    	    				this.replyText(replyToken,reply);
-    				}
-    				else {
-    					reply += "Invalid number! Please reinput the number of children.";
-        				log.info("Returns instruction message {}: {}", replyToken, reply);
-        				this.replyText(replyToken,reply);
-    				}
-    			}
-    			else {
-    				reply += "Invalid number! Please reinput the number of children.";
-    				log.info("Returns instruction message {}: {}", replyToken, reply);
-    				this.replyText(replyToken,reply);
-    			}
-    			
-    		}
-        }
-        
-        	else if(state == BOOKING4){
-        		if(!checkQuit(text,userID,FAQ2,reply,replyToken)) {
-        			if(isNumeric(text)) {
-        				if(Integer.parseInt(text)>=0) {
-        					database.setUserState(userID,BOOKING5);
-        					database.setBookingToddlerNumber(userID,Integer.parseInt(text));
-        					reply += "Please leave your special request.";
-        					log.info("Returns instruction message {}: {}", replyToken, reply);
-        	    				this.replyText(replyToken,reply);
-        				}
-        				else {
-        					reply += "Invalid number! Please reinput the number of toddlers.";
-            				log.info("Returns instruction message {}: {}", replyToken, reply);
-            				this.replyText(replyToken,reply);
-        				}
-        			}
-        			else {
-        				reply += "Invalid number! Please reinput the number of toddlers.";
-        				log.info("Returns instruction message {}: {}", replyToken, reply);
-        				this.replyText(replyToken,reply);
-        			}
-        			
-        		}
 		}
-        
-        else if(state == BOOKING5){
-    			if(!checkQuit(text,userID,FAQ2,reply,replyToken)) {
-    				database.setUserState(userID,BOOKING6);
-    				database.setBookingSpecialRequest(userID,text);
-    				reply += database.displaytBookingInformation(userID);	
-    				reply += ("Do you want to confirm your booking? \n"+"(yes/no)");
-    				log.info("Returns instruction message {}: {}", replyToken, reply);
-    				this.replyText(replyToken,reply);
-    			}
-        }
-        
-        else if(state == BOOKING6){
-    			if(!checkQuit(text,userID,FAQ2,reply,replyToken)) {
-    				if(text.toLowerCase().contains("y")) {
-    					database.setUserState(userID,FAQ3);
-    					database.setBookingConfirmation(userID);
-    					reply += ("Thanks for your interest! \n"
-    							+ "Please pay your tour fee by ATM to 123-345-432-211 of ABC Bank or by cash in our store.\n"
-    							+ "You shall send you pay-in slip to us by email or LINE. \n"
-    							+ "You are welcome to ask other questions!");
-    		    			log.info("Returns instruction message {}: {}", replyToken, reply);
-    		    			this.replyText(replyToken,reply);    			
-    				}
-    				else {
-    					database.setUserState(userID,FAQ2);
-    					database.deleteBookingEntry(userID);
-    					reply += "Booking cancelled!";
-    		    			log.info("Returns message {}: {}", replyToken, reply);
-    		    			this.replyText(replyToken,reply);
-    				}
-    			}
-        }
-        
-        else if(state==FAQ3){
-            if(!text.toLowerCase().contains("book")) {
-                String answer = database.search(text);
-                if(!answer.equals("null")) {
-                		reply += answer;
-                		log.info("Returns answer message {}: {}", replyToken, reply);
-                		this.replyText(replyToken,reply);
-                }
-                else{
-                		reply += "Sorry! We cannot answer your question.";
-                		//unanswered question, add to unknown question database
-                		database.addToUnknownDatatabse(text);
-                		log.info("Returns message {}: {}", replyToken, reply);
-                		this.replyText(replyToken,reply);
-                	}      
-            }
-            else{
-                database.setUserState(userID,ADD_BOOKING_OR_REVIEW);
-                reply += "Do you want to review your previous booking or do you want to start a new book?\n";
-                reply += "(review/new booking)";
-                log.info("Returns message {}: {}", replyToken, reply);
-                this.replyText(replyToken,reply);    
-             }   
-        }
-        
-        else if(state==ADD_BOOKING_OR_REVIEW){
-               if(text.toLowerCase().contains("review")) {
-            	   	database.setUserState(userID,FAQ3);
-            	   	reply += database.reviewBookingInformation(userID);
-            	   	log.info("Returns message {}: {}", replyToken, reply);
-            	   	this.replyText(replyToken,reply);      
-               }
-               else {
-            	   	database.setUserState(userID,BOOKING);
-            	   	reply += "Thank you for your interest, we need to fill in the booking information. \n";
-            	   	reply += "Attention: You can terminate the booking procedure by entering 0 at any time!\n";
-            	   	reply += "Here is a list of tour names: \n";
-            	   	reply +=database.getTourNames();//String database.getTourNames();
-            	   	reply +="\n";
-            	   	reply +="Please enter one of the tour IDs.(Note: tourID only).  \n";
-            	   	log.info("Returns message {}: {}", replyToken, reply);
-            	   	this.replyText(replyToken,reply);
-                
-               }
-       }        
-        
-        /*
-        else if(state==FAQ3){
-            if(!text.toLowerCase().contains("book")) {
-                String answer = database.search(text);
-                if(!answer.equals("null")) {
-                 log.info("Returns answer message {}: {}", replyToken, answer);
-                 this.replyText(replyToken,answer);
-                }else {
-             String reply = "Sorry! We cannot answer your question.";
-             //.unanswered question, add to unknown question database
-             database.addToUnknownDatatabse(text);
-                   log.info("Returns message {}: {}", replyToken, reply);
-                   this.replyText(replyToken,reply);
-                }      
-               }else {
-                database.setUserState(userID,ADD_BOOKING_OR_REVIEW);
-                String reply = "Do you want to review your previous booking or do you want to start a new book?\n";
-                reply += "answer: review /  new booking ";
-                   log.info("Returns message {}: {}", replyToken, reply);
-                   this.replyText(replyToken,reply);    
-               }   
-             }else if(state==ADD_BOOKING_OR_REVIEW){
-               if(text.toLowerCase().contains("review")) {
-                database.setUserState(userID,FAQ3);
-                String reply = database.displaytBookingInformation(userID);
-                log.info("Returns message {}: {}", replyToken, reply);
-                this.replyText(replyToken,reply);    
-       
-                
-               }else {
-                database.setUserState(userID,BOOKING);
-                String reply = "Thank you for your interest, we need to fill in the booking information. \n";
-                reply += "Attention: You can terminate the booking procedure by entering 0 at any time!\n";
-                reply += "Here is a list of tour names: \n";
-                reply +=database.getTourNames();//String database.getTourNames();
-                reply +="\n";
-                reply +="Please enter one of the tour IDs.(Note: tourID only).  \n";
-                log.info("Returns message {}: {}", replyToken, reply);
-                this.replyText(replyToken,reply);
-                
-               }
-             }
-
-        */
-        
-			
 		
-        
-        
-        
-        /*
-        switch (text) {
-            case "profile": {
-                String userId = event.getSource().getUserId();
-                if (userId != null) {
-                    lineMessagingClient
-                            .getProfile(userId)
-                            .whenComplete(new ProfileGetter (this, replyToken));
-                } else {
-                    this.replyText(replyToken, "Bot can't use profile API without user ID");
-                }
-                break;
-            }
-            case "confirm": {
-                ConfirmTemplate confirmTemplate = new ConfirmTemplate(
-                        "Do it?",
-                        new MessageAction("Yes", "Yes!"),
-                        new MessageAction("No", "No!")
-                );
-                TemplateMessage templateMessage = new TemplateMessage("Confirm alt text", confirmTemplate);
-                this.reply(replyToken, templateMessage);
-                break;
-            }
-            case "carousel": {
-                String imageUrl = createUri("/static/buttons/1040.jpg");
-                CarouselTemplate carouselTemplate = new CarouselTemplate(
-                        Arrays.asList(
-                                new CarouselColumn(imageUrl, "hoge", "fuga", Arrays.asList(
-                                        new URIAction("Go to line.me",
-                                                      "https://line.me"),
-                                        new PostbackAction("Say hello1",
-                                                           "hello 鑼敓瑙ｏ拷婧嶏絺锟芥埃锟芥簫锝忔嫹鑺﹁尗閿熼摪鈭讹綇鎷风倝")
-                                )),
-                                new CarouselColumn(imageUrl, "hoge", "fuga", Arrays.asList(
-                                        new PostbackAction("鐚瘬閳э拷 hello2",
-                                                           "hello 鑼敓瑙ｏ拷婧嶏絺锟芥埃锟芥簫锝忔嫹鑺﹁尗閿熼摪鈭讹綇鎷风倝",
-                                                           "hello 鑼敓瑙ｏ拷婧嶏絺锟芥埃锟芥簫锝忔嫹鑺﹁尗閿熼摪鈭讹綇鎷风倝"),
-                                        new MessageAction("Say message",
-                                                          "Rice=鑾藉崵椴�")
-                                ))
-                        ));
-                TemplateMessage templateMessage = new TemplateMessage("Carousel alt text", carouselTemplate);
-                this.reply(replyToken, templateMessage);
-                break;
-            }
-
-            default:
-            	String reply = null;
-            	try {
-            		reply = database.search(text);
-            	} catch (Exception e) {
-            		reply = text;
-            	}
-                log.info("Returns echo message {}: {}", replyToken, reply);
-                this.replyText(
-                        replyToken,
-                        itscLOGIN + " says " + reply
-                );
-                break;
-        }
-        */
-    }
+		log.info("Returns answer message {}: {}", replyToken, reply);
+		this.replyText(replyToken,reply);
+		}catch(Exception e) {
+			reply += Constant.FAQ_NOT_FOUND;
+			//unanswered question, add to unknown question database
+			database.addToUnknownDatatabse(text);
+			log.info("Returns message {}: {}", replyToken, reply);
+			this.replyText(replyToken,reply);       				
+			
+		}
+	}
 
 	static String createUri(String path) {
 		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();

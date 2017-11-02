@@ -4,14 +4,18 @@ import lombok.extern.slf4j.Slf4j;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.Calendar;
 import java.net.URISyntaxException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.math.*;
 
 @Slf4j
 public class SQLDatabaseEngine extends DatabaseEngine {
+	//booking state: 0 isBooking; 1 done; 2 confirmed;
+	//offering state: 0 not enough; 1 enough; 2 full; 3 old;
 	@Override
 	String search(String text) throws Exception {
 			//Write your code here
@@ -38,7 +42,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			} catch (Exception e) {
 				log.info(e.toString());
 			} finally {
-				
+
 			}
 			if (result == null)
 				result ="null";
@@ -46,9 +50,9 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				return result;
 			throw new Exception("NOT FOUND");
 	}
-	
-	
-	private Connection getConnection() throws URISyntaxException, SQLException {
+
+
+	protected Connection getConnection() throws URISyntaxException, SQLException {
 		Connection connection;
 		URI dbUri = new URI(System.getenv("DATABASE_URL"));
 
@@ -58,12 +62,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 
 		log.info("Username: {} Password: {}", username, password);
 		log.info ("dbUrl: {}", dbUrl);
-		
+
 		connection = DriverManager.getConnection(dbUrl, username, password);
 
 		return connection;
 	}
-	
+
 	User getUserInformation(String id) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -87,13 +91,13 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (1==1)
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean setUserTime(String id, java.sql.Timestamp time) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -108,7 +112,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -116,7 +120,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean setUserState(String id, int FAQ1) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -131,7 +135,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -139,7 +143,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean setUserName(String id, String text) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -154,7 +158,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -162,7 +166,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean setUserPhoneNum(String id, String text) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -177,7 +181,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -185,7 +189,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean setUserAge(String id, String text) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -200,7 +204,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -208,23 +212,24 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean createUser(String id, java.sql.Timestamp time, int state) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
 		int result=0;
 		try {
-			PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_user (id, state, last_login) VALUES (?, ?, ?);");
+			PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_user (id, state, last_login, name) VALUES (?, ?, ?, ?);");
 			stmt2.setString(1, id);
 			stmt2.setInt(2, state);
 			stmt2.setTimestamp(3, time);
+			stmt2.setString(4, "null");
 			result=stmt2.executeUpdate();
 			stmt2.close();
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -232,7 +237,31 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
+	boolean deleteUser(String id) throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		int result=0;
+		try {
+			PreparedStatement stmt2 = connection.prepareStatement("DELETE FROM line_booking WHERE user_id = ?; DELETE FROM line_user WHERE id = ?;");
+			stmt2.setString(1, id);
+			stmt2.setString(2, id);
+			result=stmt2.executeUpdate();
+			stmt2.close();
+			connection.close();
+			log.info("Deleted!");
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+
+		}
+		if (result!=0)
+			return true;
+		if (result==0)
+			return false;
+		throw new Exception("NOT FOUND");
+	}
+
 	boolean addToUnknownDatatabse(String text) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -246,7 +275,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -254,7 +283,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	String getTourNames() throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -271,7 +300,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result == "")
 			result ="null";
@@ -279,7 +308,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean tourFound(int tourID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -297,13 +326,13 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (1==1)
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	String displayTourOffering(int tourID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -322,7 +351,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			stmt.setInt(3, tourID);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				result += (rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" max people: "+rs.getInt(4)+"\n\n");
+				Timestamp time=rs.getTimestamp(2);
+				String time_change_2=""+time;
+				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
+				result += (rs.getString(1)+" "+ time_change +"\nHotel: "+rs.getString(3)+"\nMax people: "+rs.getInt(4)+"\n\n");
 			}
 			rs.close();
 			stmt.close();
@@ -330,7 +362,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result == "")
 			result ="null";
@@ -338,7 +370,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean setBufferTourID(String userID, int tourID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -353,7 +385,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -361,7 +393,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean deleteBufferBookingEntry(String userID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -375,7 +407,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -383,7 +415,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean deleteBookingEntry(String userID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -397,7 +429,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -405,7 +437,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	int getBufferTourID(String userID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -423,14 +455,14 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
-		
+
 		if (1==1)
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean tourOfferingFound(int tourID,int tourOfferingID)throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -458,13 +490,13 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (1==1)
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean setBookingTourOfferingID(String userID, int tourOfferingID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -480,7 +512,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -488,7 +520,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean setBookingAdultNumber(String userID,int number) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -503,7 +535,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -511,7 +543,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean setBookingChildrenNumber(String userID,int number) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -526,7 +558,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -534,7 +566,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean setBookingToddlerNumber(String userID,int number) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -549,7 +581,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -557,7 +589,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean setBookingSpecialRequest(String userID,String request) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -572,7 +604,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -580,7 +612,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	String displaytBookingInformation(String userID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -608,12 +640,18 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				toddler=rs.getInt(3);
 				price=rs.getDouble(4);
 				special=rs.getString(5);
+				Timestamp time=rs.getTimestamp(6);
+				String time_change_2=""+time;
+				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
+
 				result=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
-				+rs.getTimestamp(6)+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
+				+time_change+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
-				result+=("\n\nTotal fee: "+fee+"\n\n");
+				int fee_int = (int)fee;
+				result+=("\n\nTotal fee: HKD "+fee_int+"\n\n");
+
 			}
 			rs.close();
 			stmt.close();
@@ -624,12 +662,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			stmt2.setString(3, userID);
 			result2=stmt2.executeUpdate();
 			stmt2.close();
-			
+
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result == "")
 			result ="null";
@@ -637,7 +675,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	String reviewBookingInformation(String userID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -665,26 +703,32 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				toddler=rs.getInt(3);
 				price=rs.getDouble(4);
 				special=rs.getString(5);
+				Timestamp time=rs.getTimestamp(6);
+				String time_change_2=""+time;
+				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
+
 				result+=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
-				+rs.getTimestamp(6)+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
+				+time_change+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				fee = price*adult + price*0.8*child;
+				int fee_int = (int)fee;
 				int state=rs.getInt(14);
 				if(state==2) {
-					result+=("\n\nTotal fee: "+fee+"  PAID \n\n\n\n");
+					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nPAID \n\n");
 				}
 				else {
-					result+=("\n\nTotal fee: "+fee+"  UNPAID \n\n\n\n");
+					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nUNPAID \n\n");
 				}
+				result+=("=====\n\n\n\n");
+
 			}
 			rs.close();
-			stmt.close();	
-			connection.close();
+			stmt.close();
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+			connection.close();
 		}
 		if (result == "")
 			result ="null";
@@ -692,7 +736,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 	boolean setBookingConfirmation(String userID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -706,7 +750,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-			
+
 		}
 		if (result!=0)
 			return true;
@@ -714,5 +758,5 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-	
+
 }

@@ -94,5 +94,11 @@ public class User {
 		this.time = time;
 	}
 	
+	void setUser(String userID, java.sql.Timestamp time, int state) {
+		setID(userID);
+		setTime(time);
+		setState(state);
+	}
+	
 
 }
