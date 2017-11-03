@@ -41,6 +41,8 @@ public  class Constant {
 	public static final int DELETING_BOOKING_BUFFER = 1;
 	public static final int DELETING_NOTHING = 2;
 	
+	public static final long TIME_GAPPING = 10;
+	
 	
 	public static final String GREETING_FIRST_USE = "Thanks for your first use of our app! "
 			+ "You can ask us some questions about touring information "
