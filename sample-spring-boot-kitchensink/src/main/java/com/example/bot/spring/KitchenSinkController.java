@@ -538,7 +538,7 @@ public class KitchenSinkController {
 	
 	private String welcomeBack(long difference, User user){
 		String result = "";
-		if(difference > 0.1){
+		if(difference > Constant.TIME_GAPPING){
 			result += greeting();
 			if(!user.getUserName().equals("null")) {
 				result += ", ";
