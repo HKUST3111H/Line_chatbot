@@ -339,7 +339,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		String result="";
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
-					"SELECT line_touroffering.id,line_touroffering.offer_date,line_touroffering.hotel,line_touroffering.capacity_max "
+					"SELECT line_touroffering.id,line_touroffering.offer_date,line_touroffering.hotel,line_touroffering.capacity_max, "
 					+ "line_touroffering.price, line_tour.duration "
 					+ "FROM line_touroffering, line_tour WHERE line_touroffering.tour_id = ? AND line_touroffering.state < 2 AND "
 					+ "line_touroffering.tour_id=line_tour.id AND line_touroffering.id IN "
