@@ -339,7 +339,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		String result="";
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
-					"SELECT id,offer_date,hotel,capacity_max FROM line_touroffering WHERE tour_id = ? AND state < 2 AND id IN "
+					"SELECT line_touroffering.id,line_touroffering.offer_date,line_touroffering.hotel,line_touroffering.capacity_max "
+					+ "line_touroffering.price, line_tour.duration "
+					+ "FROM line_touroffering, line_tour WHERE line_touroffering.tour_id = ? AND line_touroffering.state < 2 AND "
+					+ "line_touroffering.tour_id=line_tour.id AND line_touroffering.id IN "
 					+ "(SELECT id FROM line_touroffering WHERE tour_id = ? EXCEPT "
 					+ "SELECT line_touroffering.id FROM line_touroffering, line_booking "
 					+ "WHERE line_touroffering.tour_id = ? AND line_touroffering.id=line_booking.\"tourOffering_id\" "
@@ -354,7 +357,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				Timestamp time=rs.getTimestamp(2);
 				String time_change_2=""+time;
 				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
-				result += (rs.getString(1)+" "+ time_change +"\nHotel: "+rs.getString(3)+"\nMax people: "+rs.getInt(4)+"\n\n");
+				double price=rs.getDouble(5);
+				int price_int = (int)price;
+				result += (rs.getString(1)+" "+ time_change +"\nHotel: "+rs.getString(3)+"\nMax people: "+rs.getInt(4)+
+						"\nPrice for adult: "+price_int+"\nDuration: "+rs.getInt(6)+" Days\n\n");
 			}
 			rs.close();
 			stmt.close();
@@ -681,15 +687,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		Connection connection = getConnection();
 		String result="";
 		int result2=0;
-		String special="";
-		int adult=0;
-		int child=0;
-		int toddler=0;
 		double fee=0;
-		double price=0;
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
-					"SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num, line_touroffering.price, "
+					"SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num, line_booking.tour_fee, "
 					+ "line_booking.special_request, line_touroffering.offer_date, line_touroffering.hotel, "
 					+ "line_touroffering.capacity_max, line_touroffering.guide_name, line_touroffering.guide_line, "
 					+ "line_tour.name, line_tour.description, line_tour.duration, line_booking.state FROM line_booking, "
@@ -698,20 +699,15 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			stmt.setString(1, userID);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				adult=rs.getInt(1);
-				child=rs.getInt(2);
-				toddler=rs.getInt(3);
-				price=rs.getDouble(4);
-				special=rs.getString(5);
 				Timestamp time=rs.getTimestamp(6);
 				String time_change_2=""+time;
 				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
-
+				
 				result+=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
 				+time_change+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
-				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
-				+"\n\nSpecial request: "+special);
-				fee = price*adult + price*0.8*child;
+				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+rs.getInt(1)+"\n\nChild: "+rs.getInt(2)+"\n\nToddler: "+rs.getInt(3)
+				+"\n\nSpecial request: "+rs.getString(5));
+				fee=rs.getDouble(4);
 				int fee_int = (int)fee;
 				int state=rs.getInt(14);
 				if(state==2) {
