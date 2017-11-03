@@ -360,7 +360,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				double price=rs.getDouble(5);
 				int price_int = (int)price;
 				result += (rs.getString(1)+" "+ time_change +"\nHotel: "+rs.getString(3)+"\nMax people: "+rs.getInt(4)+
-						"\nPrice for adult: "+price_int+"\nDuration: "+rs.getInt(6)+" Days\n\n");
+						"\nFull price for adult: HKD"+price_int+"\nDuration: "+rs.getInt(6)+" Days\n\n");
 			}
 			rs.close();
 			stmt.close();
