@@ -65,14 +65,19 @@ public  class Constant {
 	public static final String ERROR_REENTER_TOUR_ID = "Invalid tour ID! Please reinput tour ID.";
 	public static final String INFORMATION_NO_TOUR_OFFERING = "Sorry, currently we do not provide any offerings for this tour!\n"
 			+ "Please choose another tour id!";
+	public static final String INFORMATION_TOUR_OFFERING = "Here are the tour offerings we provide for this tour.\n"
+			+ "Note: Age below 3 (including 3) is free. "
+			+ "Age between 4 to 11 (including 4 and 11) has a discount of 20% off. "
+			+ "Otherwise full fee applies. "
+			+ "The same service charge is applied to all age customers.\n\n";
 	public static final String INSTRTUCTION_ENTER_TOUR_OFFERING_ID = "Please enter one of the tour offering IDs (number only).";
 	public static final String ERROR_REENTER_TOUR_OFFERING_ID = "Invalid tour offering ID! Please reinput tour offering ID.";
-	public static final String INSTRTUCTION_ENTER_ADULT_NUMBER = "Please input the number of adults for this tour offering.";
-	public static final String ERROR_REENTER_ADULT_NUMBER = "Invalid number! Please reinput the number of adults.";
-	public static final String INSTRTUCTION_ENTER_CHILDREN_NUMBER = "Please input the number of childrens (age between 4 and 11) for this tour offering.";
-	public static final String ERROR_REENTER_CHILDREN_NUMBER = "Invalid number! Please reinput the number of children.";
-	public static final String INSTRTUCTION_ENTER_TODDLER_NUMBER = "Please input the number of toddlers (age not larger than 3) for this tour offering.";
-	public static final String ERROR_REENTER_TODDLER_NUMBER = "Invalid number! Please reinput the number of toddlers.";
+	public static final String INSTRTUCTION_ENTER_ADULT_NUMBER = "Please input the number of ADULTS for this tour offering.";
+	public static final String ERROR_REENTER_ADULT_NUMBER = "Invalid number! Please reinput the number of ADULTS.";
+	public static final String INSTRTUCTION_ENTER_CHILDREN_NUMBER = "Please input the number of CHILDREN (age between 4 and 11) for this tour offering.";
+	public static final String ERROR_REENTER_CHILDREN_NUMBER = "Invalid number! Please reinput the number of CHILDREN.";
+	public static final String INSTRTUCTION_ENTER_TODDLER_NUMBER = "Please input the number of TODDLERS (age not larger than 3) for this tour offering.";
+	public static final String ERROR_REENTER_TODDLER_NUMBER = "Invalid number! Please reinput the number of TODDLERS.";
 	public static final String INSTRTUCTION_ENTER_SPECIAL_REQUEST = "Please leave your special request.";
 	public static final String CONFIRM_REGISTRATION = "Great! Basic information registered!\n";
 	public static final String INSTRUCTION_PAYMENT = "Thanks for your interest!\n"
