@@ -386,6 +386,7 @@ public class KitchenSinkController {
     			else {
     				database.setUserState(userID,Constant.BOOKING_OFFERING_ID);
     				database.setBufferTourID(userID,Integer.parseInt(text));
+    				reply += Constant.INFORMATION_TOUR_OFFERING;
     				reply += result;
     				reply += Constant.INSTRTUCTION_ENTER_TOUR_OFFERING_ID;
         			log.info("Returns instruction message {}: {}", replyToken, reply);
