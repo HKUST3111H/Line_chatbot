@@ -14,3 +14,7 @@ pipelines:
           # You must commit the Gradle wrapper to your repository
           # https://docs.gradle.org/current/userguide/gradle_wrapper.html
           - bash ./gradlew build
+          - script1.sh
+          - script2.sh
+          - test_script_with_coverage.sh
+          - if [ $? -eq 0 ]; then bash <(curl -s https://codecov.io/bash); fi
