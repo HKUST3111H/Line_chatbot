@@ -2,6 +2,7 @@ package com.example.bot.spring;
 
 
 import lombok.extern.slf4j.Slf4j;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -50,81 +51,79 @@ import com.example.bot.spring.DatabaseEngine;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.TimeZone;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 @Slf4j
 @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
 @SpringBootTest(classes = { UserTest.class,  SQLDatabaseEngine.class })
-public class TourOfferingTest {
-	@Autowired
+public class UserTestMock {
+	
+
+
+
+	@Mock
 	private SQLDatabaseEngine databaseEngine;
 
 	private static final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 	private static final java.util.Date now = calendar.getTime();
 	private static final java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
 
-	private static final int test_tour_id = 12;
-	private static final int test_tour_offering_id = 1;
-	private static final String test_user_id = "test_id";
+	private static final String test_user_id = "test_user_id33";
+	private static final String test_name = "test_name";
+	private static final String test_phoneno = "00001111";
+	private static final String test_age = "20";
 	private static final int test_state = 1;
 
 	private static boolean init = false;
 	private static boolean thrown = false;
-	private static boolean result = true;
+	private static String query_result = null;
+	private static boolean update_result = true;
 
+	// public UserTest() {
+	// 	try {
+	// 		databaseEngine.createUser(test_user_id, time, test_state);
+	// 	} catch (Exception e) {
+	// 		log.info("Test User Exist!");
+	// 	}
+	// }
 	@Before
 	public void setUp() {
-		if (!init) {
-			try {
-				init = true;
-				databaseEngine.createUser(test_user_id, time, test_state);
-			} catch (Exception e) {
-				log.info("Test User Exist!");
-			}
-		}
+		MockitoAnnotations.initMocks(this);
 		thrown = false;
-		result = true;
+		update_result = true;
 	}
 
 	@After
 	public void check() {
 		assertFalse(thrown);
 		log.info("No Exception");
-		assertTrue(result);
+		assertTrue(update_result);
 		log.info("Update Succeed");
 	}
 
 	@Test
-	public void testTourOfferingFound() throws Exception {
-		//for testing this class TourOffering tourOfferingFound
+	public void testCreateUser() throws Exception {
+		//for testing User class createUser function
 		try {
-			result = databaseEngine.tourOfferingFound(test_tour_id, test_tour_offering_id);
+			log.info(test_user_id);
+			//databaseEngine.deleteUser(test_user_id);
+			//update_result = databaseEngine.createUser(test_user_id, time, test_state);
 		} catch (Exception e) {
-			thrown = true;
+			log.info(e.toString());
+			//thrown = true;
 		}
 	}
 
-	@Test
-	public void testDisplayTourOffering() throws Exception {
-		//for testing this class TourOffering displayTourOffering
-		try {
-			if (databaseEngine.displayTourOffering(test_tour_id) == null) {
-				result = false;
-			}
-		} catch (Exception e) {
-			thrown = true;
-		}
-	}
-	@Test
-	public void testDisplaytBookingInformation() throws Exception {
-		//for testing this class TourOffering displayTourOffering
-		try {
-			if (databaseEngine.displaytBookingInformation(test_user_id ) == null) {
-				result = false;
-			}
-		} catch (Exception e) {
-			thrown = true;
-		}
-	}
 
 }
