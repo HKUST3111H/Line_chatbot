@@ -56,10 +56,29 @@ public class FaqTest {
 	private FaqDatabase faqEngine;
 
 	@Test
-	public void testSearchNotFound() throws Exception {
+	public void testSearchFoundHotTour() throws Exception {
 		boolean thrown = false;
 		try {
-			this.faqEngine.search("hot tour","U52a29b672ee486b66b7fb4c45a888de3");
+			String result = this.faqEngine.search("hot tour, popular attractions","U52a29b672ee486b66b7fb4c45a888de3");
+			System.out.println("\n\n\n\n");
+			System.out.println(result);
+			System.out.println("\n\n\n\n");
+			
+		} catch (Exception e) {
+			thrown = true;
+		}
+		assertThat(thrown).isEqualTo(false);
+	}
+	
+	@Test
+	public void testSearchFoundMoreTours() throws Exception {
+		boolean thrown = false;
+		try {
+			String result = this.faqEngine.search("more tours","U52a29b672ee486b66b7fb4c45a888de3");
+			System.out.println("\n\n\n\n");
+			System.out.println(result);
+			System.out.println("\n\n\n\n");
+			
 		} catch (Exception e) {
 			thrown = true;
 		}
