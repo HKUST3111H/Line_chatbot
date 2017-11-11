@@ -670,7 +670,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				total_fee_int = (int)total_fee;
 				
 				PreparedStatement stmt2 = connection.prepareStatement(
-						"SELECT line_discount.name, line_discount.id, line_booking.id, line_discount.seat, line_discount.ra FROM line_booking, "
+						"SELECT line_discount.name, line_discount.id, line_booking.id, line_discount.seat, line_discount.rate FROM line_booking, "
 						+ "line_touroffering, line_discount WHERE line_booking.user_id = ? AND line_booking.state = 0 AND "
 						+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.id=line_discount.\"tourOffering_id\" "
 						+ "AND line_discount.id IN "
