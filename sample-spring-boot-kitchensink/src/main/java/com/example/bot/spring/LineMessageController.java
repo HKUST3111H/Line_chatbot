@@ -677,7 +677,7 @@ public class LineMessageController {
 		int count=0;
 		for (Tour tour:listOfTours) {
 			String trancatedDescription=tour.getDescription();
-			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 59);
+			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 60-2)+"..";
 			CarouselColumn item=new CarouselColumn(imageUrl, tour.getTourName(), trancatedDescription, Arrays.asList(
               new MessageAction("Book",Integer.toString(tour.getTourID()))
               ));
