@@ -273,7 +273,6 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			//check all entries in databse compare and calculate distance ,update hit numebr
 			PreparedStatement stmt = connection.prepareStatement("SELECT line_unknownquestion.question, line_unknownquestion.hit FROM line_unknownquestion;");
 			ResultSet rs = stmt.executeQuery();
-			
 			while (rs.next()) {
 				resultString = rs.getString(1);//get question
 				dist=new WagnerFischer(resultString,text).getDistance();
@@ -290,8 +289,9 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			}
 			if(dist > min_dist ) {
 				//insert new entry
-				PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_unknownquestion (question) VALUES (?);");
+				PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_unknownquestion (question,hit) VALUES (?, ?);");
 				stmt2.setString(1, text);
+				stmt2.setInt(2, 1);
 				result = stmt2.executeUpdate();
 				stmt2.close();	
 			}
