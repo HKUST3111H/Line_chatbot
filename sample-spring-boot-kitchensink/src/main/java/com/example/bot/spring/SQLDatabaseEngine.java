@@ -266,11 +266,38 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		//Write your code here
 		Connection connection = getConnection();
 		int result=0;
+		int min_dist = 5;
+		String resultString = null;
+		int dist = min_dist + 1;
 		try {
-			PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_unknownquestion (question) VALUES (?);");
-			stmt2.setString(1, text);
-			result=stmt2.executeUpdate();
-			stmt2.close();
+			//check all entries in databse compare and calculate distance ,update hit numebr
+			PreparedStatement stmt = connection.prepareStatement("SELECT line_unknownquestion.question, line_unknownquestion.hit FROM line_unknownquestion;");
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				resultString = rs.getString(1);//get question
+				dist=new WagnerFischer(resultString,text).getDistance();
+				if(dist <= min_dist) {//similar question
+					PreparedStatement stmt1 = connection.prepareStatement("UPDATE line_unknownquestion SET hit = ? WHERE question = ?;");
+					int hit = rs.getInt(2)+1;
+					stmt1.setInt(1, hit);
+					stmt1.setString(2,resultString);
+					result = stmt1.executeUpdate();
+					stmt1.close();
+					break;
+				}
+
+			}
+			if(dist > min_dist ) {
+				//insert new entry
+				PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_unknownquestion (question,hit) VALUES (?, ?);");
+				stmt2.setString(1, text);
+				stmt2.setInt(2, 1);
+				result = stmt2.executeUpdate();
+				stmt2.close();	
+			}
+			
+			rs.close();
+			stmt.close();
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());

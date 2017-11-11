@@ -133,5 +133,17 @@ public class BookingTest {
 			thrown = true;
 		}
 	}
+	
+	@Test
+	public void testAddToUnknowndatabase() throws Exception {
+		//for testing AddToUnknowndatabase()
+		try {
+			result =databaseEngine.addToUnknownDatatabse("Xuxiaofeng");
+			
+		} catch (Exception e) {
+			thrown = true;
+		}
+	}
+	
 
 }
