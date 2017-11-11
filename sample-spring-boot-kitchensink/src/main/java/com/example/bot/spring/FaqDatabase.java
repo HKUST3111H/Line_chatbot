@@ -152,9 +152,17 @@ public class FaqDatabase extends SQLDatabaseEngine {
 						dist=new WagnerFischer(entry.Question,text).getDistance();
 						if (dist<=30 && dist<minDistance) {
 							minDistance=dist;
-							result=entry.Answer;
+							if (result == null) {
+								result = entry.Answer+"\n\n";
+							}
+							else {
+								result += entry.Answer+"\n\n";
+							}
 							qid=entry.questionID;
 							hit=entry.hit;
+							if(qid!=-1) {
+								updateHit(qid, hit+1);
+							}
 						}
 					}
 				}
@@ -238,9 +246,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 				}
 			}
 		}
-		if(qid!=-1) {
-			updateHit(qid, hit+1);
-		}
+
 		
 		if (result != null)
 			return result;
