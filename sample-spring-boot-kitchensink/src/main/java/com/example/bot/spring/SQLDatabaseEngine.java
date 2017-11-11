@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.net.URISyntaxException;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -311,31 +313,33 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 
-	String getTourNames() throws Exception {
+	
+	List<Tour> getTours() throws Exception {
 		//Write your code here
+		List<Tour> listOfTours = new ArrayList<Tour>();
+
 		Connection connection = getConnection();
-		String result="";
 		try {
 			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_tour;");
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				result += (rs.getString(1)+" "+rs.getString(2)+"\n"+rs.getString(3)+"\n\n");
+		    	Tour tour=new Tour(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getInt(4));
+		    	listOfTours.add(tour);
 			}
 			rs.close();
 			stmt.close();
-			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-
+			connection.close();		
 		}
-		if (result == "")
-			result ="null";
-		if (result != "")
-			return result;
-		throw new Exception("NOT FOUND");
+		if (listOfTours != null && !listOfTours.isEmpty())
+			return listOfTours;
+		log.info("tour database probably empty");
+		throw new Exception("EMPTY DATABASE");
 	}
-
+	
+	
 	boolean tourFound(int tourID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -657,6 +661,21 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		int toddler=0;
 		double fee=0;
 		double price=0;
+		
+		String discount_name="";
+		int discount_id=0;
+		int booking_id=0;
+		int seat=0;
+		int seat_for_adult=0;
+		int seat_for_child=0;
+		double rate=0.0;
+		double discount_fee=0.0;
+		double total_fee=0.0;
+		int discount_fee_int=0;
+		int total_fee_int=0;
+		int fee_int=0;
+		
+		boolean has_discount= false;
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
 					"SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num, line_touroffering.price, "
@@ -676,26 +695,90 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				Timestamp time=rs.getTimestamp(6);
 				String time_change_2=""+time;
 				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
-
-				result=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
+				fee = price*adult + price*0.8*child;
+				fee_int = (int)fee;
+				total_fee = fee;
+				total_fee_int = (int)total_fee;
+				
+				PreparedStatement stmt2 = connection.prepareStatement(
+						"SELECT line_discount.name, line_discount.id, line_booking.id, line_discount.seat, line_discount.rate FROM line_booking, "
+						+ "line_touroffering, line_discount WHERE line_booking.user_id = ? AND line_booking.state = 0 AND "
+						+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.id=line_discount.\"tourOffering_id\" "
+						+ "AND line_discount.id IN "
+						+ "(SELECT line_discount.id FROM line_booking, line_touroffering, line_discount "
+						+ "WHERE line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.id=line_discount.\"tourOffering_id\" "
+						+ "GROUP BY line_discount.id "
+						+ "HAVING COUNT(*) < line_discount.quota);");
+				stmt2.setString(1, userID);
+				ResultSet rs2 = stmt2.executeQuery();
+				if (rs2.next()) {
+					has_discount= true;
+					discount_name=rs2.getString(1);
+					discount_id=rs2.getInt(2);
+					booking_id=rs2.getInt(3);
+					seat=rs2.getInt(4);
+					rate=rs2.getDouble(5);
+					result+=("Congratulations! You gain a "+discount_name+" for "+seat+" seats in this booking.\n"
+							+ "If you canceled this booking, you will lose this discount.\n\n");
+					if(seat==0) {
+						//pass
+					}
+					else if (adult>=seat && seat>0) {
+						discount_fee += seat*(1.0-rate)*price;
+						seat_for_adult=seat;
+					}
+					else {
+						discount_fee += adult*(1.0-rate)*price;
+						seat_for_adult=adult;
+						if(child>=(seat-seat_for_adult)) {
+							discount_fee += (seat-seat_for_adult)*(1.0-rate)*price*0.8;
+							seat_for_child=(seat-seat_for_adult);
+						}
+						else{
+							discount_fee += child*(1.0-rate)*price;
+							seat_for_child = child;
+						}
+					}
+					total_fee = fee-discount_fee;
+					discount_fee_int = (int)discount_fee;
+					total_fee_int = fee_int-discount_fee_int ;
+				}
+					
+				result+=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
 				+time_change+"\n\nHotel: "+rs.getString(7)+"\n\nMax people: "+rs.getInt(8)+"\n\nGuide name: "+rs.getString(9)
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
-				fee = price*adult + price*0.8*child;
-				int fee_int = (int)fee;
-				result+=("\n\nTotal fee: HKD "+fee_int+"\n\n");
-
+				if(has_discount) {
+					result+=("\n\nOriginal fee: HKD "+fee_int+"\n\nTotal dicount fee: HKD "+discount_fee_int+"\nDiscount for "+seat_for_adult+
+							" adults and "+seat_for_child+" children"+"\n\nTotal fee: HKD "+total_fee_int);
+				}
+				else {
+					result+=("\n\nTotal fee: HKD "+total_fee_int+"\n\n");
+				}
+				rs2.close();
+				stmt2.close();
 			}
 			rs.close();
 			stmt.close();
+			if(has_discount) {
+				PreparedStatement stmt2 = connection.prepareStatement(
+						"UPDATE line_booking SET tour_fee = ?, paid_fee = ?, discount_id = ? WHERE user_id = ? AND state = 0;");
+				stmt2.setDouble(1, total_fee);
+				stmt2.setDouble(2, 0.0);
+				stmt2.setInt(3, discount_id);
+				stmt2.setString(4, userID);
+				result2=stmt2.executeUpdate();
+				stmt2.close();
+			}
+			else {
 			PreparedStatement stmt2 = connection.prepareStatement(
 					"UPDATE line_booking SET tour_fee = ?, paid_fee = ? WHERE user_id = ? AND state = 0;");
-			stmt2.setDouble(1, fee);
+			stmt2.setDouble(1, total_fee);
 			stmt2.setDouble(2, 0.0);
 			stmt2.setString(3, userID);
 			result2=stmt2.executeUpdate();
 			stmt2.close();
-
+			}
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
@@ -715,12 +798,13 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		String result="";
 		int result2=0;
 		double fee=0;
+		double paid_fee=0;
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
 					"SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num, line_booking.tour_fee, "
 					+ "line_booking.special_request, line_touroffering.offer_date, line_touroffering.hotel, "
 					+ "line_touroffering.capacity_max, line_touroffering.guide_name, line_touroffering.guide_line, "
-					+ "line_tour.name, line_tour.description, line_tour.duration, line_booking.state FROM line_booking, "
+					+ "line_tour.name, line_tour.description, line_tour.duration, line_booking.state, line_booking.paid_fee FROM line_booking, "
 					+ "line_touroffering, line_tour WHERE line_booking.user_id = ? AND line_booking.state > 0 AND "
 					+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id;");
 			stmt.setString(1, userID);
@@ -735,16 +819,17 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+rs.getInt(1)+"\n\nChild: "+rs.getInt(2)+"\n\nToddler: "+rs.getInt(3)
 				+"\n\nSpecial request: "+rs.getString(5));
 				fee=rs.getDouble(4);
+				paid_fee=rs.getDouble(15);
 				int fee_int = (int)fee;
+				int need_to_pay=(int)(fee-paid_fee);
 				int state=rs.getInt(14);
 				if(state==2) {
 					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nPAID \n\n");
 				}
 				else {
-					result+=("\n\nTotal fee: HKD "+fee_int+"  \n\nUNPAID \n\n");
+					result+=("\n\nNeed to pay: HKD "+need_to_pay+"  \n\nUNPAID \n\n");
 				}
 				result+=("=====\n\n\n\n");
-
 			}
 			rs.close();
 			stmt.close();
