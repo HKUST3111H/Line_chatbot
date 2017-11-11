@@ -115,5 +115,16 @@ public class TourOfferingTest {
 			thrown = true;
 		}
 	}
+	@Test
+	public void testDisplaytBookingInformation() throws Exception {
+		//for testing this class TourOffering displayTourOffering
+		try {
+			if (databaseEngine.displaytBookingInformation(test_user_id ) == null) {
+				result = false;
+			}
+		} catch (Exception e) {
+			thrown = true;
+		}
+	}
 
 }
