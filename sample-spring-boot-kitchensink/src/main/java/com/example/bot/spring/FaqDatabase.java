@@ -126,7 +126,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		
 
 	
-	public String search(String text)throws Exception{
+	public String search(String text, String userID)throws Exception{
 		
 		String result = null;
 		
@@ -152,17 +152,101 @@ public class FaqDatabase extends SQLDatabaseEngine {
 						dist=new WagnerFischer(entry.Question,text).getDistance();
 						if (dist<=30 && dist<minDistance) {
 							minDistance=dist;
-							result=entry.Answer;
+							if (result == null) {
+								result = entry.Answer+"\n\n";
+							}
+							else {
+								result += entry.Answer+"\n\n";
+							}
 							qid=entry.questionID;
 							hit=entry.hit;
+							if(qid!=-1) {
+								updateHit(qid, hit+1);
+							}
 						}
 					}
 				}
 			}
+			
+			// dynamic question
+			if(result.toLowerCase().contains("return")) {
+				result = "";
+				Connection connection = super.getConnection();
+				if(result.toLowerCase().contains("top 5 tours")) {
+					try {
+						
+						PreparedStatement stmt = connection.prepareStatement(
+								"SELECT line_tour.ID, line_tour.NAME, line_tour.DESCRIPTION "
+								+ "FROM line_booking, line_touroffering, line_tour "
+								+ "WHERE line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id "
+								+ "AND line_booking.state > 0 "
+								+ "AND line_tour.ID NOT IN "
+								+ "(SELECT line_tour.ID FROM line_booking, line_touroffering, line_tour "
+								+ "WHERE line_booking.user_id = ? AND line_booking.state == 2 AND "
+								+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id) "
+								+ "GROUP BY line_tour.id, line_tour.NAME, line_tour.DESCRIPTION "
+								+ "ORDER BY COUNT(line_booking.state);");
+						stmt.setString(1, userID);
+						ResultSet rs = stmt.executeQuery();
+						int i = 0;
+						while (rs.next() && i<5) {							
+							result += (rs.getString(1)+" "+rs.getString(2)+"\n"+rs.getString(3)+"\n\n");
+							i++;
+						}
+						if (result.equals("")){
+							result = "You have been to all tours we provided. Thanks for your interest and support!\n";
+						}
+						rs.close();
+						stmt.close();
+						connection.close();
+					}
+					catch (Exception e) {
+						log.info(e.toString());
+					} finally {
+
+					}
+					
+				}
+				else if(result.toLowerCase().contains("more tours")) {
+					try {
+						PreparedStatement stmt = connection.prepareStatement(
+								"SELECT line_tour.ID, line_tour.NAME, line_tour.DESCRIPTION "
+								+ "FROM line_booking, line_touroffering, line_tour "
+								+ "WHERE line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id "
+								+ "AND line_booking.state > 0 "
+								+ "AND line_tour.ID NOT IN "
+								+ "(SELECT line_tour.ID FROM line_booking, line_touroffering, line_tour "
+								+ "WHERE line_booking.user_id = ? AND line_booking.state == 2 AND "
+								+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id) "
+								+ "GROUP BY line_tour.id, line_tour.NAME, line_tour.DESCRIPTION "
+								+ "ORDER BY COUNT(line_booking.state);");
+						stmt.setString(1, userID);
+						ResultSet rs = stmt.executeQuery();
+						ResultSet temp = rs;
+						int i = 0;
+						while (rs.next() && i<5) {							
+							i++;
+						}
+						while(rs.next()) {
+							result += (rs.getString(1)+" "+rs.getString(2)+"\n"+rs.getString(3)+"\n\n");
+						}
+						if (result.equals("")){
+							result = "No more recommendations! Thanks for your interest and support!\n";
+						}
+						rs.close();
+						stmt.close();
+						connection.close();
+					}
+					catch (Exception e) {
+						log.info(e.toString());
+					} finally {
+
+					}
+					
+				}
+			}
 		}
-		if(qid!=-1) {
-			updateHit(qid, hit+1);
-		}
+
 		
 		if (result != null)
 			return result;
