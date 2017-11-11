@@ -682,7 +682,7 @@ public class LineMessageController {
               new MessageAction("Book",Integer.toString(tour.getTourID()))
               ));
 			carousel.add(item);
-			if (count%5==0 || count==listOfTours.size()-1) {
+			if (count%4==0 || count==listOfTours.size()-1) {
 				CarouselTemplate carouselTemplate = new CarouselTemplate(carousel);
 				TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);
 				msgToReply.add(templateMessage);
