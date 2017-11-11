@@ -314,7 +314,7 @@ public class LineMessageController {
 	private void FAQ_NO_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
-			faqsearch(replyToken, text, reply);
+			replyFAQ(replyToken, text, reply);
 		}
 		else {
 			database.setUserState(userID,Constant.FILL_NAME);
@@ -328,7 +328,7 @@ public class LineMessageController {
 	private void FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
-			faqsearch(replyToken, text, reply);
+			replyFAQ(replyToken, text, reply);
 		}
 		else {
 			database.setUserState(userID,Constant.BOOKING_TOUR_ID);
@@ -339,7 +339,7 @@ public class LineMessageController {
 	private void FAQ_AFTER_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
-			faqsearch(replyToken, text, reply);
+			replyFAQ(replyToken, text, reply);
 		}
 		else{
 		    database.setUserState(userID,Constant.BOOKING_OR_REVIEW);
@@ -658,16 +658,42 @@ public class LineMessageController {
 	}
 
 	private void listTourForBooking(String replyToken, String reply) throws Exception {
-		String starter = Constant.INSTRUCTION_BOOKING;
-		Message heading = new TextMessage(starter);
-		String tourNames = database.getTourNames();//String database.getTourNames();
-		List<Message> messages = splitMessages(tourNames,"\n\n");
-		messages.add(0, heading);
-		log.info("Returns message {}: {}", replyToken, reply);
-		this.reply(replyToken,messages);
+		List<Message> msgToReply=new ArrayList<Message>();
+		TextMessage heading = new TextMessage(Constant.INSTRUCTION_BOOKING);
+		msgToReply.add(heading);
+		
+		List<Tour> listOfTours=new ArrayList<Tour>();
+		String imageUrl = createUri("/static/buttons/1040.jpg");//ugly pic
+		try {
+		listOfTours =database.getTours();
+		}
+		catch(Exception e) {
+			log.info(e.toString());
+			msgToReply.add(new TextMessage("No Tours Avaliable"));
+			this.reply(replyToken,msgToReply);
+		}
+		
+		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
+		int count=0;
+		for (Tour tour:listOfTours) {
+			CarouselColumn item=new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(), Arrays.asList(
+              new PostbackAction("Book",Integer.toString(tour.getTourID()))
+              ));
+			carousel.add(item);
+			if (count%5==0 || count==listOfTours.size()-1) {
+				CarouselTemplate carouselTemplate = new CarouselTemplate(carousel);
+				TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);
+				msgToReply.add(templateMessage);
+				carousel=new ArrayList<CarouselColumn>();
+			}
+			count++;
+
+		}
+		log.info("Listed tours for booking{}", replyToken);
+		this.reply(replyToken,msgToReply);
 	}
 
-	private void faqsearch(String replyToken, String text, String reply) throws Exception {
+	private void replyFAQ(String replyToken, String text, String reply) throws Exception {
 		try {
 		String answer = faqDatabase.search(text);
 		reply += answer;

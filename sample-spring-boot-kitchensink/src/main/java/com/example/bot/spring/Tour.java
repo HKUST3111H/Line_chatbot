@@ -7,7 +7,7 @@ import java.util.List;
 @Slf4j
 public class Tour {
 	
-	private String tourID;
+	private int tourID;
 	private String tourName;
 	private String description;
 	private int duration;
@@ -15,7 +15,7 @@ public class Tour {
 	
 	
 	// constructor
-	public Tour(String tourID, String tourName, String description, int duraion) {
+	public Tour(int tourID, String tourName, String description, int duration) {
 		this.tourID = tourID;
 		this.tourName = tourName;
 		this.description = description;
@@ -34,7 +34,7 @@ public class Tour {
 	
 	
 	// get functions
-	public String getTourID() {
+	public int getTourID() {
 		return tourID;
 	}
 	
@@ -55,7 +55,7 @@ public class Tour {
 	}
 	
 	// set functions
-	public void setTourID(String tourID) {
+	public void setTourID(int tourID) {
 		this.tourID = tourID;
 	}
 	
