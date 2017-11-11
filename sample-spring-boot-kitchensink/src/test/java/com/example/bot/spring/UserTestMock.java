@@ -94,7 +94,6 @@ public class UserTestMock {
 	// }
 	@Before
 	public void setUp() {
-		@Before
 		MockitoAnnotations.initMocks(this);
 		thrown = false;
 		update_result = true;
