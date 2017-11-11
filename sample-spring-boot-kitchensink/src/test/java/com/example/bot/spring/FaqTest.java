@@ -59,11 +59,11 @@ public class FaqTest {
 	public void testSearchNotFound() throws Exception {
 		boolean thrown = false;
 		try {
-			this.faqEngine.search("i wanna eat an apple");
+			this.faqEngine.search("hot tour","U52a29b672ee486b66b7fb4c45a888de3");
 		} catch (Exception e) {
 			thrown = true;
 		}
-		assertThat(thrown).isEqualTo(true);
+		assertThat(thrown).isEqualTo(false);
 	}
 
 	@Test
@@ -71,7 +71,7 @@ public class FaqTest {
 		boolean thrown = false;
 		String result = null;
 		try {
-			result=this.faqEngine.search("How to apply?");
+			result=this.faqEngine.search("How to apply?","U52a29b672ee486b66b7fb4c45a888de3");
 		} catch (Exception e) {
 			thrown = true;
 		}

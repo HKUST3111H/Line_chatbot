@@ -168,15 +168,15 @@ public class FaqDatabase extends SQLDatabaseEngine {
 					try {
 						
 						PreparedStatement stmt = connection.prepareStatement(
-								"SELECT line_tour.ID, line_tour.NAME, line_tour.DESCRIPTION "
+								"SELECT line_tour.id, line_tour.name, line_tour.description "
 								+ "FROM line_booking, line_touroffering, line_tour "
 								+ "WHERE line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id "
 								+ "AND line_booking.state > 0 "
-								+ "AND line_tour.ID NOT IN "
-								+ "(SELECT line_tour.ID FROM line_booking, line_touroffering, line_tour "
+								+ "AND line_tour.id NOT IN "
+								+ "(SELECT line_tour.id FROM line_booking, line_touroffering, line_tour "
 								+ "WHERE line_booking.user_id = ? AND line_booking.state = 2 AND "
 								+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id) "
-								+ "GROUP BY line_tour.id, line_tour.NAME, line_tour.DESCRIPTION "
+								+ "GROUP BY line_tour.id, line_tour.name, line_tour.description "
 								+ "ORDER BY COUNT(line_booking.state) DESC;");
 						stmt.setString(1, userID);
 						ResultSet rs = stmt.executeQuery();
@@ -202,16 +202,16 @@ public class FaqDatabase extends SQLDatabaseEngine {
 				else if(result.toLowerCase().contains("more tours")) {
 					try {
 						PreparedStatement stmt = connection.prepareStatement(
-								"SELECT line_tour.ID, line_tour.NAME, line_tour.DESCRIPTION "
+								"SELECT line_tour.id, line_tour.name, line_tour.description "
 								+ "FROM line_booking, line_touroffering, line_tour "
 								+ "WHERE line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id "
 								+ "AND line_booking.state > 0 "
-								+ "AND line_tour.ID NOT IN "
-								+ "(SELECT line_tour.ID FROM line_booking, line_touroffering, line_tour "
+								+ "AND line_tour.id NOT IN "
+								+ "(SELECT line_tour.id FROM line_booking, line_touroffering, line_tour "
 								+ "WHERE line_booking.user_id = ? AND line_booking.state = 2 AND "
 								+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id) "
-								+ "GROUP BY line_tour.id, line_tour.NAME, line_tour.DESCRIPTION "
-								+ "ORDER BY COUNT(line_booking.state);");
+								+ "GROUP BY line_tour.id, line_tour.name, line_tour.description "
+								+ "ORDER BY COUNT(line_booking.state) DESC;");
 						stmt.setString(1, userID);
 						ResultSet rs = stmt.executeQuery();
 						ResultSet temp = rs;
