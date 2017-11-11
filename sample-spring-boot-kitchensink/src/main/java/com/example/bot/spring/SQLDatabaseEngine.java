@@ -709,11 +709,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				ResultSet rs2 = stmt2.executeQuery();
 				if (rs2.next()) {
 					has_discount= true;
-					discount_name=rs.getString(1);
-					discount_id=rs.getInt(2);
-					booking_id=rs.getInt(3);
-					seat=rs.getInt(4);
-					rate=rs.getDouble(5);
+					discount_name=rs2.getString(1);
+					discount_id=rs2.getInt(2);
+					booking_id=rs2.getInt(3);
+					seat=rs2.getInt(4);
+					rate=rs2.getDouble(5);
 					result+=("Congratulations! You gain a "+discount_name+" for "+seat+" seats in this booking.\n"
 							+ "If you canceled this booking, you will lose this discount.\n\n");
 					if(seat==0) {
