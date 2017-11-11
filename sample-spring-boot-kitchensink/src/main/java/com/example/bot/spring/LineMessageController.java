@@ -676,7 +676,8 @@ public class LineMessageController {
 		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
 		int count=0;
 		for (Tour tour:listOfTours) {
-			String imageUrl = createUri(database.searchImage(tour.getTourName()));
+			String imagePath=database.searchImage(tour.getTourName());
+			String imageUrl = (imagePath==null)? null:createUri(imagePath);
 			String trancatedDescription=tour.getDescription();
 			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 60-2)+"..";
 			CarouselColumn item=new CarouselColumn(imageUrl, tour.getTourName(), trancatedDescription, Arrays.asList(

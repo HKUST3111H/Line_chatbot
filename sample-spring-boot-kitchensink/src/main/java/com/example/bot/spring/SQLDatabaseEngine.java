@@ -351,7 +351,9 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 					filenames.add(file.getName());
 				}
 			}
-		}catch(Exception e) {return url;}
+		}catch(Exception e) {
+			log.info("error loading images");
+			return url;}
 		
 		if (!filenames.isEmpty()) {
 			int dist;
@@ -364,6 +366,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 					url=picName;
 				}
 			}
+			log.info("return image from"+path+url);
 			return path+url;
 		}
 		return null;
