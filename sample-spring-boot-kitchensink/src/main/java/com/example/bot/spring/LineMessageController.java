@@ -16,6 +16,7 @@
 
 package com.example.bot.spring;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.io.OutputStream;
@@ -656,14 +657,13 @@ public class LineMessageController {
 		}
 
 	}
-
 	private void listTourForBooking(String replyToken, String reply) throws Exception {
 		List<Message> msgToReply=new ArrayList<Message>();
 		TextMessage heading = new TextMessage(Constant.INSTRUCTION_BOOKING);
 		msgToReply.add(heading);
 		
 		List<Tour> listOfTours=new ArrayList<Tour>();
-		String imageUrl = null;
+		
 		try {
 		listOfTours =database.getTours();
 		}
@@ -676,6 +676,7 @@ public class LineMessageController {
 		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
 		int count=0;
 		for (Tour tour:listOfTours) {
+			String imageUrl = createUri(database.searchImage(tour.getTourName()));
 			String trancatedDescription=tour.getDescription();
 			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 60-2)+"..";
 			CarouselColumn item=new CarouselColumn(imageUrl, tour.getTourName(), trancatedDescription, Arrays.asList(
@@ -683,6 +684,7 @@ public class LineMessageController {
               ));
 			carousel.add(item);
 			count++;
+			//every 4 items one carousel 
 			if (count%4==0 || count==listOfTours.size()) {
 				CarouselTemplate carouselTemplate = new CarouselTemplate(carousel);
 				TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);

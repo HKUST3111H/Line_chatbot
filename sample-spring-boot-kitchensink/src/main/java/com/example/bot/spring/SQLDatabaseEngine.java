@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.net.URISyntaxException;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -338,7 +339,36 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		log.info("tour database probably empty");
 		throw new Exception("EMPTY DATABASE");
 	}
-	
+	public String searchImage(String keywords) {
+		String url=null;
+		String path="/static/picture/";
+		List<String> filenames = new ArrayList<String>();
+		try {
+		File[] files = new File(path).listFiles();
+
+			for (File file : files) {
+				if (file.isFile()) {
+					filenames.add(file.getName());
+				}
+			}
+		}catch(Exception e) {return url;}
+		
+		if (!filenames.isEmpty()) {
+			int dist;
+			int minDistance=1000000;
+			for (String picName:filenames) {
+				String[] parts=picName.split(".");
+				dist=new WagnerFischer(parts[0].toLowerCase(),keywords.toLowerCase()).getDistance();
+				if ( dist<=10 && dist<minDistance) {
+					minDistance=dist;
+					url=picName;
+				}
+			}
+			return path+url;
+		}
+		return null;
+		
+	}
 	
 	boolean tourFound(int tourID) throws Exception {
 		//Write your code here
