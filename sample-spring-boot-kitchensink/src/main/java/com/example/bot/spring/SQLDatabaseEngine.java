@@ -396,7 +396,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
 				double price=rs.getDouble(5);
 				int price_int = (int)price;
-				int quota = rs.getInt(7)-rs.getInt(4);
+				int quota = -rs.getInt(7)+rs.getInt(4);
 				result += (rs.getString(1)+"\nData and time: "+ time_change +"\nHotel: "+rs.getString(3)+"\nMax people: "+rs.getInt(4)+
 						"\nQuota left: "+quota+"\nFull price for adult: HKD"+price_int+"\nDuration: "+rs.getInt(6)+" Days\n\n");
 			}
