@@ -3,6 +3,9 @@ package com.example.bot.spring;
 import lombok.extern.slf4j.Slf4j;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -339,12 +342,17 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		log.info("tour database probably empty");
 		throw new Exception("EMPTY DATABASE");
 	}
+	
+	static String createUri(String path) {
+		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
+	}
 	public String searchImage(String keywords) {
 		String url=null;
-		String path="/static/pictures/";
+		String path="static/pictures/";
+		String exactpath=createUri(path);
 		List<String> filenames = new ArrayList<String>();
 		try {
-		File[] files = new File(path).listFiles();
+		File[] files = new File(exactpath).listFiles();
 
 			for (File file : files) {
 				if (file.isFile()) {
@@ -352,7 +360,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				}
 			}
 		}catch(Exception e) {
-			log.info("error loading images:{}\n",path,e);
+			log.info("error loading images:{}{}\n",path,exactpath,e);
 			return url;}
 		
 		if (!filenames.isEmpty()) {
