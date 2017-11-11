@@ -712,8 +712,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 					discount_name=rs.getString(1);
 					discount_id=rs.getInt(2);
 					booking_id=rs.getInt(3);
-					seat=rs.getInt(1);
-					rate=rs.getDouble(4);
+					seat=rs.getInt(4);
+					rate=rs.getDouble(5);
 					result+=("Congratulations! You gain a "+discount_name+" for "+seat+" seats in this booking.\n"
 							+ "If you canceled this booking, you will lose this discount.\n\n");
 					if(seat==0) {
