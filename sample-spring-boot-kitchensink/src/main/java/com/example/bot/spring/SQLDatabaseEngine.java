@@ -352,7 +352,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				}
 			}
 		}catch(Exception e) {
-			log.info("error loading images:{}",e);
+			log.info("error loading images:{}\n{}",path,e);
 			return url;}
 		
 		if (!filenames.isEmpty()) {
