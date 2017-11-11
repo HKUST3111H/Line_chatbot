@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.net.URISyntaxException;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -311,31 +313,33 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 
-	String getTourNames() throws Exception {
+	
+	List<Tour> getTours() throws Exception {
 		//Write your code here
+		List<Tour> listOfTours = new ArrayList<Tour>();
+
 		Connection connection = getConnection();
-		String result="";
 		try {
 			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_tour;");
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				result += (rs.getString(1)+" "+rs.getString(2)+"\n"+rs.getString(3)+"\n\n");
+		    	Tour tour=new Tour(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getInt(4));
+		    	listOfTours.add(tour);
 			}
 			rs.close();
 			stmt.close();
-			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
-
+			connection.close();		
 		}
-		if (result == "")
-			result ="null";
-		if (result != "")
-			return result;
-		throw new Exception("NOT FOUND");
+		if (listOfTours != null && !listOfTours.isEmpty())
+			return listOfTours;
+		log.info("tour database probably empty");
+		throw new Exception("EMPTY DATABASE");
 	}
-
+	
+	
 	boolean tourFound(int tourID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
