@@ -266,9 +266,9 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		//Write your code here
 		Connection connection = getConnection();
 		int result=0;
-		int mindist = 5;
+		int min_dist = 5;
 		String resultString = null;
-		int dist = mindist + 1;
+		int dist = min_dist + 1;
 		try {
 			//check all entries in databse compare and calculate distance ,update hit numebr
 			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_unknownquestion;");
@@ -277,22 +277,22 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			while (rs.next()) {
 				resultString = rs.getString(2);//get question
 				dist=new WagnerFischer(resultString,text).getDistance();
-				if(dist <= mindist) {//similar question
-					PreparedStatement stmt1 = connection.prepareStatement("UPDATE line_unknownquestions SET hit = ? WHERE question = ?");
+				if(dist <= min_dist) {//similar question
+					PreparedStatement stmt1 = connection.prepareStatement("UPDATE line_unknownquestion SET hit = ? WHERE question = ?");
 					int hit = rs.getInt(3)+1;
 					stmt1.setInt(1, hit);
 					stmt1.setString(2,resultString);
-					stmt1.executeQuery();
+					result = stmt1.executeUpdate();
 					stmt1.close();
 					break;
 				}
 
 			}
-			if(dist > mindist ) {
+			if(dist > min_dist ) {
 				//insert new entry
 				PreparedStatement stmt2 = connection.prepareStatement("INSERT INTO line_unknownquestion (question) VALUES (?);");
 				stmt2.setString(1, text);
-				result=stmt2.executeUpdate();
+				result = stmt2.executeUpdate();
 				stmt2.close();	
 			}
 			
