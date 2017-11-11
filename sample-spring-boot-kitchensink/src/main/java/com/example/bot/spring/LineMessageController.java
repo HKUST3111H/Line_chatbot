@@ -314,7 +314,7 @@ public class LineMessageController {
 	private void FAQ_NO_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
-			replyFAQ(replyToken, text, reply);
+			faqsearch(replyToken, text, reply, userID);
 		}
 		else {
 			database.setUserState(userID,Constant.FILL_NAME);
@@ -328,7 +328,7 @@ public class LineMessageController {
 	private void FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
-			replyFAQ(replyToken, text, reply);
+			faqsearch(replyToken, text, reply, userID);
 		}
 		else {
 			database.setUserState(userID,Constant.BOOKING_TOUR_ID);
@@ -339,7 +339,7 @@ public class LineMessageController {
 	private void FAQ_AFTER_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
-			replyFAQ(replyToken, text, reply);
+			faqsearch(replyToken, text, reply, userID);
 		}
 		else{
 		    database.setUserState(userID,Constant.BOOKING_OR_REVIEW);
@@ -693,9 +693,9 @@ public class LineMessageController {
 		this.reply(replyToken,msgToReply);
 	}
 
-	private void replyFAQ(String replyToken, String text, String reply) throws Exception {
+	private void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
 		try {
-		String answer = faqDatabase.search(text);
+		String answer = faqDatabase.search(text, userID);
 		reply += answer;
 		String imageURL=faqDatabase.replyImage(answer);
 		if (imageURL!=null) {
