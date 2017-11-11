@@ -170,31 +170,35 @@ public class FaqDatabase extends SQLDatabaseEngine {
 			
 			// dynamic question
 			if(result.toLowerCase().contains("return")) {
-				result = "";
 				Connection connection = super.getConnection();
 				if(result.toLowerCase().contains("top 5 tours")) {
 					try {
-						
+						result = "";
 						PreparedStatement stmt = connection.prepareStatement(
-								"SELECT line_tour.ID, line_tour.NAME, line_tour.DESCRIPTION "
+								"SELECT line_tour.id, line_tour.name, line_tour.description, COUNT(line_booking.state) "
 								+ "FROM line_booking, line_touroffering, line_tour "
 								+ "WHERE line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id "
 								+ "AND line_booking.state > 0 "
-								+ "AND line_tour.ID NOT IN "
-								+ "(SELECT line_tour.ID FROM line_booking, line_touroffering, line_tour "
-								+ "WHERE line_booking.user_id = ? AND line_booking.state == 2 AND "
+								+ "AND line_tour.id NOT IN "
+								+ "(SELECT line_tour.id FROM line_booking, line_touroffering, line_tour "
+								+ "WHERE line_booking.user_id = ? AND line_booking.state = 2 AND "
 								+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id) "
-								+ "GROUP BY line_tour.id, line_tour.NAME, line_tour.DESCRIPTION "
-								+ "ORDER BY COUNT(line_booking.state);");
+								+ "GROUP BY line_tour.id, line_tour.name, line_tour.description "
+								+ "ORDER BY COUNT(line_booking.state) DESC;");
 						stmt.setString(1, userID);
 						ResultSet rs = stmt.executeQuery();
 						int i = 0;
 						while (rs.next() && i<5) {							
-							result += (rs.getString(1)+" "+rs.getString(2)+"\n"+rs.getString(3)+"\n\n");
+							result += (rs.getString(1)+" "+rs.getString(2)+"\n"+rs.getString(3)+"\n"+
+						"Number of people who have visited: "+ rs.getInt(4)+"\n\n");
 							i++;
 						}
 						if (result.equals("")){
 							result = "You have been to all tours we provided. Thanks for your interest and support!\n";
+						}
+						else {
+							String header = "The following are hot tours we recommend based on your booking history.\n\n";
+							result = header+result;
 						}
 						rs.close();
 						stmt.close();
@@ -209,29 +213,35 @@ public class FaqDatabase extends SQLDatabaseEngine {
 				}
 				else if(result.toLowerCase().contains("more tours")) {
 					try {
+						result = "";
 						PreparedStatement stmt = connection.prepareStatement(
-								"SELECT line_tour.ID, line_tour.NAME, line_tour.DESCRIPTION "
+								"SELECT line_tour.id, line_tour.name, line_tour.description, COUNT(line_booking.state) "
 								+ "FROM line_booking, line_touroffering, line_tour "
 								+ "WHERE line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id "
 								+ "AND line_booking.state > 0 "
-								+ "AND line_tour.ID NOT IN "
-								+ "(SELECT line_tour.ID FROM line_booking, line_touroffering, line_tour "
-								+ "WHERE line_booking.user_id = ? AND line_booking.state == 2 AND "
+								+ "AND line_tour.id NOT IN "
+								+ "(SELECT line_tour.id FROM line_booking, line_touroffering, line_tour "
+								+ "WHERE line_booking.user_id = ? AND line_booking.state = 2 AND "
 								+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id) "
-								+ "GROUP BY line_tour.id, line_tour.NAME, line_tour.DESCRIPTION "
-								+ "ORDER BY COUNT(line_booking.state);");
+								+ "GROUP BY line_tour.id, line_tour.name, line_tour.description "
+								+ "ORDER BY COUNT(line_booking.state) DESC;");
 						stmt.setString(1, userID);
 						ResultSet rs = stmt.executeQuery();
 						ResultSet temp = rs;
 						int i = 0;
-						while (rs.next() && i<5) {							
+						while (i<5 && rs.next()) {							
 							i++;
 						}
 						while(rs.next()) {
-							result += (rs.getString(1)+" "+rs.getString(2)+"\n"+rs.getString(3)+"\n\n");
+							result += (rs.getString(1)+" "+rs.getString(2)+"\n"+rs.getString(3)+"\n"+
+						"Number of people who have visited: "+ rs.getInt(4)+"\n\n");
 						}
 						if (result.equals("")){
 							result = "No more recommendations! Thanks for your interest and support!\n";
+						}
+						else {
+							String header = "The following are more hot tours we recommend based on your booking history.\n\n";
+							result = header+result;
 						}
 						rs.close();
 						stmt.close();
