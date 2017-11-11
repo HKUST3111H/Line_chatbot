@@ -271,15 +271,15 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		int dist = min_dist + 1;
 		try {
 			//check all entries in databse compare and calculate distance ,update hit numebr
-			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_unknownquestion;");
+			PreparedStatement stmt = connection.prepareStatement("SELECT line_unknownquestion.question, line_unknownquestion.hit FROM line_unknownquestion;");
 			ResultSet rs = stmt.executeQuery();
 			
 			while (rs.next()) {
-				resultString = rs.getString(2);//get question
+				resultString = rs.getString(1);//get question
 				dist=new WagnerFischer(resultString,text).getDistance();
 				if(dist <= min_dist) {//similar question
-					PreparedStatement stmt1 = connection.prepareStatement("UPDATE line_unknownquestion SET hit = ? WHERE question = ?");
-					int hit = rs.getInt(3)+1;
+					PreparedStatement stmt1 = connection.prepareStatement("UPDATE line_unknownquestion SET hit = ? WHERE question = ?;");
+					int hit = rs.getInt(2)+1;
 					stmt1.setInt(1, hit);
 					stmt1.setString(2,resultString);
 					result = stmt1.executeUpdate();
