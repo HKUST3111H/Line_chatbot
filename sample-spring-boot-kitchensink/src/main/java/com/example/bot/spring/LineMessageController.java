@@ -663,7 +663,7 @@ public class LineMessageController {
 		msgToReply.add(heading);
 		
 		List<Tour> listOfTours=new ArrayList<Tour>();
-		String imageUrl = createUri("/static/buttons/1040.jpg");//ugly pic
+		String imageUrl = null;
 		try {
 		listOfTours =database.getTours();
 		}
@@ -676,7 +676,7 @@ public class LineMessageController {
 		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
 		int count=0;
 		for (Tour tour:listOfTours) {
-			CarouselColumn item=new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(), Arrays.asList(
+			CarouselColumn item=new CarouselColumn(imageUrl, null, tour.getTourName()+"\n"+tour.getDescription(), Arrays.asList(
               new PostbackAction("Book",Integer.toString(tour.getTourID()))
               ));
 			carousel.add(item);
