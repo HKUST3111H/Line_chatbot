@@ -341,7 +341,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	}
 	public String searchImage(String keywords) {
 		String url=null;
-		String path="/static/picture/";
+		String path="/static/pictures/";
 		List<String> filenames = new ArrayList<String>();
 		try {
 		File[] files = new File(path).listFiles();
