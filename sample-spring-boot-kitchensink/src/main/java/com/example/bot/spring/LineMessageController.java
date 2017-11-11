@@ -511,6 +511,7 @@ public class LineMessageController {
 
 			database.setUserState(userID,Constant.BOOKING_PAYMENT);
 			database.setBookingSpecialRequest(userID,text);
+			
 			reply += database.displaytBookingInformation(userID);
 
             ConfirmTemplate confirmTemplate = new ConfirmTemplate(
@@ -741,6 +742,7 @@ public class LineMessageController {
 	private SQLDatabaseEngine database;
 	private FaqDatabase faqDatabase;
 	private String itscLOGIN;
+	
 
 
 	//The annontation @Value is from the package lombok.Value

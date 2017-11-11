@@ -2,6 +2,7 @@ package com.example.bot.spring;
 
 
 import lombok.extern.slf4j.Slf4j;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -53,6 +54,7 @@ import java.util.TimeZone;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -60,11 +62,14 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 @Slf4j
 @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
 @SpringBootTest(classes = { UserTest.class,  SQLDatabaseEngine.class })
 public class UserTestMock {
+	
+
 
 
 	@Mock
@@ -74,7 +79,7 @@ public class UserTestMock {
 	private static final java.util.Date now = calendar.getTime();
 	private static final java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
 
-	private static final String test_user_id = "test_user_id";
+	private static final String test_user_id = "test_user_id33";
 	private static final String test_name = "test_name";
 	private static final String test_phoneno = "00001111";
 	private static final String test_age = "20";
@@ -111,11 +116,11 @@ public class UserTestMock {
 	public void testCreateUser() throws Exception {
 		//for testing User class createUser function
 		try {
-			//log.info(test_user_id);
+			log.info(test_user_id);
 			//databaseEngine.deleteUser(test_user_id);
 			//update_result = databaseEngine.createUser(test_user_id, time, test_state);
 		} catch (Exception e) {
-			//log.info(e.toString());
+			log.info(e.toString());
 			//thrown = true;
 		}
 	}
