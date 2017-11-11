@@ -737,7 +737,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 					}
 					total_fee = fee-discount_fee;
 					discount_fee_int = (int)discount_fee;
-					total_fee_int = (int)total_fee;
+					total_fee_int = fee_int-discount_fee_int ;
 				}
 					
 				result+=("Tour name: "+rs.getString(11)+"\n\nDescription: "+rs.getString(12)+"\n\nDuration: "+rs.getInt(13)+"\n\nOffer date: "
