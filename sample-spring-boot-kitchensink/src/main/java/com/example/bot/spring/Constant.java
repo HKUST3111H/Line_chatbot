@@ -14,7 +14,8 @@ import java.util.*;
 
 @Slf4j
 public  class Constant {
-	
+	private static Constant uniqueInstance = new Constant();
+	private Constant () {};
 	// FAQ
 	public static final int FAQ_NO_USER_INFORMATION = 100;
 	public static final int FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION = 300;
