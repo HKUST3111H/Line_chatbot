@@ -359,7 +359,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			for (String picName:filenames) {
 				String[] parts=picName.split(".");
 				dist=new WagnerFischer(parts[0].toLowerCase(),keywords.toLowerCase()).getDistance();
-				if ( dist<=10 && dist<minDistance) {
+				if ( dist<=30 && dist<minDistance) {
 					minDistance=dist;
 					url=picName;
 				}
