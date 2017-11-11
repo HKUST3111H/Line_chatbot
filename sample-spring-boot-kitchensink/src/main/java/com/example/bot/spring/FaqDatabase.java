@@ -174,10 +174,10 @@ public class FaqDatabase extends SQLDatabaseEngine {
 								+ "AND line_booking.state > 0 "
 								+ "AND line_tour.ID NOT IN "
 								+ "(SELECT line_tour.ID FROM line_booking, line_touroffering, line_tour "
-								+ "WHERE line_booking.user_id = ? AND line_booking.state == 2 AND "
+								+ "WHERE line_booking.user_id = ? AND line_booking.state = 2 AND "
 								+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id) "
 								+ "GROUP BY line_tour.id, line_tour.NAME, line_tour.DESCRIPTION "
-								+ "ORDER BY COUNT(line_booking.state);");
+								+ "ORDER BY COUNT(line_booking.state) DESC;");
 						stmt.setString(1, userID);
 						ResultSet rs = stmt.executeQuery();
 						int i = 0;
@@ -208,7 +208,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 								+ "AND line_booking.state > 0 "
 								+ "AND line_tour.ID NOT IN "
 								+ "(SELECT line_tour.ID FROM line_booking, line_touroffering, line_tour "
-								+ "WHERE line_booking.user_id = ? AND line_booking.state == 2 AND "
+								+ "WHERE line_booking.user_id = ? AND line_booking.state = 2 AND "
 								+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id) "
 								+ "GROUP BY line_tour.id, line_tour.NAME, line_tour.DESCRIPTION "
 								+ "ORDER BY COUNT(line_booking.state);");
