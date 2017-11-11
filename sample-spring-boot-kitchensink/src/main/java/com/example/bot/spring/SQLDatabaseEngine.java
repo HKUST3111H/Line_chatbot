@@ -341,7 +341,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	}
 	public String searchImage(String keywords) {
 		String url=null;
-		String path="static/pictures/";
+		String path="/static/pictures/";
 		List<String> filenames = new ArrayList<String>();
 		try {
 		File[] files = new File(path).listFiles();
@@ -352,7 +352,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				}
 			}
 		}catch(Exception e) {
-			log.info("error loading images:{}\n{}",path,e);
+			log.info("error loading images:{}\n",path,e);
 			return url;}
 		
 		if (!filenames.isEmpty()) {
