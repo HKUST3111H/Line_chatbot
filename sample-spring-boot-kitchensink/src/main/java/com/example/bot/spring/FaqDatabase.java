@@ -152,17 +152,18 @@ public class FaqDatabase extends SQLDatabaseEngine {
 						dist=new WagnerFischer(entry.Question,text).getDistance();
 						if (dist<=30 && dist<minDistance) {
 							minDistance=dist;
-							result=entry.Answer;
+							result += entry.Answer+"\n";
 							qid=entry.questionID;
 							hit=entry.hit;
+							if(qid!=-1) {
+								updateHit(qid, hit+1);
+							}
 						}
 					}
 				}
 			}
 		}
-		if(qid!=-1) {
-			updateHit(qid, hit+1);
-		}
+
 		
 		if (result != null)
 			return result;
