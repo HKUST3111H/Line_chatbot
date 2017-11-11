@@ -658,13 +658,41 @@ public class LineMessageController {
 	}
 
 	private void listTourForBooking(String replyToken, String reply) throws Exception {
-		String starter = Constant.INSTRUCTION_BOOKING;
-		Message heading = new TextMessage(starter);
-		String tourNames = database.getTourNames();//String database.getTourNames();
-		List<Message> messages = splitMessages(tourNames,"\n\n");
-		messages.add(0, heading);
-		log.info("Returns message {}: {}", replyToken, reply);
-		this.reply(replyToken,messages);
+		List<Message> msgToReply=new ArrayList<Message>();
+		TextMessage heading = new TextMessage(Constant.INSTRUCTION_BOOKING);
+		msgToReply.add(heading);
+		
+		List<Tour> listOfTours=new ArrayList<Tour>();
+		String imageUrl = null;
+		try {
+		listOfTours =database.getTours();
+		}
+		catch(Exception e) {
+			log.info(e.toString());
+			msgToReply.add(new TextMessage("No Tours Avaliable"));
+			this.reply(replyToken,msgToReply);
+		}
+		
+		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
+		int count=0;
+		for (Tour tour:listOfTours) {
+			String trancatedDescription=tour.getDescription();
+			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 60-2)+"..";
+			CarouselColumn item=new CarouselColumn(imageUrl, tour.getTourName(), trancatedDescription, Arrays.asList(
+              new MessageAction("Book",Integer.toString(tour.getTourID()))
+              ));
+			carousel.add(item);
+			count++;
+			if (count%4==0 || count==listOfTours.size()) {
+				CarouselTemplate carouselTemplate = new CarouselTemplate(carousel);
+				TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);
+				msgToReply.add(templateMessage);
+				carousel=new ArrayList<CarouselColumn>();
+			}
+
+		}
+		log.info("Listed tours for booking{}", replyToken);
+		this.reply(replyToken,msgToReply);
 	}
 
 	private void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
