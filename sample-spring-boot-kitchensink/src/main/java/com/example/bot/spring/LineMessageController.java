@@ -676,7 +676,9 @@ public class LineMessageController {
 		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
 		int count=0;
 		for (Tour tour:listOfTours) {
-			CarouselColumn item=new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription().substring(0, 59), Arrays.asList(
+			String trancatedDescription=tour.getDescription();
+			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 59);
+			CarouselColumn item=new CarouselColumn(imageUrl, tour.getTourName(), trancatedDescription, Arrays.asList(
               new PostbackAction("Book",Integer.toString(tour.getTourID()))
               ));
 			carousel.add(item);
