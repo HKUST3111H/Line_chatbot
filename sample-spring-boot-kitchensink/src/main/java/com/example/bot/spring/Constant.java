@@ -79,6 +79,9 @@ public  class Constant {
 	public static final String ERROR_REENTER_CHILDREN_NUMBER = "Invalid number! Please reinput the number of CHILDREN.";
 	public static final String INSTRTUCTION_ENTER_TODDLER_NUMBER = "Please input the number of TODDLERS (age not larger than 3) for this tour offering.";
 	public static final String ERROR_REENTER_TODDLER_NUMBER = "Invalid number! Please reinput the number of TODDLERS.";
+	public static final String QUOTA_FULL_1 = "Sorry we do not have enough quota for your booking, only ";
+	public static final String QUOTA_FULL_2 = " quota left. \nYou can re-input the number of people or you can terminate the booking procedure by texting \"Q\"."
+			+ "\n\nPlease input the number of ADULTS for this tour offering.";
 	public static final String INSTRTUCTION_ENTER_SPECIAL_REQUEST = "Please leave your special request.";
 	public static final String CONFIRM_REGISTRATION = "Great! Basic information registered!\n";
 	public static final String INSTRUCTION_PAYMENT = "Thanks for your interest!\n"
