@@ -343,9 +343,6 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("EMPTY DATABASE");
 	}
 	
-	static String createUri(String path) {
-		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
-	}
 	
 
 	boolean tourFound(int tourID) throws Exception {
