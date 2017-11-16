@@ -346,41 +346,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	static String createUri(String path) {
 		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
 	}
-	public String searchImage(String keywords) {
-		String url=null;
-		String path="static/pictures/";
-		String exactpath=createUri(path);
-		List<String> filenames = new ArrayList<String>();
-		try {
-		File[] files = new File(exactpath).listFiles();
-
-			for (File file : files) {
-				if (file.isFile()) {
-					filenames.add(file.getName());
-				}
-			}
-		}catch(Exception e) {
-			log.info("error loading images:{}{}\n",path,exactpath,e);
-			return url;}
-		
-		if (!filenames.isEmpty()) {
-			int dist;
-			int minDistance=1000000;
-			for (String picName:filenames) {
-				String[] parts=picName.split(".");
-				dist=new WagnerFischer(parts[0].toLowerCase(),keywords.toLowerCase()).getDistance();
-				if ( dist<=30 && dist<minDistance) {
-					minDistance=dist;
-					url=picName;
-				}
-			}
-			log.info("return image from"+path+url);
-			return path+url;
-		}
-		return null;
-		
-	}
 	
+
 	boolean tourFound(int tourID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
