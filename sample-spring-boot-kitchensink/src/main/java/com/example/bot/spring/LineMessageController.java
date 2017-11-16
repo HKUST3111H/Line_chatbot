@@ -490,11 +490,23 @@ public class LineMessageController {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 			text=text.replaceAll(" ","");
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
-					database.setUserState(userID,Constant.BOOKING_CONFIRMATION);
 					database.setBookingToddlerNumber(userID,Integer.parseInt(text));
-					reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
-					log.info("Returns instruction message {}: {}", replyToken, reply);
-	    				this.replyText(replyToken,reply);
+					int quota=database.checkQuota(userID);
+					if(quota>=0) {
+						database.setUserState(userID,Constant.BOOKING_CONFIRMATION);
+						reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
+						log.info("Returns instruction message {}: {}", replyToken, reply);
+		    				this.replyText(replyToken,reply);
+					}
+					else {
+						quota=database.checkQuota(userID);
+						database.setUserState(userID,Constant.BOOKING_ADULT);
+						reply += Constant.QUOTA_FULL_1;
+						reply += quota;
+						reply += Constant.QUOTA_FULL_2;
+						log.info("Returns instruction message {}: {}", replyToken, reply);
+	    					this.replyText(replyToken,reply);
+	    			}
 				}
 				else {
 					reply += Constant.ERROR_REENTER_TODDLER_NUMBER;
