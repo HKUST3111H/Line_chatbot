@@ -7,7 +7,7 @@ import java.util.List;
 @Slf4j
 public class TourOffering {
 
-	private String offeringID;
+	private int offeringID;
 	private String date;
 	private String guideName;
 	private String guideAccount;
@@ -16,21 +16,20 @@ public class TourOffering {
 	private int minCapacity;
 	private List<User> users;
 	private int state;
+	private int price;
+	private int duration;
+	private int quota;
 	
 	// constructor
-	public TourOffering(String offeringID, String date, String guideName, String guideAccount,
-			String hotel, int maxCapacity, int minCapacity) {
+	public TourOffering(int offeringID, String date,String hotel,int maxCapacity, int price, int duration, int quota) {
 		this.offeringID = offeringID;
 		this.date = date;
-		this.guideName = guideName;
-		this.guideAccount = guideAccount;
 		this.hotel = hotel;
 		this.maxCapacity = maxCapacity;
-		this.minCapacity = minCapacity;
-		this.users = new ArrayList<User>();
+		this.price = price;
+		this.duration = duration;
+		this.quota = quota;
 	}
-	
-	
 	
 	public void registerUser(User user) {
 		if ( !users.contains(user) ) users.add(user);
@@ -42,7 +41,7 @@ public class TourOffering {
 	
 	
 	// get functions
-	public String getOfferingID() {
+	public int getOfferingID() {
 		return offeringID;
 	}
 	
@@ -78,8 +77,20 @@ public class TourOffering {
 		return users;
 	}
 	
+	public int getPrice() {
+		return price;
+	}
+	
+	public int getDuration() {
+		return duration;
+	}
+	
+	public int getQuota() {
+		return quota;
+	}
+	
 	// set functions
-	public void setOfferingID(String offeringID) {
+	public void setOfferingID(int offeringID) {
 		this.offeringID = offeringID;
 	}
 	
@@ -113,5 +124,17 @@ public class TourOffering {
 	
 	public void setState(int state) {
 		this.state = state;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
+	
+	public void setQuota(int quota) {
+		this.quota = quota;
 	}
 }

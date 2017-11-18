@@ -369,8 +369,9 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 
-	String displayTourOffering(int tourID) throws Exception {
+	List<TourOffering> displayTourOffering(int tourID) throws Exception {
 		//Write your code here
+		List<TourOffering> listOfTourOfferings = new ArrayList<TourOffering>();
 		Connection connection = getConnection();
 		String result="";
 		try {
@@ -402,8 +403,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				double price=rs.getDouble(5);
 				int price_int = (int)price;
 				int quota = -rs.getInt(7)+rs.getInt(4);
-				result += (rs.getString(1)+"\nData and time: "+ time_change +"\nHotel: "+rs.getString(3)+"\nMax people: "+rs.getInt(4)+
-						"\nQuota left: "+quota+"\nFull price for adult: HKD"+price_int+"\nDuration: "+rs.getInt(6)+" Days\n\n");
+				TourOffering tourOffering=new TourOffering(rs.getInt(1),time_change,rs.getString(3),rs.getInt(4),price_int,rs.getInt(6),quota);
+				listOfTourOfferings.add(tourOffering);
 			}
 			rs.close();
 			stmt.close();
@@ -413,10 +414,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} finally {
 
 		}
-		if (result == "")
-			result ="null";
-		if (result != "")
-			return result;
+		if (!listOfTourOfferings.isEmpty())
+			return listOfTourOfferings;
+		if (listOfTourOfferings.isEmpty())
+			return listOfTourOfferings;
 		throw new Exception("NOT FOUND");
 	}
 
