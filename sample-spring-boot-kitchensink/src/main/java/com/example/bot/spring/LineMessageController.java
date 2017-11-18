@@ -202,8 +202,13 @@ public class LineMessageController {
 	 * @param event
 	 */
 	@EventMapping
-	public void handlePostbackEvent(PostbackEvent event) {
+	public void handlePostbackEvent(PostbackEvent event)  throws Exception  {
 		String replyToken = event.getReplyToken();
+		/*String reply="";
+		String text=event.getPostbackContent().getData();
+		if (text.contains(Constant.TEXT_NEW_BOOKING)){
+			listTourForBooking(replyToken, reply);
+		}*/
 		this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
 	}
 	/**
@@ -439,7 +444,7 @@ public class LineMessageController {
 		    ConfirmTemplate confirmTemplate = new ConfirmTemplate(
 		    		Constant.QUESTION_REVIEW_OR_BOOKING,
 		            new MessageAction("Review", "Review"),
-		            new MessageAction("New Booking", "New Booking")
+		            new MessageAction(Constant.TEXT_NEW_BOOKING, Constant.TEXT_NEW_BOOKING)
 		    );
 		    TemplateMessage whichBook = new TemplateMessage("Review Booking/New Booking", confirmTemplate);
 
@@ -523,18 +528,19 @@ public class LineMessageController {
 			//here		
 			List<Tour> listOfTours = database.getTours();
 			List<Message> messages = new ArrayList<Message>();
-			String description = " ";
-			for (Tour tour : listOfTours) {
-				if(tour.getTourID()==Integer.parseInt(text)) {
-					description = tour.getDescription();	
-					description.replace("*", "\n");
-				}
-			}
 
-			messages.add(new TextMessage(description));
 			//end
 
 			if(isNumeric(text) && database.tourFound(Integer.parseInt(text))) {
+				String description = " ";
+				for (Tour tour : listOfTours) {
+					if(tour.getTourID()==Integer.parseInt(text)) {
+						description = tour.getDescription();	
+						description.replace("*", "\n");
+					}
+				}
+
+				messages.add(new TextMessage(description));
 				
 				List<TourOffering> listOfTourOfferings=new ArrayList<TourOffering>();
 				try {

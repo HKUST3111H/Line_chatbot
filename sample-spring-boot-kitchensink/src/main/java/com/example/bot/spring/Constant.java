@@ -98,7 +98,7 @@ public  class Constant {
 	public static final String QUESTION_CONFIRM_OR_NOT = "Do you want to confirm your booking";
 	public static final String FAQ_NOT_FOUND = "Sorry! We don't have relevant information.";
 	public static final String BOOKING_CANCELLED = "Booking cancelled!";
-	
+	public static final String TEXT_NEW_BOOKING="New Booking";
 	
 
 }
