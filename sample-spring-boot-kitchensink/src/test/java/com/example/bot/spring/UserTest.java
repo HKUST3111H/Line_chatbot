@@ -73,6 +73,9 @@ public class UserTest {
 	private static boolean thrown = false;
 	private static String query_result = null;
 	private static boolean update_result = true;
+	
+				
+	User newuser = new User();	
 
 	// public UserTest() {
 	// 	try {
@@ -171,5 +174,206 @@ public class UserTest {
 			thrown = true;
 		}
 	}
+//=======================for user calss====================
+	@Test 
+	public void testConstructor() throws Exception {
+		try {
+			User consUser = new User("110","Xiaomei","110011","20",230,time);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	
+	
+	
+	@Test
+	public void testSetTime() throws Exception {
+		try {
+			//java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());	
+			newuser.setTime(time);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	
+	@Test
+	public void testSetName() throws Exception {
+		try {
+			newuser.setName("xuxiaofeng");
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	@Test
+	public void testSetState() throws Exception {
+		try {
+			newuser.setState(200);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+
+	@Test
+	public void testSetAge() throws Exception {
+		try {
+			newuser.setAge("21");
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+
+	
+
+	@Test
+	public void testSetID() throws Exception {
+		try {
+			newuser.setID("2031");
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	@Test
+	public void testSetPhoneNumber() throws Exception {
+		try {
+			newuser.setPhoneNumber("1860143");
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	@Test
+	public void testAddTripHistory() throws Exception {
+		try {
+			newuser.addTripHistory("Shenzhen City");
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	@Test
+	public void testSetUser() throws Exception {
+		try {
+			
+			newuser.setUser("2031",time,200);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	
+	
+	@Test
+	public void testGetUserName() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			String name =newuser.getUserName();
+			assertTrue(!name.equals("xuxiaofeng"));
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	@Test
+	public void testGetPhoneNumber() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			String phoneNumber =newuser.getPhoneNumber();
+			assertTrue(!phoneNumber.equals("1860143"));
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	@Test
+	public void testGetUserID() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			String ID =newuser.getUserID();
+			assertTrue(!ID.equals("2031"));
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	
+	@Test
+	public void testGetAge() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			String age =newuser.getAge();
+			assertTrue(!age.equals("21"));
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	
+	@Test
+	public void testGetState() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			int state =newuser.getState();
+			assertTrue(state!=200);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	@Test
+	public void testGetTime() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			java.sql.Timestamp thisTime =newuser.getTime();
+			assertTrue(thisTime!=time);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	
+	@Test
+	public void testOutputTripHistory() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			newuser.outputTripHistory();
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	
+	
+	
+	
+	
 
 }
