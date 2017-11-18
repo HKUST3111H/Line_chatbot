@@ -546,8 +546,9 @@ public class LineMessageController {
 						description=description.replace("*", "\n");
 						lines=description.split("[\\r\\n]+");
 						description="";
+						int emojiCode=0x100033;
 						for (String line :lines) {
-							description+=(char) 0x100033 +line+"\n";
+							description+=Character.toChars(emojiCode) +line+"\n";
 						}
 
 					}
