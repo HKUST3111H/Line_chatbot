@@ -398,15 +398,30 @@ public class LineMessageController {
 
 	private void BOOKING_TOUR_ID_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		text=text.replaceAll(" ","");
+		String result="";
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_NOTHING)) {
 			if(isNumeric(text) && database.tourFound(Integer.parseInt(text))) {
- 			String result = database.displayTourOffering(Integer.parseInt(text));
-    			if(result.equals("null")) {
+				
+				List<TourOffering> listOfTourOfferings=new ArrayList<TourOffering>();
+				try {
+					listOfTourOfferings =database.displayTourOffering(Integer.parseInt(text));
+					}
+					catch(Exception e) {
+						reply += Constant.ERROR_REENTER_TOUR_ID;
+		    			log.info("Returns instruction message {}: {}", replyToken, reply);
+		    			this.replyText(replyToken,reply);
+					}
+    			if(listOfTourOfferings.isEmpty()) {
     				reply += Constant.INFORMATION_NO_TOUR_OFFERING;
     				log.info("Returns instruction message {}: {}", replyToken, reply);
         			this.replyText(replyToken,reply);
     			}
     			else {
+    				for (TourOffering tourOffering:listOfTourOfferings) {
+						result += (tourOffering.getOfferingID()+"\nData and time: "+ tourOffering.getDate()+"\nHotel: "+tourOffering.getHotel()+"\nMax people: "+tourOffering.getMaxCapacity()+
+								"\nFull price for adult: HKD"+tourOffering.getPrice()+"\nDuration: "+tourOffering.getDuration()+" Days\n\n");
+				
+					}
     				database.setUserState(userID,Constant.BOOKING_OFFERING_ID);
     				database.setBufferTourID(userID,Integer.parseInt(text));
     				reply += Constant.INFORMATION_TOUR_OFFERING;
