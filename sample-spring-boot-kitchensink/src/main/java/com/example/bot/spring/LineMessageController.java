@@ -541,7 +541,7 @@ public class LineMessageController {
 				for (Tour tour : listOfTours) {
 					if(tour.getTourID()==Integer.parseInt(text)) {
 						description = tour.getDescription();	
-						description.replace("*", "\n");
+						description=description.replace("*", "\n");
 					}
 				}
 
