@@ -15,7 +15,6 @@ public class Tour {
 	private String tourName;
 	private String description;
 	private int duration;
-	private List<TourOffering> offerings;
 	
 	
 	// constructor
@@ -32,22 +31,6 @@ public class Tour {
 		this.tourName = tourName;
 		this.description = description;
 		this.duration = duration;
-		this.offerings = new ArrayList<TourOffering>();
-	}
-	
-	
-	/**
-	 * @param offering
-	 */
-	public void addTourOffering(TourOffering offering) {
-		if ( !offerings.contains(offering) ) this.offerings.add(offering);
-	}
-	
-	/**
-	 * @param offering
-	 */
-	public void removeTourOffering(TourOffering offering) {
-		if ( offerings.contains(offering) ) this.offerings.remove(offering);
 	}
 	
 	
@@ -81,13 +64,6 @@ public class Tour {
 		return duration;
 	}
 	
-	/**
-	 * @return a list of tour offerings
-	 */
-	public List<TourOffering> getOfferings(){
-		return offerings;
-	}
-	
 	// set functions
 	/**
 	 * @param tourID
@@ -116,13 +92,7 @@ public class Tour {
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
-	
-	/**
-	 * @param offerings
-	 */
-	public void setOfferings(List<TourOffering> offerings){
-		this.offerings = offerings;
-	}
+
 	
 	
 }

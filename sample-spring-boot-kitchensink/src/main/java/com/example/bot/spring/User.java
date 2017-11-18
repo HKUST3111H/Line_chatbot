@@ -13,8 +13,13 @@ import java.net.URI;
 import java.util.ArrayList;
 
 import java.util.List;
+/**
+ * @author Group 16
+ * This class is a container for Users
+ */
 @Slf4j
 public class User {
+	
 	private String userName;
 	private String userID;
 	private String phoneNumber;
@@ -23,15 +28,6 @@ public class User {
 	private int state;//chatting or booking state
 	private java.sql.Timestamp time;
 	
-	public User (String id,String name, String phoneno, String age, int state, java.sql.Timestamp time ){//except for tripHistory
-		tripHistory = new ArrayList<String>();
-		this.userID = id;
-		this.userName = name;
-		this.phoneNumber = phoneno;
-		this.age = age;
-		this.state = state;
-		this.time = time;
-	}
 	public User (){//except for tripHistory
 		tripHistory = new ArrayList<String>();
 		this.userID = "null";
@@ -41,60 +37,136 @@ public class User {
 		this.state = -1;	
 	}
 	
+	/**
+	 * Constructor
+	 * @param id
+	 * @param name
+	 * @param phoneno
+	 * @param age
+	 * @param state
+	 * @param time
+	 */
+	public User (String id,String name, String phoneno, String age, int state, java.sql.Timestamp time ){//except for tripHistory
+		tripHistory = new ArrayList<String>();
+		this.userID = id;
+		this.userName = name;
+		this.phoneNumber = phoneno;
+		this.age = age;
+		this.state = state;
+		this.time = time;
+	}
+
+	
 	//getter
-	String getUserName(){
-		return this.userName;
-	}
-	String getUserID(){
-		return this.userID;
-	}
-	String getPhoneNumber(){
-		return this.phoneNumber;
-	}
-	String getAge(){
-		return this.age;
-	}
-	int getState(){
-		return this.state;
+	
+	/**
+	 * @return userName
+	 */
+	public String getUserName(){
+		return userName;
 	}
 	
-	java.sql.Timestamp getTime(){
-		return this.time;
+	/**
+	 * @return userID
+	 */
+	public String getUserID(){
+		return userID;
 	}
 	
-	void outputTripHistory(){
+	/**
+	 * @return phoneNumber
+	 */
+	public String getPhoneNumber(){
+		return phoneNumber;
+	}
+	
+	/**
+	 * @return age
+	 */
+	public String getAge(){
+		return age;
+	}
+	
+	/**
+	 * @return state
+	 */
+	public int getState(){
+		return state;
+	}
+	
+	/**
+	 * @return time
+	 */
+	public java.sql.Timestamp getTime(){
+		return time;
+	}
+	
+	/**
+	 * show tour history
+	 */
+	public void outputTripHistory(){
 		for(int i = 0; i <this.tripHistory.size();i++){
 			System.out.println(tripHistory.get(i));
 		}
 	}
 	
+	/**
+	 * @param state
+	 */
 	//mutator
-	void setState(int state){
+	public void setState(int state){
 		this.state = state; //chatting => 0 , booking => 1
 	}
-
-	void setAge(String Age){
+	
+	/**
+	 * @param Age
+	 */
+	public void setAge(String Age){
 		this.age = Age;
 	}
-	void setPhoneNumber(String PhoneNo){
+	
+	/**
+	 * @param PhoneNo
+	 */
+	public void setPhoneNumber(String PhoneNo){
 		this.phoneNumber = PhoneNo;
 	}
-	void setID(String userID){
+	
+	/**
+	 * @param userID
+	 */
+	public void setID(String userID){
 		this.userID = userID;
 	}
-	void setName(String userName){
+	
+	/**
+	 * @param userName
+	 */
+	public void setName(String userName){
 		this.userName = userName;
 	}
-	void addTripHistory(String tripID){
-		this.tripHistory.add(tripID);
+	
+	/**
+	 * @param tourID
+	 */
+	public void addTripHistory(String tourID){
+		this.tripHistory.add(tourID);
 		
 	}
 	
-	void setTime(java.sql.Timestamp time){
+	/**
+	 * @param time
+	 */
+	public void setTime(java.sql.Timestamp time){
 		this.time = time;
 	}
 	
-	void setUser(String userID, java.sql.Timestamp time, int state) {
+	/**
+	 * @param userID
+	 * @param time
+	 * @param state
+	 */
+	public void setUser(String userID, java.sql.Timestamp time, int state) {
 		setID(userID);
 		setTime(time);
 		setState(state);

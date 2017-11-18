@@ -94,7 +94,10 @@ public class SQLDatabaseEngineTest {
 		assertTrue(result);
         log.info("Update Succeed");
         try {
-            databaseEngine.deleteUser(test_user_id);
+			Boolean deleted= databaseEngine.deleteUser(test_user_id);
+			if (!deleted) {
+				log.info("Delete fail!");
+			}
         }
         catch (Exception e) {
             log.info(e.toString());

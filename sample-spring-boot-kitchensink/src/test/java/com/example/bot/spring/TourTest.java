@@ -54,56 +54,31 @@ import java.util.TimeZone;
 @Slf4j
 @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
-@SpringBootTest(classes = { UserTest.class,  SQLDatabaseEngine.class })
-public class UserTest {
-	
+@SpringBootTest(classes = { TourTest.class })
+public class TourTest {
 	@Autowired
-	private SQLDatabaseEngine databaseEngine;
 
 	private static final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 	private static final java.util.Date now = calendar.getTime();
 	private static final java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
 
-	private static final String test_user_id = "test_user_id";
+	private static final int test_tour_id = 10;
 	private static final String test_name = "test_name";
-	private static final String test_phoneno = "00001111";
-	private static final String test_age = "20";
-	private static final int test_state = 1;
+	private static final String test_description = "hhh";
+	private static final int test_duration = 2;
 
 	private static boolean init = false;
 	private static boolean thrown = false;
 	private static String query_result = null;
 	private static boolean update_result = true;
 	
-	private static User newuser = new User(test_user_id, test_name, test_phoneno, test_age,test_state,time );	
 				
+	private static Tour newtour = new Tour(test_tour_id, test_name, test_description, test_duration);	
 
-	// public UserTest() {
-	// 	try {
-	// 		databaseEngine.createUser(test_user_id, time, test_state);
-	// 	} catch (Exception e) {
-	// 		log.info("Test User Exist!");
-	// 	}
-	// }
-	@Before
-	public void setUp() {
-		thrown = false;
-		update_result = true;
-	}
-
-	@After
-	public void check() {
-		assertFalse(thrown);
-		log.info("No Exception");
-		assertTrue(update_result);
-		log.info("Update Succeed");
-	}
-
-//=======================for user calss====================
 	@Test 
 	public void testConstructor() throws Exception {
 		try {
-			User consUser = new User(test_user_id, test_name, test_phoneno, test_age,test_state,time );	
+			Tour consTour = new Tour(test_tour_id, test_name, test_description, test_duration);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -112,22 +87,12 @@ public class UserTest {
 	}
 	
 	
-	@Test
-	public void testSetTime() throws Exception {
-		try {
-			newuser.setTime(time);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	
-	}
 	
 	
 	@Test
-	public void testSetName() throws Exception {
+	public void testSetTourID() throws Exception {
 		try {
-			newuser.setName(test_name);
+			newtour.setTourID(test_tour_id);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -136,9 +101,9 @@ public class UserTest {
 	}
 	
 	@Test
-	public void testSetState() throws Exception {
+	public void testSetTourName() throws Exception {
 		try {
-			newuser.setState(test_state);
+			newtour.setTourName(test_name);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -147,9 +112,19 @@ public class UserTest {
 	}
 
 	@Test
-	public void testSetAge() throws Exception {
+	public void testSetDescription() throws Exception {
 		try {
-			newuser.setAge(test_age);
+			newtour.setDescription(test_description);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	@Test
+	public void testSetDuration() throws Exception {
+		try {
+			newtour.setDuration(test_duration);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -158,60 +133,12 @@ public class UserTest {
 	}
 
 	
-
 	@Test
-	public void testSetID() throws Exception {
-		try {
-			newuser.setID(test_user_id);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	
-	}
-	
-	@Test
-	public void testSetPhoneNumber() throws Exception {
-		try {
-			newuser.setPhoneNumber(test_phoneno);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	
-	}
-	
-	@Test
-	public void testAddTripHistory() throws Exception {
-		try {
-			newuser.addTripHistory("Shenzhen City");
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	
-	}
-	
-	@Test
-	public void testSetUser() throws Exception {
-		try {
-			
-			newuser.setUser(test_user_id,time,test_state);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	
-	}
-	
-	
-	
-	@Test
-	public void testGetUserName() throws Exception {
+	public void testGetTourID() throws Exception {
 		//for testing User class setUserAge function
 		try {
-			String name =newuser.getUserName();
-			assertTrue(name.equals(test_name));
+			int id =newtour.getTourID();
+			assertTrue(id==test_tour_id);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -219,11 +146,11 @@ public class UserTest {
 	}
 	
 	@Test
-	public void testGetPhoneNumber() throws Exception {
+	public void testGetTourName() throws Exception {
 		//for testing User class setUserAge function
 		try {
-			String phoneNumber =newuser.getPhoneNumber();
-			assertTrue(phoneNumber.equals(test_phoneno));
+			String TourName =newtour.getTourName();
+			assertTrue(TourName.equals(test_name));
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -231,24 +158,11 @@ public class UserTest {
 	}
 	
 	@Test
-	public void testGetUserID() throws Exception {
+	public void testGetDescription() throws Exception {
 		//for testing User class setUserAge function
 		try {
-			String ID =newuser.getUserID();
-			assertTrue(ID.equals(test_user_id));
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-	
-	
-	@Test
-	public void testGetAge() throws Exception {
-		//for testing User class setUserAge function
-		try {
-			String age =newuser.getAge();
-			assertTrue(age.equals(test_age));
+			String description =newtour.getDescription();
+			assertTrue(description.equals(test_description));
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -257,35 +171,11 @@ public class UserTest {
 	
 	
 	@Test
-	public void testGetState() throws Exception {
+	public void testGetDuration() throws Exception {
 		//for testing User class setUserAge function
 		try {
-			int state =newuser.getState();
-			assertTrue(state==test_state);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-	
-	@Test
-	public void testGetTime() throws Exception {
-		//for testing User class setUserAge function
-		try {
-			java.sql.Timestamp thisTime =newuser.getTime();
-			assertTrue(thisTime==time);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-	
-	
-	@Test
-	public void testOutputTripHistory() throws Exception {
-		//for testing User class setUserAge function
-		try {
-			newuser.outputTripHistory();
+			int duration =newtour.getDuration();
+			assertTrue(duration==test_duration);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;

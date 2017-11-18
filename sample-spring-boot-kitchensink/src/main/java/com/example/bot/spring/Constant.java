@@ -11,9 +11,15 @@ import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.*;
-
+/**
+ * @author Group 16
+ * This class is a container for Constant
+ */
 @Slf4j
 public  class Constant {
+	/**
+	 * Prite Constructor means it is singleton
+	 */
 	private static Constant uniqueInstance = new Constant();
 	private Constant () {};
 	// FAQ
