@@ -576,7 +576,8 @@ public class LineMessageController {
     				//prepare button for display
     				List<MessageAction> listOfButton=new ArrayList<MessageAction>();
     				for (TourOffering tourOffering:listOfTourOfferings) {
-    					MessageAction button=new MessageAction("Tour Offering "+tourOffering.getOfferingID(), +tourOffering.getOfferingID());
+    					String tourofferingID=Integer.toString(tourOffering.getOfferingID());
+    					MessageAction button=new MessageAction("Tour Offering "+tourofferingID, tourofferingID);
 	    				listOfButton.add(button);
 	    				ButtonsTemplate buttonTemplate = new ButtonsTemplate(
 		            			null,"","",Arrays.asList(button)
