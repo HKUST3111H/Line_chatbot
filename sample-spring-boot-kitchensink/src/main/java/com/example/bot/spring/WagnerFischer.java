@@ -14,6 +14,11 @@ import java.util.ArrayList;
 
 import java.util.List;
 @Slf4j
+
+/**
+ * @author Group 16
+ * This class is WagnerFischer to find distance between String
+ */
 public class WagnerFischer {
     private char[] s1;
     private char[] s2;

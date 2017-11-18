@@ -18,6 +18,10 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.math.*;
 
+/**
+ * @author Group 16
+ * This class is a for SQLDatabaseEngine
+ */
 @Slf4j
 public class SQLDatabaseEngine extends DatabaseEngine {
 	//booking state: 0 isBooking; 1 done; 2 confirmed;
@@ -57,7 +61,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			throw new Exception("NOT FOUND");
 	}
 
-
+	/**
+	 * Connect to database
+	 * @return Connection
+	 */
 	protected Connection getConnection() throws URISyntaxException, SQLException {
 		Connection connection;
 		URI dbUri = new URI(System.getenv("DATABASE_URL"));
@@ -73,7 +80,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 
 		return connection;
 	}
-
+	/**
+	 * Get User Information
+	 * @param userID
+	 * @return User
+	 * @see User
+	 */
 	User getUserInformation(String id) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -103,7 +115,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Set User last response Time
+	 * @param userID
+	 * @param time
+	 */
 	boolean setUserTime(String id, java.sql.Timestamp time) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -126,7 +142,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Set User State
+	 * @param userID
+	 * @param state
+	 */
 	boolean setUserState(String id, int FAQ1) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -149,7 +169,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Set User Name
+	 * @param userID
+	 * @param name
+	 */
 	boolean setUserName(String id, String text) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -172,7 +196,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Set User PhoneNum
+	 * @param userID
+	 * @param phoneNum
+	 */
 	boolean setUserPhoneNum(String id, String text) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -195,7 +223,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Set User Age
+	 * @param userID
+	 * @param age
+	 */
 	boolean setUserAge(String id, String text) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -218,7 +250,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Create User in Database
+	 * @param userID
+	 * @param time
+	 * @param state
+	 */
 	boolean createUser(String id, java.sql.Timestamp time, int state) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -243,7 +280,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Delete User in Database
+	 * @param userID
+	 */
 	boolean deleteUser(String id) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -267,7 +307,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Add Unknown Question To Unknown Datatabse
+	 * @param userID
+	 */
 	boolean addToUnknownDatatabse(String text) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -316,7 +359,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Get Available Tour
+	 * @param tourID
+	 * @return Tour List
+	 * @see Tour
+	 */
 	
 	List<Tour> getTours() throws Exception {
 		//Write your code here
@@ -342,7 +390,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		log.info("tour database probably empty");
 		throw new Exception("EMPTY DATABASE");
 	}
-	
+	/**
+	 * find the tour with Tour ID
+	 * @param tourID
+	 */
 	
 
 	boolean tourFound(int tourID) throws Exception {
@@ -368,7 +419,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Get Available TourOffering
+	 * @param tourID
+	 * @return TourOffering List
+	 * @see TourOffering
+	 */
 	List<TourOffering> displayTourOffering(int tourID) throws Exception {
 		//Write your code here
 		List<TourOffering> listOfTourOfferings = new ArrayList<TourOffering>();
@@ -420,7 +476,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return listOfTourOfferings;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Set Buffer Tour ID
+	 * @param userID
+	 * @param tourID
+	 */
 	boolean setBufferTourID(String userID, int tourID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -443,7 +503,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Delete Buffer Booking Entry
+	 * @param userID
+	 */
 	boolean deleteBufferBookingEntry(String userID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -465,7 +528,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Delete Buffer Booking Entry
+	 * @param userID
+	 */
 	boolean deleteBookingEntry(String userID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -487,7 +553,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Get Buffer Tour ID
+	 * @param userID
+	 * @return TourID
+	 */
 	int getBufferTourID(String userID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -512,7 +582,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Check TourID and TourOfferingID are match
+	 * @param tourID
+	 * @param tourOfferingID
+	 */
 	boolean tourOfferingFound(int tourID,int tourOfferingID)throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -549,7 +623,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Get Quota for Booking
+	 * @param userID
+	 * @return quota
+	 */
 	int checkQuota(String userID)throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -611,7 +689,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-	
+	/**
+	 * Set Booking TourOffering ID
+	 * @param userID
+	 * @param tourOfferingID
+	 */
 	boolean setBookingTourOfferingID(String userID, int tourOfferingID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -635,7 +717,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Set Booking Adult Number
+	 * @param userID
+	 * @param number
+	 */
 	boolean setBookingAdultNumber(String userID,int number) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -658,7 +744,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Set Booking Children Number
+	 * @param userID
+	 * @param number
+	 */
 	boolean setBookingChildrenNumber(String userID,int number) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -681,7 +771,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Set Booking Toddler Number
+	 * @param userID
+	 * @param number
+	 */
 	boolean setBookingToddlerNumber(String userID,int number) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -704,7 +798,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Set Booking Special Request
+	 * @param userID
+	 * @param request
+	 */
 	boolean setBookingSpecialRequest(String userID,String request) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -727,7 +825,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return false;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Display Booking Information
+	 * @param userID
+	 * @return answer
+	 */
 	String displaytBookingInformation(String userID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -869,7 +971,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Review Booking Information
+	 * @param userID
+	 * @return answer
+	 */
 	String reviewBookingInformation(String userID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -922,7 +1028,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-
+	/**
+	 * Set Booking Confirmation
+	 * @param userID
+	 */
 	boolean setBookingConfirmation(String userID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();

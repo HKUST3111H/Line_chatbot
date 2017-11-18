@@ -83,6 +83,7 @@ public class Tour {
 	
 	/**
 	 * @return a list of tour offerings
+	 * @see TourOffering
 	 */
 	public List<TourOffering> getOfferings(){
 		return offerings;
@@ -118,7 +119,8 @@ public class Tour {
 	}
 	
 	/**
-	 * @param offerings
+	 * @param offerings list
+	 * @see TourOffering
 	 */
 	public void setOfferings(List<TourOffering> offerings){
 		this.offerings = offerings;
