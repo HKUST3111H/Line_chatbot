@@ -531,7 +531,7 @@ public class LineMessageController {
 					if(quota>=0) {
 						System.out.print("Quata valid????");
 						database.setUserState(userID,Constant.BOOKING_CONFIRMATION);
-						reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
+						//reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
 			            ButtonsTemplate buttonTemplate = new ButtonsTemplate(
 		            			null,
 		            			"Special request",
@@ -543,7 +543,7 @@ public class LineMessageController {
 	
 					log.info("Returns instruction message {}: {}", replyToken, reply);
 					this.reply(replyToken,
-		                    Arrays.asList(new TextMessage(reply),ButtonMessageBlock));
+		                    Arrays.asList(new TextMessage(Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST),ButtonMessageBlock));
 
 					}
 					else {
