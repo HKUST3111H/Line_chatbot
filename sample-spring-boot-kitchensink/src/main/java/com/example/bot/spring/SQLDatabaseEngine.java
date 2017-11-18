@@ -3,12 +3,16 @@ package com.example.bot.spring;
 import lombok.extern.slf4j.Slf4j;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.net.URISyntaxException;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -340,6 +344,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	}
 	
 	
+
 	boolean tourFound(int tourID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
