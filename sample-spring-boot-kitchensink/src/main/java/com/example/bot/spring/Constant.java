@@ -101,7 +101,7 @@ public  class Constant {
 	public static final String TEXT_NEW_BOOKING="New Booking";
 	
 	
-	public static final String STICKER_ID_CONFIRMBOOK="13";
+	public static final String STICKER_ID_CONFIRMBOOK="407";
 	
 
 }
