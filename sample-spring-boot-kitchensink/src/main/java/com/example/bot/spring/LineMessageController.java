@@ -580,7 +580,7 @@ public class LineMessageController {
     					MessageAction button=new MessageAction("Tour Offering "+tourofferingID, tourofferingID);
 	    				listOfButton.add(button);
 	    				ButtonsTemplate buttonTemplate = new ButtonsTemplate(
-		            			null,"","",Arrays.asList(button)
+		            			null," "," ",Arrays.asList(button)
 			            		);
 						messages.add(new TemplateMessage("button",buttonTemplate));
     				}	
