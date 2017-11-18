@@ -32,7 +32,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
-import javax.xml.ws.Action;
+//import javax.xml.ws.Action;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
@@ -53,6 +53,8 @@ import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.PostbackAction;
 import com.linecorp.bot.model.action.URIAction;
+import com.linecorp.bot.model.action.Action;
+
 import com.linecorp.bot.model.event.BeaconEvent;
 import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.FollowEvent;
@@ -575,7 +577,7 @@ public class LineMessageController {
     				messages.add(new TextMessage(reply));
     				//prepare button for display
     				int count=0;
-    				List<MessageAction> listOfButton=new ArrayList<MessageAction>();
+    				List<Action> listOfButton=new ArrayList<Action>();
     				for (TourOffering tourOffering:listOfTourOfferings) {
     					String tourofferingID=Integer.toString(tourOffering.getOfferingID());
     					MessageAction button=new MessageAction("Tour Offering "+tourofferingID, tourofferingID);
@@ -584,7 +586,7 @@ public class LineMessageController {
 	    				if (count%5==0) break;
     				}	
     				ButtonsTemplate buttonTemplate = new ButtonsTemplate(
-	            			null,"Short Cut","You may press button instead.",Arrays.asList(listOfButton)
+	            			null,"Shortcut","You may press button instead.", listOfButton
 		            		);
 					messages.add(new TemplateMessage("button",buttonTemplate));
     				
