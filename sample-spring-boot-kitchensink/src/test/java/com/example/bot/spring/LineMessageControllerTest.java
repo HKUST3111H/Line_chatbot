@@ -286,9 +286,37 @@ public class LineMessageControllerTest {
         ));
     }
 	
-	*/
+	@Test
+    //for successful adult number
+    public void test_BOOKING_OFFERING_ID_handler() throws Exception {
+
+        String testMsg = "12";
+        String userId = "userId";
+        String replyToken = "replyToken";
+        String expectReply = Constant.INSTRTUCTION_ENTER_ADULT_NUMBER;
+
+        // mock line bot api client response
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));
+        when(database.getBufferTourID(userId)).thenReturn(true);
+        when(database.tourOfferingFound(database.getBufferTourID(userId)
+        		,Integer.parseInt(text)).thenReturn(true);
+        when(database.setUserState(userId,Constant.BOOKING_ADULT)).thenReturn(true);
+        when(database.deleteBufferBookingEntry(userId)).then(true);
+        when(database.setBookingTourOfferingID(userId,Integer.parseInt(text));).then(true);
+        
+        underTest.BOOKING_OFFERING_ID_handler(replyToken, testMsg, userId, "");
+
+        // confirm replyMessage is called with following parameter
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+    }
 	
-	
+*/	
 	
 	
 	

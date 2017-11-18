@@ -944,10 +944,7 @@ public class LineMessageController {
 		log.info("Listed tours for booking{}", replyToken);
 		this.reply(replyToken,msgToReply);
 	}
-<<<<<<< HEAD
 
-	public void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
-=======
 	/**
 	 * Faq Search
 	 * @param replyToken
@@ -956,7 +953,6 @@ public class LineMessageController {
 	 * @param userID
 	 */
 	private void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
->>>>>>> upstream/develop
 		try {
 		String answer = faqDatabase.search(text, userID);
 		reply += answer;
