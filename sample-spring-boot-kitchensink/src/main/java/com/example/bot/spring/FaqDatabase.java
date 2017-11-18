@@ -325,7 +325,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	private String parse(String description) {
 		String parseDescription = "";
 		for(int i = 0; i<description.length();i++ ) {
-			if (description.charAt(i)=="*") {
+			if (description.charAt(i)=='*') {
 				parseDescription += "\n*";
 			}
 			else {
