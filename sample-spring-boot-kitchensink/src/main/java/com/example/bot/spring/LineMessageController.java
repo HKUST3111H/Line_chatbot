@@ -547,7 +547,7 @@ public class LineMessageController {
 						lines=description.split("[\\r\\n]+");
 						description="";
 						for (String line :lines) {
-							description+="\\uDBC0"+line;
+							description+="\uDBC0"+line;
 						}
 
 					}
