@@ -444,6 +444,7 @@ public class LineMessageController {
     				database.setUserState(userID,Constant.BOOKING_OFFERING_ID);
     				database.setBufferTourID(userID,Integer.parseInt(text));
     				reply += Constant.INFORMATION_TOUR_OFFERING;
+    				reply += result;
     				reply += Constant.INSTRTUCTION_ENTER_TOUR_OFFERING_ID;
     				messages.add(new TextMessage(reply));
         			log.info("Returns instruction message {}: {}", replyToken, reply);
@@ -528,11 +529,12 @@ public class LineMessageController {
 
 					int quota=database.checkQuota(userID);
 					if(quota>=0) {
+						System.out.print("Quata valid????");
 						database.setUserState(userID,Constant.BOOKING_CONFIRMATION);
 						reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
 			            ButtonsTemplate buttonTemplate = new ButtonsTemplate(
 		            			null,
-		            			"special request",
+		            			"Special request",
 		                    "Press \"No\" if you don't have any request, otherwise, type in your request. ",
 		                    Arrays.asList(new MessageAction("No", "No!"))
 			            		);
