@@ -16,6 +16,15 @@
 
 apply plugin: 'org.springframework.boot'
 
+apply plugin: "jacoco"
+jacocoTestReport {
+reports {
+xml.enabled false
+csv.enabled false
+html.destination file("${buildDir}/jacocoHtml")
+}
+}
+
 dependencies {
     compile project(':line-bot-spring-boot')
     compile group: 'postgresql', name: 'postgresql', version: '9.0-801.jdbc4'

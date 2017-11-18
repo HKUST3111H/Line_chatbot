@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+
+import javax.xml.ws.Action;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import com.linecorp.bot.model.profile.UserProfileResponse;
@@ -398,6 +401,20 @@ public class LineMessageController {
 	private void BOOKING_TOUR_ID_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		text=text.replaceAll(" ","");
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_NOTHING)) {
+			//here		
+			List<Tour> listOfTours = database.getTours();
+			List<Message> messages = new ArrayList<Message>();
+			String description = " ";
+			for (Tour tour : listOfTours) {
+				if(tour.getTourID()==Integer.parseInt(text)) {
+					description = tour.getDescription();	
+					description.replace("*", "\n");
+				}
+			}
+
+			messages.add(new TextMessage(description));
+			//end
+
 			if(isNumeric(text) && database.tourFound(Integer.parseInt(text))) {
  			String result = database.displayTourOffering(Integer.parseInt(text));
     			if(result.equals("null")) {
@@ -406,13 +423,14 @@ public class LineMessageController {
         			this.replyText(replyToken,reply);
     			}
     			else {
+
     				database.setUserState(userID,Constant.BOOKING_OFFERING_ID);
     				database.setBufferTourID(userID,Integer.parseInt(text));
     				reply += Constant.INFORMATION_TOUR_OFFERING;
-    				reply += result;
     				reply += Constant.INSTRTUCTION_ENTER_TOUR_OFFERING_ID;
+    				messages.add(new TextMessage(reply));
         			log.info("Returns instruction message {}: {}", replyToken, reply);
-        			this.replyText(replyToken,reply);
+        			this.reply(replyToken,messages);
     			}
 			}
 			else {
@@ -492,15 +510,29 @@ public class LineMessageController {
 					database.setUserState(userID,Constant.BOOKING_CONFIRMATION);
 					database.setBookingToddlerNumber(userID,Integer.parseInt(text));
 					reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
+					//add special request button
+					//List<Action> actions = new ArrayList<Action>();
+					//actions.add(new MessageAction("No", "No!"));
+		            ButtonsTemplate buttonTemplate = new ButtonsTemplate(
+		            			null,
+		            			"special request",
+		                    "Press \"No\" if you don't have any request, otherwise, type in your request. ",
+		                    Arrays.asList(new MessageAction("No", "No!"))
+		            );
+		           
+		            TemplateMessage ButtonMessageBlock = new TemplateMessage("Sepcial requests?",buttonTemplate);
+	
 					log.info("Returns instruction message {}: {}", replyToken, reply);
-	    				this.replyText(replyToken,reply);
+					this.reply(replyToken,
+		                    Arrays.asList(new TextMessage(reply),ButtonMessageBlock));
+	    				
 				}
 				else {
 					reply += Constant.ERROR_REENTER_TODDLER_NUMBER;
-    				log.info("Returns instruction message {}: {}", replyToken, reply);
-    				this.replyText(replyToken,reply);
+    					log.info("Returns instruction message {}: {}", replyToken, reply);
+    					this.replyText(replyToken,reply);
 				}
-
+			//end
 
 		}
 	}
