@@ -312,7 +312,7 @@ public class LineMessageController {
 
 
 
-	private void FAQ_NO_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
+	public void FAQ_NO_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
 			faqsearch(replyToken, text, reply, userID);
