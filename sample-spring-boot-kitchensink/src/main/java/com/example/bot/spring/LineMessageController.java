@@ -212,7 +212,7 @@ public class LineMessageController {
 			database.setUserState(userID,Constant.BOOKING_TOUR_ID);
 			listTourForBooking(replyToken, reply);
 		}
-		this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
+		//this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
 	}
 	/**
 	 * Handle Beacon Event
@@ -530,7 +530,7 @@ public class LineMessageController {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_NOTHING)) {
 			//here		
 			List<Tour> listOfTours = database.getTours();
-			List<com.sun.xml.internal.ws.api.message.Message> messages = new ArrayList<Message>();
+			List<Message> messages = new ArrayList<Message>();
 
 			//end
 
@@ -589,7 +589,7 @@ public class LineMessageController {
     					MessageAction button=new MessageAction("Tour Offering "+tourOffering.getOfferingID(), +tourOffering.getOfferingID());
 	    				listOfButton.add(button);
 	    				ButtonsTemplate buttonTemplate = new ButtonsTemplate(
-		            			null,null,null,Arrays.asList(button)
+		            			null,"","",Arrays.asList(button)
 			            		);
 						messages.add(new TemplateMessage("button",buttonTemplate));
     				}	
