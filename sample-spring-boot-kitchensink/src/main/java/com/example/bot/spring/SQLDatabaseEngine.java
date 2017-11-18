@@ -26,41 +26,6 @@ import java.math.*;
 public class SQLDatabaseEngine extends DatabaseEngine {
 	//booking state: 0 isBooking; 1 done; 2 confirmed;
 	//offering state: 0 not enough; 1 enough; 2 full; 3 old;
-	@Override
-	String search(String text) throws Exception {
-			//Write your code here
-			Connection connection = getConnection();
-			String result = null;
-			try {
-				PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_faq;");
-				ResultSet rs = stmt.executeQuery();
-				while (result == null && rs.next()) {
-					if (text.toLowerCase().contains(rs.getString(2).toLowerCase())) {
-						result = rs.getString(3);
-						PreparedStatement stmt2 = connection.prepareStatement("UPDATE keywords SET hit = ? WHERE question = ?;");
-						int hits = rs.getInt(4)+1;
-						String keyword=rs.getString(2);
-						stmt2.setInt(1, hits);
-						stmt2.setString(2, keyword);
-						stmt2.executeQuery();
-						stmt2.close();
-					}
-				}
-				rs.close();
-				stmt.close();
-				connection.close();
-			} catch (Exception e) {
-				log.info(e.toString());
-			} finally {
-
-			}
-			if (result == null)
-				result ="null";
-			if (result != null)
-				return result;
-			throw new Exception("NOT FOUND");
-	}
-
 	/**
 	 * Connect to database
 	 * @return Connection
@@ -86,7 +51,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	 * @return result
 	 * @see User
 	 */
-	public User getUserInformation(String id) throws Exception {
+	public User getUserInformation(String id){
 		//Write your code here
 		User result=new User();
 		try {
@@ -120,11 +85,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	 * @param id
 	 * @param time
 	 */
-	public boolean setUserTime(String id, java.sql.Timestamp time) throws Exception {
+	public boolean setUserTime(String id, java.sql.Timestamp time) {
 		//Write your code here
-		Connection connection = getConnection();
 		int result=0;
 		try {
+			Connection connection = getConnection();
 			PreparedStatement stmt2 = connection.prepareStatement("UPDATE line_user SET last_login = ? WHERE id = ?;");
 			stmt2.setTimestamp(1, time);
 			stmt2.setString(2, id);
@@ -140,7 +105,6 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return true;
 		if (result==0)
 			return false;
-		throw new Exception("NOT FOUND");
 	}
 	/**
 	 * Set User State
