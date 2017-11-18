@@ -535,7 +535,7 @@ public class LineMessageController {
 			            ButtonsTemplate buttonTemplate = new ButtonsTemplate(
 		            			null,
 		            			"Special request",
-		                    "Press \"No\" if you don't have any request, otherwise, type in your request. ",
+		                    "Press \"No\" if you don't have any request.",
 		                    Arrays.asList(new MessageAction("No", "No!"))
 			            		);
 		           
