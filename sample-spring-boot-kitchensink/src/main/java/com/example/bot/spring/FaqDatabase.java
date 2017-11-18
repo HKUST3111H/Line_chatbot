@@ -189,7 +189,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 						ResultSet rs = stmt.executeQuery();
 						int i = 0;
 						while (rs.next() && i<5) {							
-							result += (rs.getString(1)+" "+rs.getString(2)+"\n"+rs.getString(3)+"\n"+
+							result += (rs.getString(1)+" "+rs.getString(2)+"\n"+parse(rs.getString(3))+"\n"+
 						"Number of people who have visited: "+ rs.getInt(4)+"\n\n");
 							i++;
 						}
@@ -232,8 +232,8 @@ public class FaqDatabase extends SQLDatabaseEngine {
 						while (i<5 && rs.next()) {							
 							i++;
 						}
-						while(rs.next()) {
-							result += (rs.getString(1)+" "+rs.getString(2)+"\n"+rs.getString(3)+"\n"+
+						while(rs.next()) {							
+							result += (rs.getString(1)+" "+rs.getString(2)+"\n"+parse(rs.getString(3))+"\n"+
 						"Number of people who have visited: "+ rs.getInt(4)+"\n\n");
 						}
 						if (result.equals("")){
@@ -254,6 +254,65 @@ public class FaqDatabase extends SQLDatabaseEngine {
 					}
 					
 				}
+				else if(result.toLowerCase().contains("hot spring")) {
+					try {
+						result = "";
+						PreparedStatement stmt = connection.prepareStatement(
+								"SELECT line_tour.id, line_tour.name, line_tour.description "
+								+ "FROM line_tour "
+								+ "WHERE line_tour.description like \'%hot spring%\' "
+								+ "OR line_tour.description like \'%Hot Spring%\';");
+						ResultSet rs = stmt.executeQuery();
+						while(rs.next()) {
+							result += (rs.getString(1)+" "+rs.getString(2)+"\n"+parse(rs.getString(3))+"\n\n");
+						}
+						if (result.equals("")){
+							result = "No tours with hot spring! Thanks for your interest and support!\n";
+						}
+						else {
+							String header = "The following are tours with hot spring.\n\n";
+							result = header+result;
+						}
+						rs.close();
+						stmt.close();
+						connection.close();
+					}
+					catch (Exception e) {
+						log.info(e.toString());
+					} finally {
+
+					}
+				}
+				else if(result.toLowerCase().contains("mountain")) {
+					try {
+						result = "";
+						PreparedStatement stmt = connection.prepareStatement(
+								"SELECT line_tour.id, line_tour.name, line_tour.description "
+								+ "FROM line_tour "
+								+ "WHERE line_tour.description like \'%mountain%\' "
+								+ "OR line_tour.description like \'%Mountain%\';");
+						ResultSet rs = stmt.executeQuery();
+						while(rs.next()) {
+							result += (rs.getString(1)+" "+rs.getString(2)+"\n"+parse(rs.getString(3))+"\n\n");
+						}
+						if (result.equals("")){
+							result = "No tours with mountain! Thanks for your interest and support!\n";
+						}
+						else {
+							String header = "The following are tours with mountain.\n\n";
+							result = header+result;
+						}
+						rs.close();
+						stmt.close();
+						connection.close();
+					}
+					catch (Exception e) {
+						log.info(e.toString());
+					} finally {
+
+					}
+				}
+				
 			}
 		}
 
@@ -261,6 +320,19 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		if (result != null)
 			return result;
 		throw new Exception("NOT FOUND");
+	}
+	
+	private String parse(String description) {
+		String parseDescription = "";
+		for(int i = 0; i<description.length;i++ ) {
+			if (description[i]=="*") {
+				parseDescription += "\n*";
+			}
+			else {
+				parseDescription += description[i];
+			}
+		}
+		return parseDescription;
 	}
 
 	/*
