@@ -33,11 +33,3 @@ test {
 }
 
 //heroku pg:psql postgresql-angular-13616 --app comp3111h-line-chatbot
-apply plugin: "jacoco"
-jacocoTestReport {
-	reports {
-		xml.enabled false
-		csv.enabled false
-		html.destination file("${buildDir}/jacocoHtml")
-	}
-}
