@@ -87,4 +87,27 @@ public class LineMessageControllerTest {
                 replyToken, singletonList(new TextMessage(expectReply))
         ));
     }
+
+    @Test
+    public void test_BOOKING_PAYMENT_handler() throws Exception {
+        
+        String testMsg = "yes";
+        String userID = "userId";
+        String replyToken = "replyToken";
+        String expectReply = Constant.INSTRUCTION_PAYMENT;
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));
+
+        when(database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION)).thenReturn(true);
+        when(database.setBookingConfirmation(userID)).thenReturn(true);
+
+        underTest.BOOKING_PAYMENT_handler(replyToken, testMsg, userID, "");
+
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+    }
 }

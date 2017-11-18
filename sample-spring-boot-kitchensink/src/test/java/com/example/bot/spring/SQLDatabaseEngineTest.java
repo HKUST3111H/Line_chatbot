@@ -54,8 +54,8 @@ import java.util.TimeZone;
 @Slf4j
 @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
-@SpringBootTest(classes = { UserTest.class,  SQLDatabaseEngine.class })
-public class TourOfferingTest {
+@SpringBootTest(classes = { SQLDatabaseEngineTest.class,  SQLDatabaseEngine.class })
+public class SQLDatabaseEngineTest {
 	@Autowired
 	private SQLDatabaseEngine databaseEngine;
 
@@ -66,6 +66,9 @@ public class TourOfferingTest {
 	private static final int test_tour_id = 9;
 	private static final int test_tour_offering_id = 15;
 	private static final String test_user_id = "test_id";
+	private static final String test_name = "test_name";
+	private static final String test_phoneno = "00001111";
+	private static final String test_age = "20";
 	private static final int test_state = 1;
 
 	private static boolean init = false;
@@ -74,14 +77,12 @@ public class TourOfferingTest {
 
 	@Before
 	public void setUp() {
-		if (!init) {
-			try {
-				init = true;
-				databaseEngine.createUser(test_user_id, time, test_state);
-			} catch (Exception e) {
-				log.info("Test User Exist!");
-			}
-		}
+        try {
+            init = true;
+            databaseEngine.createUser(test_user_id, time, test_state);
+        } catch (Exception e) {
+            log.info("Test User Exist!");
+        }
 		thrown = false;
 		result = true;
 	}
@@ -91,11 +92,17 @@ public class TourOfferingTest {
 		assertFalse(thrown);
 		log.info("No Exception");
 		assertTrue(result);
-		log.info("Update Succeed");
+        log.info("Update Succeed");
+        try {
+            databaseEngine.deleteUser(test_user_id);
+        }
+        catch (Exception e) {
+            log.info(e.toString());
+        }
 	}
 
 	@Test
-	public void testTourOfferingFound() throws Exception {
+	public void testTourOfferingFound() {
 		// for testing this class TourOffering tourOfferingFound
 		try {
 			result = databaseEngine.tourOfferingFound(test_tour_id, test_tour_offering_id);
@@ -105,7 +112,7 @@ public class TourOfferingTest {
 	}
 
 	@Test
-	public void testDisplayTourOffering() throws Exception {
+	public void testDisplayTourOffering() {
 		//for testing this class TourOffering displayTourOffering
 		try {
 			if (databaseEngine.displayTourOffering(test_tour_id).isEmpty()) {
@@ -116,7 +123,7 @@ public class TourOfferingTest {
 		}
 	}
 	@Test
-	public void testDisplaytBookingInformation() throws Exception {
+	public void testDisplaytBookingInformation() {
 		//for testing this class TourOffering displayTourOffering
 		try {
 			if (databaseEngine.displaytBookingInformation(test_user_id ) == null) {
@@ -127,4 +134,123 @@ public class TourOfferingTest {
 		}
 	}
 
+	@Test
+	public void testCreateUser() {
+		//for testing User class createUser function
+		try {
+			log.info(test_user_id);
+			databaseEngine.deleteUser(test_user_id);
+			result = databaseEngine.createUser(test_user_id, time, test_state);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+
+	@Test
+	public void testSetUserTime() {
+		//for testing User class setUserTime function
+		try {
+			result = databaseEngine.setUserTime(test_user_id, time);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+
+	@Test
+	public void testSetUserState() {
+		//for testing User class setUserState function
+		try {
+			result = databaseEngine.setUserState(test_user_id, test_state);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+
+
+	@Test
+	public void testSetUserName() {
+		//for testing User class setUserName function
+		try {
+			result = databaseEngine.setUserName(test_user_id, test_name);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+
+	@Test
+	public void testSetUserPhoneNum() {
+		//for testing User class setUserPhoneNum function
+		try {
+			result = databaseEngine.setUserPhoneNum(test_user_id, test_phoneno);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+
+	@Test
+	public void testSetUserAge() {
+		//for testing User class setUserAge function
+		try {
+			result = databaseEngine.setUserAge(test_user_id, test_age);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+    }
+    
+	@Test
+	public void testBuffer() {
+		//for testing this class Booking Buffer
+		try {
+			result = databaseEngine.setBufferTourID(test_user_id, test_tour_id);
+		} catch (Exception e) {
+			thrown = true;
+		}
+
+		if (thrown || !result) {
+				return;
+		}
+
+		try {
+			result = (databaseEngine.getBufferTourID(test_user_id) != -1);
+		} catch (Exception e) {
+			thrown = true;
+		}
+
+		if (thrown || !result) {
+				return;
+		}
+
+		try {
+			result = databaseEngine.deleteBufferBookingEntry(test_user_id);
+		} catch (Exception e) {
+			thrown = true;
+		}
+	}
+
+	@Test
+	public void testSetBookingTourOfferingID() {
+		//for testing this class Booking setBookingTourOfferingID
+		try {
+			result =databaseEngine.setBookingTourOfferingID(test_user_id, test_tour_offering_id);
+		} catch (Exception e) {
+			thrown = true;
+		}
+	}
+	
+	@Test
+	public void testAddToUnknowndatabase() {
+		//for testing AddToUnknowndatabase()
+		try {
+			result =databaseEngine.addToUnknownDatatabse("Xuxiaofeng");
+			
+		} catch (Exception e) {
+			thrown = true;
+		}
+	}
 }
