@@ -512,11 +512,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 
-	boolean tourOfferingFound(int tourID,int tourOfferingID)throws Exception {
+	boolean tourOfferingFound(int tourID,int tourOfferingID){
 		//Write your code here
-		Connection connection = getConnection();
 		boolean result=false;
 		try {
+			Connection connection = getConnection();
 			PreparedStatement stmt = connection.prepareStatement(
 					"SELECT id,offer_date,hotel,capacity_max FROM line_touroffering WHERE tour_id = ? AND state < 2 AND id = ? AND id IN "
 					+ "(SELECT id FROM line_touroffering WHERE tour_id = ? "
@@ -541,12 +541,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
-		if (1==1)
-			return result;
-		throw new Exception("NOT FOUND");
+		} 
+		return result;
 	}
 
 	int checkQuota(String userID)throws Exception {
