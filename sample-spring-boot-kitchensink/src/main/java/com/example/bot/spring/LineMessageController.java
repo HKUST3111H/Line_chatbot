@@ -787,8 +787,8 @@ public class LineMessageController {
 				reply += Constant.INSTRUCTION_PAYMENT;
 				log.info("Returns instruction message {}: {}", replyToken, reply);
 	    		List<Message> msgToReply=new ArrayList<Message>();
+	    		msgToReply.add(new StickerMessage("1",Constant.STICKER_ID_CONFIRMBOOK));
 	    		msgToReply.add(new TextMessage(reply));
-	    		msgToReply.add(new StickerMessage("1","13"));
 	    		this.reply(replyToken,msgToReply);
 			}
 			else {
