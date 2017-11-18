@@ -88,13 +88,14 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	 */
 	public User getUserInformation(String id) throws Exception {
 		//Write your code here
-		Connection connection = getConnection();
 		User result=new User();
 		try {
+			Connection connection = getConnection();
 			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_user WHERE id = ?;");
 			stmt.setString(1, id);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
+					log.info("fuck fuck");
 					result.setID(rs.getString(1));
 					result.setName(rs.getString(2));
 					result.setPhoneNumber(rs.getString(3));
@@ -106,14 +107,13 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			rs.close();
 			stmt.close();
 			connection.close();
+			log.info("fuck");
 		} catch (Exception e) {
 			log.info(e.toString());
 		} finally {
 
 		}
-		if (1==1)
-			return result;
-		throw new Exception("NOT FOUND");
+		return result;
 	}
 	/**
 	 * Set User last response Time

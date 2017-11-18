@@ -76,14 +76,6 @@ public class BookingTest {
 
 	@Before
 	public void setUp() {
-		if (!init) {
-			try {
-				init = true;
-				databaseEngine.createUser(test_user_id, time, test_state);
-			} catch (Exception e) {
-				log.info("Test User Exist!");
-			}
-		}
 		thrown = false;
 		result = true;
 	}
@@ -96,45 +88,6 @@ public class BookingTest {
 		log.info("Update Succeed");
 	}
 
-	@Test
-	public void testBuffer() throws Exception {
-		//for testing this class Booking Buffer
-		try {
-			result = databaseEngine.setBufferTourID(test_user_id, test_tour_id);
-		} catch (Exception e) {
-			thrown = true;
-		}
-
-		if (thrown || !result) {
-				return;
-		}
-
-		try {
-			result = (databaseEngine.getBufferTourID(test_user_id) != -1);
-		} catch (Exception e) {
-			thrown = true;
-		}
-
-		if (thrown || !result) {
-				return;
-		}
-
-		try {
-			result = databaseEngine.deleteBufferBookingEntry(test_user_id);
-		} catch (Exception e) {
-			thrown = true;
-		}
-	}
-
-	@Test
-	public void testSetBookingTourOfferingID() throws Exception {
-		//for testing this class Booking setBookingTourOfferingID
-		try {
-			result =databaseEngine.setBookingTourOfferingID(test_user_id, test_tour_offering_id);
-		} catch (Exception e) {
-			thrown = true;
-		}
-	}
 	
 	@Test
 	public void testAddToUnknowndatabase() throws Exception {

@@ -750,7 +750,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void BOOKING_PAYMENT_handler(String replyToken, String text, String userID, String reply) throws Exception {
+	public void BOOKING_PAYMENT_handler(String replyToken, String text, String userID, String reply) throws Exception {
 
 			if(text.toLowerCase().contains("y")||text.toLowerCase().contains("confirm")) {
 				database.setUserState(userID,Constant.FAQ_AFTER_CONFIRMATION);
