@@ -538,12 +538,22 @@ public class LineMessageController {
 
 			if(isNumeric(text) && database.tourFound(Integer.parseInt(text))) {
 				String description = " ";
+				String[] lines;
 				for (Tour tour : listOfTours) {
 					if(tour.getTourID()==Integer.parseInt(text)) {
-						description = tour.getDescription();	
+						description = tour.getDescription();
+						description=description.replace("* ", "\n");
 						description=description.replace("*", "\n");
+						lines=description.split("[\\r\\n]+");
+						description="";
+						for (String line :lines) {
+							description+="\\uDBC0"+line;
+						}
+
 					}
 				}
+				
+				
 
 				messages.add(new TextMessage(description));
 				
