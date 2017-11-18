@@ -27,7 +27,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	 */
 	public String replyImage(String answer) {
         //String pattern = "(\\d+)[.](.*[?])[\\n][>](.*)[\\n]";
-        String pattern = "(see the picture (.*)[)]";
+        String pattern = "see the picture (.*)[)]";
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(answer);
 	    if (m.find()) {
