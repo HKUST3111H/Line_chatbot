@@ -93,6 +93,10 @@ import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
+/**
+ * @author Group 16
+ * This class is Line Message Controller
+ */
 
 @Slf4j
 @LineMessageHandler
@@ -100,7 +104,10 @@ public class LineMessageController {
 
 	@Autowired
 	private LineMessagingClient lineMessagingClient;
-
+	/**
+	 * Handle Text Message Event
+	 * @param event
+	 */
 	@EventMapping
 	public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
 		log.info("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
@@ -109,19 +116,28 @@ public class LineMessageController {
 		TextMessageContent message = event.getMessage();
 		handleTextContent(event.getReplyToken(), event, message);
 	}
-
+	/**
+	 * Handle Sticker Message Event
+	 * @param event
+	 */
 	@EventMapping
 	public void handleStickerMessageEvent(MessageEvent<StickerMessageContent> event) {
 		handleSticker(event.getReplyToken(), event.getMessage());
 	}
-
+	/**
+	 * Handle Location Event
+	 * @param event
+	 */
 	@EventMapping
 	public void handleLocationMessageEvent(MessageEvent<LocationMessageContent> event) {
 		LocationMessageContent locationMessage = event.getMessage();
 		reply(event.getReplyToken(), new LocationMessage(locationMessage.getTitle(), locationMessage.getAddress(),
 				locationMessage.getLatitude(), locationMessage.getLongitude()));
 	}
-
+	/**
+	 * Handle Image Event
+	 * @param event
+	 */
 	@EventMapping
 	public void handleImageMessageEvent(MessageEvent<ImageMessageContent> event) throws IOException {
 		final MessageContentResponse response;
@@ -137,7 +153,10 @@ public class LineMessageController {
 		reply(((MessageEvent) event).getReplyToken(), new ImageMessage(jpg.getUri(), jpg.getUri()));
 
 	}
-
+	/**
+	 * Handle Audio Event
+	 * @param event
+	 */
 	@EventMapping
 	public void handleAudioMessageEvent(MessageEvent<AudioMessageContent> event) throws IOException {
 		final MessageContentResponse response;
@@ -152,45 +171,71 @@ public class LineMessageController {
 		DownloadedContent mp4 = saveContent("mp4", response);
 		reply(event.getReplyToken(), new AudioMessage(mp4.getUri(), 100));
 	}
-
+	/**
+	 * Handle Unfollow Event
+	 * @param event
+	 */
 	@EventMapping
 	public void handleUnfollowEvent(UnfollowEvent event) {
 		log.info("unfollowed this bot: {}", event);
 	}
-
+	/**
+	 * Handle Follow Event
+	 * @param event
+	 */
 	@EventMapping
 	public void handleFollowEvent(FollowEvent event) {
 		String replyToken = event.getReplyToken();
 		this.replyText(replyToken, "Got followed event");
 	}
-
+	/**
+	 * Handle Join Event
+	 * @param event
+	 */
 	@EventMapping
 	public void handleJoinEvent(JoinEvent event) {
 		String replyToken = event.getReplyToken();
 		this.replyText(replyToken, "Joined " + event.getSource());
 	}
-
+	/**
+	 * Handle Postback Event
+	 * @param event
+	 */
 	@EventMapping
 	public void handlePostbackEvent(PostbackEvent event) {
 		String replyToken = event.getReplyToken();
 		this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
 	}
-
+	/**
+	 * Handle Beacon Event
+	 * @param event
+	 */
 	@EventMapping
 	public void handleBeaconEvent(BeaconEvent event) {
 		String replyToken = event.getReplyToken();
 		this.replyText(replyToken, "Got beacon message " + event.getBeacon().getHwid());
 	}
-
+	/**
+	 * Handle Other Event
+	 * @param event
+	 */
 	@EventMapping
 	public void handleOtherEvent(Event event) {
 		log.info("Received message(Ignored): {}", event);
 	}
-
+	/**
+	 * reply
+	 * @param replyToken
+	 * @param message
+	 */
 	private void reply(@NonNull String replyToken, @NonNull Message message) {
 		reply(replyToken, Collections.singletonList(message));
 	}
-
+	/**
+	 * reply
+	 * @param replyToken
+	 * @param messages
+	 */
 	private void reply(@NonNull String replyToken, @NonNull List<Message> messages) {
 		try {
 			BotApiResponse apiResponse = lineMessagingClient.replyMessage(new ReplyMessage(replyToken, messages)).get();
@@ -199,7 +244,11 @@ public class LineMessageController {
 			throw new RuntimeException(e);
 		}
 	}
-
+	/**
+	 * reply text
+	 * @param replyToken
+	 * @param message
+	 */
 	private void replyText(@NonNull String replyToken, @NonNull String message) {
 		if (replyToken.isEmpty()) {
 			throw new IllegalArgumentException("replyToken must not be empty");
@@ -209,18 +258,30 @@ public class LineMessageController {
 		//}
 		this.reply(replyToken, new TextMessage(message));
 	}
-
+	/**
+	 * push text
+	 * @param receiver
+	 * @param message
+	 */
 	private void pushText(@NonNull String receiver, @NonNull String message) {
 		if (receiver.isEmpty()) {
 			throw new IllegalArgumentException("receiver must not be empty");
 		}
 		push(receiver, new TextMessage(message));
 	}
-
+	/**
+	 * push
+	 * @param receiver
+	 * @param message
+	 */
   private void push(@NonNull String receiver, @NonNull Message message) {
     push(receiver, Collections.singletonList(message));
   }
-
+  	/**
+	 * push
+	 * @param receiver
+	 * @param messages
+	 */
   private void push(@NonNull String receiver, @NonNull List<Message> messages) {
     try {
       BotApiResponse apiResponse = lineMessagingClient.pushMessage(new PushMessage(receiver, messages)).get();
@@ -230,11 +291,20 @@ public class LineMessageController {
       throw new RuntimeException(e);
     }
   }
-
+  	/**
+	 * Handle Sticker
+	 * @param replyToken
+	 * @param content
+	 */
 	private void handleSticker(String replyToken, StickerMessageContent content) {
 		reply(replyToken, new StickerMessage(content.getPackageId(), content.getStickerId()));
 	}
-
+	/**
+	 * Handle Text Content
+	 * @param replyToken
+	 * @param event
+	 * @param content
+	 */
 
 	private void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
@@ -312,6 +382,13 @@ public class LineMessageController {
        		break;
         }
 	}
+	/**
+	 * FAQ_NO_USER_INFORMATION_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 
 
 
@@ -328,7 +405,13 @@ public class LineMessageController {
 			this.replyText(replyToken,reply);
 		}
 	}
-
+	/**
+	 * FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 	private void FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
@@ -339,7 +422,13 @@ public class LineMessageController {
 			listTourForBooking(replyToken, reply);
 		}
 	}
-
+	/**
+	 * FAQ_AFTER_CONFIRMATION_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 	private void FAQ_AFTER_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
@@ -360,6 +449,15 @@ public class LineMessageController {
 		 }
 	}
 	
+
+	/**
+	 * FILL_NAME_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
+
 	private void FILL_NAME_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		database.setUserState(userID,Constant.FILL_PHONE_NUM);
@@ -368,7 +466,15 @@ public class LineMessageController {
 		reply += Constant.INSTRUCTION_ENTER_PHONE_NUM;
 		log.info("Returns message {}: {}", replyToken, reply);
 		this.replyText(replyToken,reply);
-	}//tested
+
+	}
+	/**
+	 * FILL_PHONE_NUM_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 
 
 	private void FILL_PHONE_NUM_handler(String replyToken, String text, String userID, String reply)
@@ -380,7 +486,13 @@ public class LineMessageController {
 		log.info("Returns message {}: {}", replyToken, reply);
 		this.replyText(replyToken,reply);
 	}
-
+	/**
+	 * FILL_AGE_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 	private void FILL_AGE_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		text=text.replaceAll(" ","");
 		if(isNumeric(text) && Integer.parseInt(text)>=0) {
@@ -397,8 +509,13 @@ public class LineMessageController {
 		this.replyText(replyToken,reply);
 	}
 	}
-
-
+	/**
+	 * BOOKING_TOUR_ID_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 	private void BOOKING_TOUR_ID_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		text=text.replaceAll(" ","");
 		String result="";
@@ -458,7 +575,13 @@ public class LineMessageController {
 			}
 		}
 	}
-
+	/**
+	 * BOOKING_OFFERING_ID_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 	private void BOOKING_OFFERING_ID_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		text=text.replaceAll(" ","");
@@ -478,7 +601,13 @@ public class LineMessageController {
 			}
 		}
 	}
-
+	/**
+	 * BOOKING_ADULT_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 	private void BOOKING_ADULT_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 			text=text.replaceAll(" ","");
@@ -498,7 +627,13 @@ public class LineMessageController {
 
 		}
 	}
-
+	/**
+	 * BOOKING_CHILDREN_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 	private void BOOKING_CHILDREN_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
@@ -520,7 +655,13 @@ public class LineMessageController {
 		}
 	}
 
-
+	/**
+	 * BOOKING_TODDLER_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 	private void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 			text=text.replaceAll(" ","");
@@ -566,7 +707,13 @@ public class LineMessageController {
 
 		}
 	}
-
+	/**
+	 * BOOKING_CONFIRMATION_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 	private void BOOKING_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
@@ -589,7 +736,13 @@ public class LineMessageController {
                     Arrays.asList(new TextMessage(reply),confirmMessageBlock));
 		}
 	}
-
+	/**
+	 * BOOKING_PAYMENT_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 	private void BOOKING_PAYMENT_handler(String replyToken, String text, String userID, String reply) throws Exception {
 
 			if(text.toLowerCase().contains("y")||text.toLowerCase().contains("confirm")) {
@@ -605,7 +758,13 @@ public class LineMessageController {
 
 	}
 
-
+	/**
+	 * BOOKING_OR_REVIEW_handler
+	 * @param replyToken
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 */
 	private void BOOKING_OR_REVIEW_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(text.toLowerCase().contains("review")) {
@@ -621,7 +780,12 @@ public class LineMessageController {
 
 		   }
 	}
-
+	/**
+	 * Welcome Back
+	 * @param difference
+	 * @param user
+	 * @return result
+	 */
 	private String welcomeBack(long difference, User user){
 		String result = "";
 		if(difference > Constant.TIME_GAPPING){
@@ -634,7 +798,9 @@ public class LineMessageController {
 		}
 		return result;
 	}
-
+	/**
+	 * greeting
+	 */
 	private String greeting() {
 		Calendar now = Calendar.getInstance();
 		int hour = now.get(Calendar.HOUR_OF_DAY);
@@ -649,7 +815,14 @@ public class LineMessageController {
         		return Constant.AFTERNOON;
         }
 	}
-
+	/**
+	 * Check Quit
+	 * @param text
+	 * @param userID
+	 * @param reply
+	 * @param replyToken
+	 * @param choice
+	 */
 	private boolean checkQuit(String text, String userID, String reply, String replyToken, int choice) throws Exception{
 		if (text.equals("Q")){
 			String result = database.reviewBookingInformation(userID);
@@ -675,7 +848,10 @@ public class LineMessageController {
 		}
 	}
 
-
+	/**
+	 * Is Numeric
+	 * @param str
+	 */
 	public static boolean isNumeric(String str)
 		 {
 		   try
@@ -689,7 +865,12 @@ public class LineMessageController {
 		   return true;
 		 }
 
-
+	/**
+	 * Split Messages
+	 * @param longstring
+	 * @param splitter
+	 * @return messages
+	 */
 
 	private List<Message> splitMessages(String longstring,String splitter){
 		if(longstring!=null) {
@@ -718,6 +899,11 @@ public class LineMessageController {
 		}
 
 	}
+	/**
+	 * List Tour For Booking
+	 * @param replyToken
+	 * @param reply
+	 */
 	private void listTourForBooking(String replyToken, String reply) throws Exception {
 		List<Message> msgToReply=new ArrayList<Message>();
 		TextMessage heading = new TextMessage(Constant.INSTRUCTION_BOOKING);
@@ -758,8 +944,19 @@ public class LineMessageController {
 		log.info("Listed tours for booking{}", replyToken);
 		this.reply(replyToken,msgToReply);
 	}
+<<<<<<< HEAD
 
 	public void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
+=======
+	/**
+	 * Faq Search
+	 * @param replyToken
+	 * @param text
+	 * @param reply
+	 * @param userID
+	 */
+	private void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
+>>>>>>> upstream/develop
 		try {
 		String answer = faqDatabase.search(text, userID);
 		reply += answer;
@@ -782,11 +979,17 @@ public class LineMessageController {
 
 		}
 	}
-
+	/**
+	 * Create Uri
+	 * @param path
+	 */
 	static String createUri(String path) {
 		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
 	}
-
+	/**
+	 * system
+	 * @param args
+	 */
 	private void system(String... args) {
 		ProcessBuilder processBuilder = new ProcessBuilder(args);
 		try {
@@ -800,7 +1003,12 @@ public class LineMessageController {
 			Thread.currentThread().interrupt();
 		}
 	}
-
+	/**
+	 * Save Content
+	 * @param ext
+	 * @param responseBody
+	 * @return tempFile
+	 */
 	private static DownloadedContent saveContent(String ext, MessageContentResponse responseBody) {
 		log.info("Got content-type: {}", responseBody);
 
@@ -813,7 +1021,10 @@ public class LineMessageController {
 			throw new UncheckedIOException(e);
 		}
 	}
-
+	/**
+	 * Create Temp File
+	 * @param ext
+	 */
 	private static DownloadedContent createTempFile(String ext) {
 		String fileName = LocalDateTime.now().toString() + '-' + UUID.randomUUID().toString() + '.' + ext;
 		Path tempFile = KitchenSinkApplication.downloadedContentDir.resolve(fileName);
@@ -823,8 +1034,9 @@ public class LineMessageController {
 
 
 
-
-
+	/**
+	 * Constructor
+	 */
 	public LineMessageController() {
 		database = new SQLDatabaseEngine();
 		faqDatabase = new FaqDatabase();
@@ -835,7 +1047,12 @@ public class LineMessageController {
 	private FaqDatabase faqDatabase;
 	private String itscLOGIN;
 	
-
+	/**
+	 * Constructor. 
+	 * The annontation @Value is from the package lombok.Value
+	 * Basically what it does is to generate constructor and getter for the class below
+	 * See https://projectlombok.org/features/Value
+	 */
 
 	//The annontation @Value is from the package lombok.Value
 	//Basically what it does is to generate constructor and getter for the class below
@@ -845,18 +1062,30 @@ public class LineMessageController {
 		Path path;
 		String uri;
 	}
-
+	/**
+	 * @author Group 16
+	 * This class is Profile Getter
+	 */
 
 	//an inner class that gets the user profile and status message
 	class ProfileGetter implements BiConsumer<UserProfileResponse, Throwable> {
 		private LineMessageController ksc;
 		private String replyToken;
-
+		/**
+		 * Constructor
+		 * @param ksc
+		 * @param replyToken
+		 */
 		public ProfileGetter(LineMessageController ksc, String replyToken) {
 			this.ksc = ksc;
 			this.replyToken = replyToken;
 		}
 		@Override
+		/**
+		 * Accept
+		 * @param profile
+		 * @param throwable
+		 */
     	public void accept(UserProfileResponse profile, Throwable throwable) {
     		if (throwable != null) {
             	ksc.replyText(replyToken, throwable.getMessage());
