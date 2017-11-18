@@ -2,7 +2,6 @@ package com.example.bot.spring;
 
 
 import lombok.extern.slf4j.Slf4j;
-
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -55,97 +54,138 @@ import java.util.TimeZone;
 @Slf4j
 @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
-@SpringBootTest(classes = { UserTest.class,  SQLDatabaseEngine.class })
-public class BookingTest {
-	
+@SpringBootTest(classes = { TourTest.class })
+public class TourTest {
 	@Autowired
-	private SQLDatabaseEngine databaseEngine;
 
 	private static final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 	private static final java.util.Date now = calendar.getTime();
 	private static final java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
 
-	private static final int test_tour_id = 12;
-	private static final int test_tour_offering_id = 1;
-	private static final String test_user_id = "test_id";
-	private static final int test_state = 1;
+	private static final int test_tour_id = 10;
+	private static final String test_name = "test_name";
+	private static final String test_description = "hhh";
+	private static final int test_duration = 2;
 
 	private static boolean init = false;
 	private static boolean thrown = false;
-	private static boolean result = false;
+	private static String query_result = null;
+	private static boolean update_result = true;
+	
+				
+	private static Tour newtour = new Tour(test_tour_id, test_name, test_description, test_duration);	
 
-	@Before
-	public void setUp() {
-		if (!init) {
-			try {
-				init = true;
-				databaseEngine.createUser(test_user_id, time, test_state);
-			} catch (Exception e) {
-				log.info("Test User Exist!");
-			}
+	@Test 
+	public void testConstructor() throws Exception {
+		try {
+			Tour consTour = new Tour(test_tour_id, test_name, test_description, test_duration);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
 		}
-		thrown = false;
-		result = true;
+	
 	}
-
-	@After
-	public void check() {
-		assertFalse(thrown);
-		log.info("No Exception");
-		assertTrue(result);
-		log.info("Update Succeed");
+	
+	
+	
+	
+	@Test
+	public void testSetTourID() throws Exception {
+		try {
+			newtour.setTourID(test_tour_id);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	@Test
+	public void testSetTourName() throws Exception {
+		try {
+			newtour.setTourName(test_name);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
 	}
 
 	@Test
-	public void testBuffer() throws Exception {
-		//for testing this class Booking Buffer
+	public void testSetDescription() throws Exception {
 		try {
-			result = databaseEngine.setBufferTourID(test_user_id, test_tour_id);
+			newtour.setDescription(test_description);
 		} catch (Exception e) {
+			log.info(e.toString());
 			thrown = true;
 		}
-
-		if (thrown || !result) {
-				return;
-		}
-
+	
+	}
+	@Test
+	public void testSetDuration() throws Exception {
 		try {
-			result = (databaseEngine.getBufferTourID(test_user_id) != -1);
+			newtour.setDuration(test_duration);
 		} catch (Exception e) {
+			log.info(e.toString());
 			thrown = true;
 		}
-
-		if (thrown || !result) {
-				return;
-		}
-
-		try {
-			result = databaseEngine.deleteBufferBookingEntry(test_user_id);
-		} catch (Exception e) {
-			thrown = true;
-		}
+	
 	}
 
+	
 	@Test
-	public void testSetBookingTourOfferingID() throws Exception {
-		//for testing this class Booking setBookingTourOfferingID
+	public void testGetTourID() throws Exception {
+		//for testing User class setUserAge function
 		try {
-			result =databaseEngine.setBookingTourOfferingID(test_user_id, test_tour_offering_id);
+			int id =newtour.getTourID();
+			assertTrue(id==test_tour_id);
 		} catch (Exception e) {
+			log.info(e.toString());
 			thrown = true;
 		}
 	}
 	
 	@Test
-	public void testAddToUnknowndatabase() throws Exception {
-		//for testing AddToUnknowndatabase()
+	public void testGetTourName() throws Exception {
+		//for testing User class setUserAge function
 		try {
-			result =databaseEngine.addToUnknownDatatabse("Xuxiaofeng");
-			
+			String TourName =newtour.getTourName();
+			assertTrue(TourName.equals(test_name));
 		} catch (Exception e) {
+			log.info(e.toString());
 			thrown = true;
 		}
 	}
+	
+	@Test
+	public void testGetDescription() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			String description =newtour.getDescription();
+			assertTrue(description.equals(test_description));
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	
+	@Test
+	public void testGetDuration() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			int duration =newtour.getDuration();
+			assertTrue(duration==test_duration);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	
+	
+	
+	
 	
 
 }

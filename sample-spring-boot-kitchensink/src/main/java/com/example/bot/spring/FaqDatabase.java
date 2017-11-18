@@ -13,9 +13,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.*;
 
+/**
+ * @author Group 16 This class is a container for Faq database
+ */
 @Slf4j
 public class FaqDatabase extends SQLDatabaseEngine {
 
+	/**
+	 * To get reply image
+	 * 
+	 * @param answer
+	 * @return image
+	 */
 	public String replyImage(String answer) {
 		// String pattern = "(\\d+)[.](.*[?])[\\n][>](.*)[\\n]";
 		String pattern = "see the picture (.*)[)]";
@@ -27,13 +36,21 @@ public class FaqDatabase extends SQLDatabaseEngine {
 			return null;
 	}
 
-	private List<faqEntry> loadQuestion() throws Exception {
-		// return loadQuestionStatic();
+
+	/**
+	 * To load question
+	 */
+	public List<faqEntry> loadQuestion() throws Exception{
+		//return loadQuestionStatic();
 		return loadQuestionSQL();
 
 	}
 
-	public List<faqEntry> loadQuestionSQL() throws Exception {
+	/**
+	 * To load question from database
+	 * @return listOfEntry
+	 */
+	public List<faqEntry> loadQuestionSQL() throws Exception{
 		try {
 			Connection connection = super.getConnection();
 			List<faqEntry> listOfEntry = new ArrayList<faqEntry>();
@@ -65,6 +82,12 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		// throw new Exception("EMPTY DATABASE");
 	}
 
+	/**
+	 * Update hit number
+	 * 
+	 * @param qid
+	 * @param hit
+	 */
 	public boolean updateHit(int qid, int hit) throws Exception {
 		try {
 			Connection connection = super.getConnection();
@@ -84,28 +107,12 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		}
 	}
 
-	/*
-	 * private List<faqEntry> loadQuestionStatic() throws Exception{
+	/**
+	 * Search from FAQ list
 	 * 
-	 * List<faqEntry> listOfEntry = new ArrayList<faqEntry>();
-	 * 
-	 * //load from static file and process by re BufferedReader br = null;
-	 * InputStreamReader isr = null; String para = null; try { isr = new
-	 * InputStreamReader( this.getClass().getResourceAsStream(FILENAME)); br = new
-	 * BufferedReader(isr); for (String line; (line = br.readLine()) != null; para
-	 * += (line+"\n")); } catch (IOException e) {
-	 * log.info("IOException while reading file: {}", e.toString()); } finally { try
-	 * { if (br != null) br.close(); if (isr != null) isr.close(); } catch
-	 * (IOException ex) { log.info("IOException while closing file: {}",
-	 * ex.toString()); } } //loaded text from static file if (para != null) { String
-	 * pattern = "(\\d+)[.](.*[?])[\\n][>](.*)[\\n]"; Pattern r =
-	 * Pattern.compile(pattern); Matcher m = r.matcher(para); while(m.find()) {
-	 * faqEntry entry=new
-	 * faqEntry(Integer.parseInt(m.group(1)),m.group(2),m.group(3),0);
-	 * listOfEntry.add(entry); } return listOfEntry; } throw new
-	 * Exception("Cannot load faq from database");
-	 * 
-	 * }
+	 * @param text
+	 * @param userID
+	 * @return result
 	 */
 
 	public String search(String text, String userID) throws Exception {
@@ -304,6 +311,12 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		}
 	}
 
+	/**
+	 * parse description
+	 * 
+	 * @param description
+	 * @return parseDescription
+	 */
 	public String parse(String description) {
 		String parseDescription = "";
 		for (int i = 0; i < description.length(); i++) {
@@ -323,6 +336,9 @@ public class FaqDatabase extends SQLDatabaseEngine {
 
 }
 
+/**
+ * @author Group 16 This class is a container for Faq Entry
+ */
 @Slf4j
 class faqEntry {
 	faqEntry(int questionID, String Question, String Answer, int hit) {

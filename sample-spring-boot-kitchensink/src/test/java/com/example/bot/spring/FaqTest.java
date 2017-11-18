@@ -239,4 +239,5 @@ public class FaqTest {
 		assertThat(result).isEqualTo(null);
 
 	}
+
 }

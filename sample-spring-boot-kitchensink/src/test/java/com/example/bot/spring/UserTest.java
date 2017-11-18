@@ -56,6 +56,7 @@ import java.util.TimeZone;
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
 @SpringBootTest(classes = { UserTest.class,  SQLDatabaseEngine.class })
 public class UserTest {
+	
 	@Autowired
 	private SQLDatabaseEngine databaseEngine;
 
@@ -73,6 +74,9 @@ public class UserTest {
 	private static boolean thrown = false;
 	private static String query_result = null;
 	private static boolean update_result = true;
+	
+	private static User newuser = new User(test_user_id, test_name, test_phoneno, test_age,test_state,time );	
+				
 
 	// public UserTest() {
 	// 	try {
@@ -171,5 +175,203 @@ public class UserTest {
 			thrown = true;
 		}
 	}
+//=======================for user calss====================
+	@Test 
+	public void testConstructor() throws Exception {
+		try {
+			User consUser = new User(test_user_id, test_name, test_phoneno, test_age,test_state,time );	
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	
+	@Test
+	public void testSetTime() throws Exception {
+		try {
+			newuser.setTime(time);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	
+	@Test
+	public void testSetName() throws Exception {
+		try {
+			newuser.setName(test_name);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	@Test
+	public void testSetState() throws Exception {
+		try {
+			newuser.setState(test_state);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+
+	@Test
+	public void testSetAge() throws Exception {
+		try {
+			newuser.setAge(test_age);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+
+	
+
+	@Test
+	public void testSetID() throws Exception {
+		try {
+			newuser.setID(test_user_id);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	@Test
+	public void testSetPhoneNumber() throws Exception {
+		try {
+			newuser.setPhoneNumber(test_phoneno);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	@Test
+	public void testAddTripHistory() throws Exception {
+		try {
+			newuser.addTripHistory("Shenzhen City");
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	@Test
+	public void testSetUser() throws Exception {
+		try {
+			
+			newuser.setUser(test_user_id,time,test_state);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	
+	
+	
+	@Test
+	public void testGetUserName() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			String name =newuser.getUserName();
+			assertTrue(name.equals(test_name));
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	@Test
+	public void testGetPhoneNumber() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			String phoneNumber =newuser.getPhoneNumber();
+			assertTrue(phoneNumber.equals(test_phoneno));
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	@Test
+	public void testGetUserID() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			String ID =newuser.getUserID();
+			assertTrue(ID.equals(test_user_id));
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	
+	@Test
+	public void testGetAge() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			String age =newuser.getAge();
+			assertTrue(age.equals(test_age));
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	
+	@Test
+	public void testGetState() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			int state =newuser.getState();
+			assertTrue(state==test_state);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	@Test
+	public void testGetTime() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			java.sql.Timestamp thisTime =newuser.getTime();
+			assertTrue(thisTime==time);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	
+	@Test
+	public void testOutputTripHistory() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			newuser.outputTripHistory();
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	
+	
+	
+	
+	
 
 }
