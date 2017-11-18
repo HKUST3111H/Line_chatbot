@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+
+import javax.xml.ws.Action;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import com.linecorp.bot.model.profile.UserProfileResponse;
@@ -445,6 +448,8 @@ public class LineMessageController {
 
 		 }
 	}
+	
+
 	/**
 	 * FILL_NAME_handler
 	 * @param replyToken
@@ -452,6 +457,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
+
 	private void FILL_NAME_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		database.setUserState(userID,Constant.FILL_PHONE_NUM);
@@ -460,6 +466,7 @@ public class LineMessageController {
 		reply += Constant.INSTRUCTION_ENTER_PHONE_NUM;
 		log.info("Returns message {}: {}", replyToken, reply);
 		this.replyText(replyToken,reply);
+
 	}
 	/**
 	 * FILL_PHONE_NUM_handler
@@ -468,6 +475,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
+
 
 	private void FILL_PHONE_NUM_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
@@ -512,6 +520,20 @@ public class LineMessageController {
 		text=text.replaceAll(" ","");
 		String result="";
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_NOTHING)) {
+			//here		
+			List<Tour> listOfTours = database.getTours();
+			List<Message> messages = new ArrayList<Message>();
+			String description = " ";
+			for (Tour tour : listOfTours) {
+				if(tour.getTourID()==Integer.parseInt(text)) {
+					description = tour.getDescription();	
+					description.replace("*", "\n");
+				}
+			}
+
+			messages.add(new TextMessage(description));
+			//end
+
 			if(isNumeric(text) && database.tourFound(Integer.parseInt(text))) {
 				
 				List<TourOffering> listOfTourOfferings=new ArrayList<TourOffering>();
@@ -529,17 +551,21 @@ public class LineMessageController {
         			this.replyText(replyToken,reply);
     			}
     			else {
+
+
     				for (TourOffering tourOffering:listOfTourOfferings) {
 						result += (tourOffering.getOfferingID()+"\nData and time: "+ tourOffering.getDate()+"\nHotel: "+tourOffering.getHotel()+"\nMax people: "+tourOffering.getMaxCapacity()+
 								"\nQuota Left: "+tourOffering.getQuota()+"\nFull price for adult: HKD"+tourOffering.getPrice()+"\nDuration: "+tourOffering.getDuration()+" Days\n\n");
 					}
+
     				database.setUserState(userID,Constant.BOOKING_OFFERING_ID);
     				database.setBufferTourID(userID,Integer.parseInt(text));
     				reply += Constant.INFORMATION_TOUR_OFFERING;
     				reply += result;
     				reply += Constant.INSTRTUCTION_ENTER_TOUR_OFFERING_ID;
+    				messages.add(new TextMessage(reply));
         			log.info("Returns instruction message {}: {}", replyToken, reply);
-        			this.replyText(replyToken,reply);
+        			this.reply(replyToken,messages);
     			}
 			}
 			else {
@@ -641,12 +667,25 @@ public class LineMessageController {
 			text=text.replaceAll(" ","");
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
 					database.setBookingToddlerNumber(userID,Integer.parseInt(text));
+
 					int quota=database.checkQuota(userID);
 					if(quota>=0) {
+						System.out.print("Quata valid????");
 						database.setUserState(userID,Constant.BOOKING_CONFIRMATION);
-						reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
-						log.info("Returns instruction message {}: {}", replyToken, reply);
-		    				this.replyText(replyToken,reply);
+						//reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
+			            ButtonsTemplate buttonTemplate = new ButtonsTemplate(
+		            			null,
+		            			"Special request",
+		                    "Press \"No\" if you don't have any request.",
+		                    Arrays.asList(new MessageAction("No", "No!"))
+			            		);
+		           
+		            TemplateMessage ButtonMessageBlock = new TemplateMessage("Sepcial requests?",buttonTemplate);
+	
+					log.info("Returns instruction message {}: {}", replyToken, reply);
+					this.reply(replyToken,
+		                    Arrays.asList(new TextMessage(Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST),ButtonMessageBlock));
+
 					}
 					else {
 						quota=database.checkQuota(userID);
@@ -657,13 +696,14 @@ public class LineMessageController {
 						log.info("Returns instruction message {}: {}", replyToken, reply);
 	    					this.replyText(replyToken,reply);
 	    			}
+
 				}
 				else {
 					reply += Constant.ERROR_REENTER_TODDLER_NUMBER;
-    				log.info("Returns instruction message {}: {}", replyToken, reply);
-    				this.replyText(replyToken,reply);
+    					log.info("Returns instruction message {}: {}", replyToken, reply);
+    					this.replyText(replyToken,reply);
 				}
-
+			//end
 
 		}
 	}
@@ -904,6 +944,10 @@ public class LineMessageController {
 		log.info("Listed tours for booking{}", replyToken);
 		this.reply(replyToken,msgToReply);
 	}
+<<<<<<< HEAD
+
+	public void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
+=======
 	/**
 	 * Faq Search
 	 * @param replyToken
@@ -912,6 +956,7 @@ public class LineMessageController {
 	 * @param userID
 	 */
 	private void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
+>>>>>>> upstream/develop
 		try {
 		String answer = faqDatabase.search(text, userID);
 		reply += answer;
