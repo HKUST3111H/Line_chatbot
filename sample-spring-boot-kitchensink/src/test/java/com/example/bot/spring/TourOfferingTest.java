@@ -108,7 +108,7 @@ public class TourOfferingTest {
 	public void testDisplayTourOffering() throws Exception {
 		//for testing this class TourOffering displayTourOffering
 		try {
-			if (!databaseEngine.displayTourOffering(test_tour_id).isEmpty()) {
+			if (databaseEngine.displayTourOffering(test_tour_id).isEmpty()) {
 				result = false;
 			}
 		} catch (Exception e) {

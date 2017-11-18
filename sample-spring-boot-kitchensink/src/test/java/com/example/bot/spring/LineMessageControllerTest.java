@@ -55,6 +55,29 @@ public class LineMessageControllerTest {
                 new BotApiResponse("ok", Collections.emptyList())
         ));
 
+        underTest.FAQ_NO_USER_INFORMATION_handler(replyToken, testMsg, userId, "");
+
+        // confirm replyMessage is called with following parameter
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+    }
+    
+    @Test
+    public void test_FAQ_NO_USER_INFORMATION_handler_booking() throws Exception {
+
+        String testMsg = "booking";
+        String userId = "userId";
+        String replyToken = "replyToken";
+        String expectReply = Constant.INSTRUCTION_FILL_INFORMATION + Constant.INSTRUCTION_ENTER_NAME;
+
+        // mock line bot api client response
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));
+
         when(database.setUserState(userId, Constant.FILL_NAME)).thenReturn(true);
 
         underTest.FAQ_NO_USER_INFORMATION_handler(replyToken, testMsg, userId, "");

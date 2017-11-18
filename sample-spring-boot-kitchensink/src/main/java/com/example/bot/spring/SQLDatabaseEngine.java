@@ -369,12 +369,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 
-	List<TourOffering> displayTourOffering(int tourID) throws Exception {
+	List<TourOffering> displayTourOffering(int tourID) {
 		//Write your code here
 		List<TourOffering> listOfTourOfferings = new ArrayList<TourOffering>();
-		Connection connection = getConnection();
 		String result="";
 		try {
+			Connection connection = getConnection();
 			PreparedStatement stmt = connection.prepareStatement(
 					"SELECT line_touroffering.id,line_touroffering.offer_date,line_touroffering.hotel,line_touroffering.capacity_max, "
 					+ "line_touroffering.price, line_tour.duration, "
@@ -414,11 +414,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} finally {
 
 		}
-		if (!listOfTourOfferings.isEmpty())
-			return listOfTourOfferings;
-		if (listOfTourOfferings.isEmpty())
-			return listOfTourOfferings;
-		throw new Exception("NOT FOUND");
+		return listOfTourOfferings;
 	}
 
 	boolean setBufferTourID(String userID, int tourID) throws Exception {
