@@ -204,11 +204,14 @@ public class LineMessageController {
 	@EventMapping
 	public void handlePostbackEvent(PostbackEvent event)  throws Exception  {
 		String replyToken = event.getReplyToken();
-		/*String reply="";
+		String reply="";
 		String text=event.getPostbackContent().getData();
+        String userID = event.getSource().getUserId();
+        User user = database.getUserInformation(userID);
 		if (text.contains(Constant.TEXT_NEW_BOOKING)){
+			database.setUserState(userID,Constant.BOOKING_TOUR_ID);
 			listTourForBooking(replyToken, reply);
-		}*/
+		}
 		this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
 	}
 	/**
@@ -444,7 +447,7 @@ public class LineMessageController {
 		    ConfirmTemplate confirmTemplate = new ConfirmTemplate(
 		    		Constant.QUESTION_REVIEW_OR_BOOKING,
 		            new MessageAction("Review", "Review"),
-		            new MessageAction(Constant.TEXT_NEW_BOOKING, Constant.TEXT_NEW_BOOKING)
+		            new PostbackAction(Constant.TEXT_NEW_BOOKING, Constant.TEXT_NEW_BOOKING)
 		    );
 		    TemplateMessage whichBook = new TemplateMessage("Review Booking/New Booking", confirmTemplate);
 
