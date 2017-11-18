@@ -13,10 +13,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.*;
 
+/**
+ * @author Group 16
+ * This class is a container for Faq database
+ */
 @Slf4j
 public class FaqDatabase extends SQLDatabaseEngine {
 	
-	
+	/**
+	 * To get reply image
+	 * @param answer
+	 * @return image
+	 */
 	public String replyImage(String answer) {
         //String pattern = "(\\d+)[.](.*[?])[\\n][>](.*)[\\n]";
         String pattern = "see the picture (.*)[)]";
@@ -27,13 +35,18 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	    }
 	    else return null;
 	}
-	
+	/**
+	 * To load question
+	 */
 	private List<faqEntry> loadQuestion() throws Exception{
 		//return loadQuestionStatic();
 		return loadQuestionSQL();
 		
 	}
-	
+	/**
+	 * To load question from database
+	 * @return listOfEntry
+	 */
 	private List<faqEntry> loadQuestionSQL() throws Exception{
 		Connection connection = super.getConnection();
 		List<faqEntry> listOfEntry = new ArrayList<faqEntry>();
@@ -60,6 +73,11 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		throw new Exception("EMPTY DATABASE");
 	}
 	
+	/**
+	 * Update hit number
+	 * @param qid
+	 * @param hit
+	 */
 	private boolean updateHit(int qid, int hit) throws Exception{
 		Connection connection = super.getConnection();
 		int result=0;
@@ -124,7 +142,12 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	      
 	      
 		
-
+	/**
+	 * Search from FAQ list
+	 * @param text
+	 * @param userID
+	 * @return result
+	 */
 	
 	public String search(String text, String userID)throws Exception{
 		
@@ -315,13 +338,15 @@ public class FaqDatabase extends SQLDatabaseEngine {
 				
 			}
 		}
-
-		
 		if (result != null)
 			return result;
 		throw new Exception("NOT FOUND");
 	}
-	
+	/**
+	 * parse description
+	 * @param description
+	 * @return parseDescription
+	 */
 	private String parse(String description) {
 		String parseDescription = "";
 		for(int i = 0; i<description.length();i++ ) {
@@ -343,7 +368,10 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	private String FILENAME = "/static/faq.txt";
 	
 }
-
+/**
+ * @author Group 16
+ * This class is a container for Faq Entry
+ */
 @Slf4j
 class faqEntry{
 	faqEntry(int questionID, String Question, String Answer, int hit){
