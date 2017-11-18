@@ -3,12 +3,16 @@ package com.example.bot.spring;
 import lombok.extern.slf4j.Slf4j;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.net.URISyntaxException;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -340,6 +344,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	}
 	
 	
+
 	boolean tourFound(int tourID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();
@@ -364,22 +369,29 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 
-	String displayTourOffering(int tourID) throws Exception {
+	List<TourOffering> displayTourOffering(int tourID) throws Exception {
 		//Write your code here
+		List<TourOffering> listOfTourOfferings = new ArrayList<TourOffering>();
 		Connection connection = getConnection();
 		String result="";
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
 					"SELECT line_touroffering.id,line_touroffering.offer_date,line_touroffering.hotel,line_touroffering.capacity_max, "
-					+ "line_touroffering.price, line_tour.duration "
-					+ "FROM line_touroffering, line_tour WHERE line_touroffering.tour_id = ? AND line_touroffering.state < 2 AND "
-					+ "line_touroffering.tour_id=line_tour.id AND line_touroffering.id IN "
-					+ "(SELECT id FROM line_touroffering WHERE tour_id = ? EXCEPT "
-					+ "SELECT line_touroffering.id FROM line_touroffering, line_booking "
-					+ "WHERE line_touroffering.tour_id = ? AND line_touroffering.id=line_booking.\"tourOffering_id\" "
-					+ "AND line_booking.state=2 "
+					+ "line_touroffering.price, line_tour.duration, "
+					+ "SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) "
+					+ "FROM line_tour, line_touroffering LEFT JOIN line_booking ON line_touroffering.id=line_booking.\"tourOffering_id\" "
+					+ "AND line_booking.state>0 "
+					+ "WHERE line_touroffering.tour_id = ? "
+					+ "AND line_touroffering.state < 2 AND line_touroffering.tour_id=line_tour.id "
+					+ "AND line_touroffering.id IN "
+					+ "(SELECT id FROM line_touroffering WHERE tour_id = ? EXCEPT SELECT line_touroffering.id "
+					+ "FROM line_touroffering, line_booking WHERE line_touroffering.tour_id = ? "
+					+ "AND line_touroffering.id=line_booking.\"tourOffering_id\" AND line_booking.state>0 "
 					+ "GROUP BY line_touroffering.id "
-					+ "HAVING COUNT(*) >= line_touroffering.capacity_max);");
+					+ "HAVING SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) >= "
+					+ "line_touroffering.capacity_max) "
+					+ "GROUP BY line_touroffering.id,line_touroffering.offer_date,line_touroffering.hotel, "
+					+ "line_touroffering.capacity_max,  line_touroffering.price, line_tour.duration;");
 			stmt.setInt(1, tourID);
 			stmt.setInt(2, tourID);
 			stmt.setInt(3, tourID);
@@ -390,8 +402,9 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);
 				double price=rs.getDouble(5);
 				int price_int = (int)price;
-				result += (rs.getString(1)+"\nData and time: "+ time_change +"\nHotel: "+rs.getString(3)+"\nMax people: "+rs.getInt(4)+
-						"\nFull price for adult: HKD"+price_int+"\nDuration: "+rs.getInt(6)+" Days\n\n");
+				int quota = -rs.getInt(7)+rs.getInt(4);
+				TourOffering tourOffering=new TourOffering(rs.getInt(1),time_change,rs.getString(3),rs.getInt(4),price_int,rs.getInt(6),quota);
+				listOfTourOfferings.add(tourOffering);
 			}
 			rs.close();
 			stmt.close();
@@ -401,10 +414,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} finally {
 
 		}
-		if (result == "")
-			result ="null";
-		if (result != "")
-			return result;
+		if (!listOfTourOfferings.isEmpty())
+			return listOfTourOfferings;
+		if (listOfTourOfferings.isEmpty())
+			return listOfTourOfferings;
 		throw new Exception("NOT FOUND");
 	}
 
@@ -507,12 +520,15 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		try {
 			PreparedStatement stmt = connection.prepareStatement(
 					"SELECT id,offer_date,hotel,capacity_max FROM line_touroffering WHERE tour_id = ? AND state < 2 AND id = ? AND id IN "
-					+ "(SELECT id FROM line_touroffering WHERE tour_id = ? EXCEPT "
-					+ "SELECT line_touroffering.id FROM line_touroffering, line_booking "
-					+ "WHERE line_touroffering.tour_id = ? AND line_touroffering.id=line_booking.\"tourOffering_id\" "
-					+ "AND line_booking.state=2 "
+					+ "(SELECT id FROM line_touroffering WHERE tour_id = ? "
+					+ "EXCEPT SELECT line_touroffering.id "
+					+ "FROM line_touroffering, line_booking "
+					+ "WHERE line_touroffering.tour_id = ? "
+					+ "AND line_touroffering.id=line_booking.\"tourOffering_id\" "
+					+ "AND line_booking.state>0 "
 					+ "GROUP BY line_touroffering.id "
-					+ "HAVING COUNT(*) >= line_touroffering.capacity_max);");
+					+ "HAVING SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) >= "
+					+ "line_touroffering.capacity_max);");
 			stmt.setInt(1, tourID);
 			stmt.setInt(2, tourOfferingID);
 			stmt.setInt(3, tourID);
@@ -534,6 +550,68 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 
+	int checkQuota(String userID)throws Exception {
+		//Write your code here
+		Connection connection = getConnection();
+		int result=-1;
+		int max=0;
+		int sum=0;
+		int adult=0;
+		int child=0;
+		int toddler=0;
+		try {
+			PreparedStatement stmt = connection.prepareStatement(
+					"SELECT SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num), line_touroffering.capacity_max "
+					+ "FROM line_tour,line_touroffering LEFT JOIN line_booking ON line_touroffering.id=line_booking.\"tourOffering_id\" "  
+					+ "AND line_booking.state>0 "
+					+ "WHERE line_touroffering.state < 2 "
+					+ "AND line_touroffering.tour_id=line_tour.id "
+					+ "AND line_touroffering.id IN "
+					+ "(SELECT line_booking.\"tourOffering_id\" FROM line_booking WHERE user_id = ? AND state = 0) "
+					+ "GROUP BY line_touroffering.id,line_touroffering.capacity_max;");
+			stmt.setString(1, userID);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				sum=rs.getInt(1);
+				max=rs.getInt(2);
+			}
+			rs.close();
+			stmt.close();
+			
+			PreparedStatement stmt2 = connection.prepareStatement(
+					"SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num "
+					+ "FROM line_booking WHERE user_id = ? AND state = 0;");
+			stmt2.setString(1, userID);
+			ResultSet rs2 = stmt2.executeQuery();
+			if (rs2.next()) {
+				adult=rs2.getInt(1);
+				child=rs2.getInt(2);
+				toddler=rs2.getInt(3);
+			}
+			rs2.close();
+			stmt2.close();
+			result=max-sum-adult-child-toddler;
+			if (result<0) {
+				PreparedStatement stmt3 = connection.prepareStatement("UPDATE line_booking SET adult_num = ?, child_num = ?, toddler_num = ? "
+						+ "WHERE user_id = ? AND state = 0;");
+				stmt3.setInt(1, 0);
+				stmt3.setInt(2, 0);
+				stmt3.setInt(3, 0);
+				stmt3.setString(4, userID);
+				stmt3.executeUpdate();
+				stmt3.close();
+			}
+			connection.close();
+		} catch (Exception e) {
+			log.info(e.toString());
+		} finally {
+
+		}
+		if (1==1)
+			return result;
+		throw new Exception("NOT FOUND");
+	}
+	
 	boolean setBookingTourOfferingID(String userID, int tourOfferingID) throws Exception {
 		//Write your code here
 		Connection connection = getConnection();

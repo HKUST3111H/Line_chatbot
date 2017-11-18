@@ -16,6 +16,7 @@
 
 package com.example.bot.spring;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.io.OutputStream;
@@ -400,6 +401,7 @@ public class LineMessageController {
 
 	private void BOOKING_TOUR_ID_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		text=text.replaceAll(" ","");
+		String result="";
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_NOTHING)) {
 			//here		
 			List<Tour> listOfTours = database.getTours();
@@ -416,13 +418,28 @@ public class LineMessageController {
 			//end
 
 			if(isNumeric(text) && database.tourFound(Integer.parseInt(text))) {
- 			String result = database.displayTourOffering(Integer.parseInt(text));
-    			if(result.equals("null")) {
+				
+				List<TourOffering> listOfTourOfferings=new ArrayList<TourOffering>();
+				try {
+					listOfTourOfferings =database.displayTourOffering(Integer.parseInt(text));
+					}
+					catch(Exception e) {
+						reply += Constant.ERROR_REENTER_TOUR_ID;
+		    			log.info("Returns instruction message {}: {}", replyToken, reply);
+		    			this.replyText(replyToken,reply);
+					}
+    			if(listOfTourOfferings.isEmpty()) {
     				reply += Constant.INFORMATION_NO_TOUR_OFFERING;
     				log.info("Returns instruction message {}: {}", replyToken, reply);
         			this.replyText(replyToken,reply);
     			}
     			else {
+
+
+    				for (TourOffering tourOffering:listOfTourOfferings) {
+						result += (tourOffering.getOfferingID()+"\nData and time: "+ tourOffering.getDate()+"\nHotel: "+tourOffering.getHotel()+"\nMax people: "+tourOffering.getMaxCapacity()+
+								"\nQuota Left: "+tourOffering.getQuota()+"\nFull price for adult: HKD"+tourOffering.getPrice()+"\nDuration: "+tourOffering.getDuration()+" Days\n\n");
+					}
 
     				database.setUserState(userID,Constant.BOOKING_OFFERING_ID);
     				database.setBufferTourID(userID,Integer.parseInt(text));
@@ -507,25 +524,36 @@ public class LineMessageController {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 			text=text.replaceAll(" ","");
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
-					database.setUserState(userID,Constant.BOOKING_CONFIRMATION);
 					database.setBookingToddlerNumber(userID,Integer.parseInt(text));
-					reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
-					//add special request button
-					//List<Action> actions = new ArrayList<Action>();
-					//actions.add(new MessageAction("No", "No!"));
-		            ButtonsTemplate buttonTemplate = new ButtonsTemplate(
+
+					int quota=database.checkQuota(userID);
+					if(quota>=0) {
+						database.setUserState(userID,Constant.BOOKING_CONFIRMATION);
+						reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
+			            ButtonsTemplate buttonTemplate = new ButtonsTemplate(
 		            			null,
 		            			"special request",
 		                    "Press \"No\" if you don't have any request, otherwise, type in your request. ",
 		                    Arrays.asList(new MessageAction("No", "No!"))
-		            );
+			            		);
 		           
 		            TemplateMessage ButtonMessageBlock = new TemplateMessage("Sepcial requests?",buttonTemplate);
 	
 					log.info("Returns instruction message {}: {}", replyToken, reply);
 					this.reply(replyToken,
 		                    Arrays.asList(new TextMessage(reply),ButtonMessageBlock));
-	    				
+
+					}
+					else {
+						quota=database.checkQuota(userID);
+						database.setUserState(userID,Constant.BOOKING_ADULT);
+						reply += Constant.QUOTA_FULL_1;
+						reply += quota;
+						reply += Constant.QUOTA_FULL_2;
+						log.info("Returns instruction message {}: {}", replyToken, reply);
+	    					this.replyText(replyToken,reply);
+	    			}
+
 				}
 				else {
 					reply += Constant.ERROR_REENTER_TODDLER_NUMBER;
@@ -688,14 +716,13 @@ public class LineMessageController {
 		}
 
 	}
-
 	private void listTourForBooking(String replyToken, String reply) throws Exception {
 		List<Message> msgToReply=new ArrayList<Message>();
 		TextMessage heading = new TextMessage(Constant.INSTRUCTION_BOOKING);
 		msgToReply.add(heading);
 		
 		List<Tour> listOfTours=new ArrayList<Tour>();
-		String imageUrl = null;
+		
 		try {
 		listOfTours =database.getTours();
 		}
@@ -708,6 +735,8 @@ public class LineMessageController {
 		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
 		int count=0;
 		for (Tour tour:listOfTours) {
+			String imagePath=" ";
+			String imageUrl = createUri(imagePath);
 			String trancatedDescription=tour.getDescription();
 			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 60-2)+"..";
 			CarouselColumn item=new CarouselColumn(imageUrl, tour.getTourName(), trancatedDescription, Arrays.asList(
@@ -715,6 +744,7 @@ public class LineMessageController {
               ));
 			carousel.add(item);
 			count++;
+			//every 4 items one carousel 
 			if (count%4==0 || count==listOfTours.size()) {
 				CarouselTemplate carouselTemplate = new CarouselTemplate(carousel);
 				TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);
