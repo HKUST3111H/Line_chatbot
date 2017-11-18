@@ -458,7 +458,7 @@ public class LineMessageController {
 	 * @param reply
 	 */
 
-	private void FILL_NAME_handler(String replyToken, String text, String userID, String reply)
+	public void FILL_NAME_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		database.setUserState(userID,Constant.FILL_PHONE_NUM);
 		// store the name info
@@ -477,7 +477,7 @@ public class LineMessageController {
 	 */
 
 
-	private void FILL_PHONE_NUM_handler(String replyToken, String text, String userID, String reply)
+	public void FILL_PHONE_NUM_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		database.setUserState(userID,Constant.FILL_AGE);
 		// store phone number
@@ -493,7 +493,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void FILL_AGE_handler(String replyToken, String text, String userID, String reply) throws Exception {
+	public void FILL_AGE_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		text=text.replaceAll(" ","");
 		if(isNumeric(text) && Integer.parseInt(text)>=0) {
     		database.setUserAge(userID,text);//extract number preferred here
@@ -516,7 +516,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void BOOKING_TOUR_ID_handler(String replyToken, String text, String userID, String reply) throws Exception {
+	public void BOOKING_TOUR_ID_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		text=text.replaceAll(" ","");
 		String result="";
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_NOTHING)) {
@@ -582,7 +582,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void BOOKING_OFFERING_ID_handler(String replyToken, String text, String userID, String reply)
+	public void BOOKING_OFFERING_ID_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		text=text.replaceAll(" ","");
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_BUFFER)) {
@@ -608,7 +608,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void BOOKING_ADULT_handler(String replyToken, String text, String userID, String reply) throws Exception {
+	public void BOOKING_ADULT_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 			text=text.replaceAll(" ","");
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
@@ -634,7 +634,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void BOOKING_CHILDREN_handler(String replyToken, String text, String userID, String reply)
+	public void BOOKING_CHILDREN_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 			text=text.replaceAll(" ","");
@@ -952,7 +952,7 @@ public class LineMessageController {
 	 * @param reply
 	 * @param userID
 	 */
-	private void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
+	public void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
 		try {
 		String answer = faqDatabase.search(text, userID);
 		reply += answer;

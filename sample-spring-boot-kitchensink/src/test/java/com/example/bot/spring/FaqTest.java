@@ -101,4 +101,5 @@ public class FaqTest {
 											+"Customer shall send their pay-in slip to us by email or LINE.");
 
 	}
+
 }

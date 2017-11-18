@@ -57,6 +57,7 @@ import java.util.TimeZone;
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
 @SpringBootTest(classes = { UserTest.class,  SQLDatabaseEngine.class })
 public class BookingTest {
+	
 	@Autowired
 	private SQLDatabaseEngine databaseEngine;
 
