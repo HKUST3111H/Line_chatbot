@@ -103,7 +103,7 @@ public class LineMessageController {
 	private LineMessagingClient lineMessagingClient;
 	/**
 	 * Handle Text Message Event
-	 * @param TextMessageContent
+	 * @param event
 	 */
 	@EventMapping
 	public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
@@ -115,7 +115,7 @@ public class LineMessageController {
 	}
 	/**
 	 * Handle Sticker Message Event
-	 * @param StickerMessageContent
+	 * @param event
 	 */
 	@EventMapping
 	public void handleStickerMessageEvent(MessageEvent<StickerMessageContent> event) {
@@ -123,7 +123,7 @@ public class LineMessageController {
 	}
 	/**
 	 * Handle Location Event
-	 * @param LocationMessageContent
+	 * @param event
 	 */
 	@EventMapping
 	public void handleLocationMessageEvent(MessageEvent<LocationMessageContent> event) {
@@ -133,7 +133,7 @@ public class LineMessageController {
 	}
 	/**
 	 * Handle Image Event
-	 * @param ImageMessageContent
+	 * @param event
 	 */
 	@EventMapping
 	public void handleImageMessageEvent(MessageEvent<ImageMessageContent> event) throws IOException {
@@ -152,7 +152,7 @@ public class LineMessageController {
 	}
 	/**
 	 * Handle Audio Event
-	 * @param AudioMessageContent
+	 * @param event
 	 */
 	@EventMapping
 	public void handleAudioMessageEvent(MessageEvent<AudioMessageContent> event) throws IOException {
@@ -170,7 +170,7 @@ public class LineMessageController {
 	}
 	/**
 	 * Handle Unfollow Event
-	 * @param UnfollowEvent
+	 * @param event
 	 */
 	@EventMapping
 	public void handleUnfollowEvent(UnfollowEvent event) {
@@ -178,7 +178,7 @@ public class LineMessageController {
 	}
 	/**
 	 * Handle Follow Event
-	 * @param FollowEvent
+	 * @param event
 	 */
 	@EventMapping
 	public void handleFollowEvent(FollowEvent event) {
@@ -187,7 +187,7 @@ public class LineMessageController {
 	}
 	/**
 	 * Handle Join Event
-	 * @param JoinEvent
+	 * @param event
 	 */
 	@EventMapping
 	public void handleJoinEvent(JoinEvent event) {
@@ -196,7 +196,7 @@ public class LineMessageController {
 	}
 	/**
 	 * Handle Postback Event
-	 * @param PostbackEvent
+	 * @param event
 	 */
 	@EventMapping
 	public void handlePostbackEvent(PostbackEvent event) {
@@ -205,7 +205,7 @@ public class LineMessageController {
 	}
 	/**
 	 * Handle Beacon Event
-	 * @param BeaconEvent
+	 * @param event
 	 */
 	@EventMapping
 	public void handleBeaconEvent(BeaconEvent event) {
@@ -214,7 +214,7 @@ public class LineMessageController {
 	}
 	/**
 	 * Handle Other Event
-	 * @param Event
+	 * @param event
 	 */
 	@EventMapping
 	public void handleOtherEvent(Event event) {
@@ -231,7 +231,7 @@ public class LineMessageController {
 	/**
 	 * reply
 	 * @param replyToken
-	 * @param message list
+	 * @param messages
 	 */
 	private void reply(@NonNull String replyToken, @NonNull List<Message> messages) {
 		try {
@@ -277,7 +277,7 @@ public class LineMessageController {
   	/**
 	 * push
 	 * @param receiver
-	 * @param message
+	 * @param messages
 	 */
   private void push(@NonNull String receiver, @NonNull List<Message> messages) {
     try {
@@ -386,7 +386,10 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void FAQ_NO_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
+
+
+
+	public void FAQ_NO_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
 			faqsearch(replyToken, text, reply, userID);
@@ -741,7 +744,7 @@ public class LineMessageController {
 	 * Welcome Back
 	 * @param difference
 	 * @param user
-	 * @return welcome
+	 * @return result
 	 */
 	private String welcomeBack(long difference, User user){
 		String result = "";
@@ -757,7 +760,6 @@ public class LineMessageController {
 	}
 	/**
 	 * greeting
-	 * @return greeting
 	 */
 	private String greeting() {
 		Calendar now = Calendar.getInstance();
@@ -808,7 +810,7 @@ public class LineMessageController {
 
 	/**
 	 * Is Numeric
-	 * @param input string
+	 * @param str
 	 */
 	public static boolean isNumeric(String str)
 		 {
@@ -827,7 +829,7 @@ public class LineMessageController {
 	 * Split Messages
 	 * @param longstring
 	 * @param splitter
-	 * @return messages list
+	 * @return messages
 	 */
 
 	private List<Message> splitMessages(String longstring,String splitter){
@@ -935,7 +937,6 @@ public class LineMessageController {
 	/**
 	 * Create Uri
 	 * @param path
-	 * @return Uri
 	 */
 	static String createUri(String path) {
 		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
@@ -961,7 +962,7 @@ public class LineMessageController {
 	 * Save Content
 	 * @param ext
 	 * @param responseBody
-	 * @return DownloadedContent
+	 * @return tempFile
 	 */
 	private static DownloadedContent saveContent(String ext, MessageContentResponse responseBody) {
 		log.info("Got content-type: {}", responseBody);
@@ -978,7 +979,6 @@ public class LineMessageController {
 	/**
 	 * Create Temp File
 	 * @param ext
-	 * @return DownloadedContent
 	 */
 	private static DownloadedContent createTempFile(String ext) {
 		String fileName = LocalDateTime.now().toString() + '-' + UUID.randomUUID().toString() + '.' + ext;

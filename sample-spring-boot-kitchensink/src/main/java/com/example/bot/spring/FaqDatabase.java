@@ -37,7 +37,6 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	}
 	/**
 	 * To load question
-	 * @return list Of FAQ
 	 */
 	private List<faqEntry> loadQuestion() throws Exception{
 		//return loadQuestionStatic();
@@ -46,7 +45,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	}
 	/**
 	 * To load question from database
-	 * @return list Of FAQ
+	 * @return listOfEntry
 	 */
 	private List<faqEntry> loadQuestionSQL() throws Exception{
 		Connection connection = super.getConnection();
@@ -147,7 +146,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	 * Search from FAQ list
 	 * @param text
 	 * @param userID
-	 * @return answer
+	 * @return result
 	 */
 	
 	public String search(String text, String userID)throws Exception{
@@ -346,7 +345,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	/**
 	 * parse description
 	 * @param description
-	 * @return parse Description
+	 * @return parseDescription
 	 */
 	private String parse(String description) {
 		String parseDescription = "";
