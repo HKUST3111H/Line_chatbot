@@ -94,21 +94,21 @@ public class TourOfferingTest {
 		log.info("Update Succeed");
 	}
 
-	@Test
-	public void testTourOfferingFound() throws Exception {
+//	@Test
+	//public void testTourOfferingFound() throws Exception {
 		//for testing this class TourOffering tourOfferingFound
-		try {
-			result = databaseEngine.tourOfferingFound(test_tour_id, test_tour_offering_id);
-		} catch (Exception e) {
-			thrown = true;
-		}
-	}
+		//try {
+			//result = databaseEngine.tourOfferingFound(test_tour_id, test_tour_offering_id);
+		//} catch (Exception e) {
+			//thrown = true;
+		//}
+//	}
 
 	@Test
 	public void testDisplayTourOffering() throws Exception {
 		//for testing this class TourOffering displayTourOffering
 		try {
-			if (databaseEngine.displayTourOffering(test_tour_id) == null) {
+			if (!databaseEngine.displayTourOffering(test_tour_id).isEmpty()) {
 				result = false;
 			}
 		} catch (Exception e) {
