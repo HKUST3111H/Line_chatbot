@@ -75,8 +75,8 @@ public class UserTest {
 	private static String query_result = null;
 	private static boolean update_result = true;
 	
+	private static User newuser = new User(test_user_id, test_name, test_phoneno, test_age,test_state,time );	
 				
-	User newuser = new User();	
 
 	// public UserTest() {
 	// 	try {
@@ -179,7 +179,7 @@ public class UserTest {
 	@Test 
 	public void testConstructor() throws Exception {
 		try {
-			User consUser = new User("110","Xiaomei","110011","20",230,time);
+			User consUser = new User(test_user_id, test_name, test_phoneno, test_age,test_state,time );	
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -188,12 +188,9 @@ public class UserTest {
 	}
 	
 	
-	
-	
 	@Test
 	public void testSetTime() throws Exception {
 		try {
-			//java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());	
 			newuser.setTime(time);
 		} catch (Exception e) {
 			log.info(e.toString());
@@ -206,7 +203,7 @@ public class UserTest {
 	@Test
 	public void testSetName() throws Exception {
 		try {
-			newuser.setName("xuxiaofeng");
+			newuser.setName(test_name);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -217,7 +214,7 @@ public class UserTest {
 	@Test
 	public void testSetState() throws Exception {
 		try {
-			newuser.setState(200);
+			newuser.setState(test_state);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -228,7 +225,7 @@ public class UserTest {
 	@Test
 	public void testSetAge() throws Exception {
 		try {
-			newuser.setAge("21");
+			newuser.setAge(test_age);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -241,7 +238,7 @@ public class UserTest {
 	@Test
 	public void testSetID() throws Exception {
 		try {
-			newuser.setID("2031");
+			newuser.setID(test_user_id);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -252,7 +249,7 @@ public class UserTest {
 	@Test
 	public void testSetPhoneNumber() throws Exception {
 		try {
-			newuser.setPhoneNumber("1860143");
+			newuser.setPhoneNumber(test_phoneno);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -275,7 +272,7 @@ public class UserTest {
 	public void testSetUser() throws Exception {
 		try {
 			
-			newuser.setUser("2031",time,200);
+			newuser.setUser(test_user_id,time,test_state);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -290,7 +287,7 @@ public class UserTest {
 		//for testing User class setUserAge function
 		try {
 			String name =newuser.getUserName();
-			assertTrue(!name.equals("xuxiaofeng"));
+			assertTrue(name.equals(test_name));
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -302,7 +299,7 @@ public class UserTest {
 		//for testing User class setUserAge function
 		try {
 			String phoneNumber =newuser.getPhoneNumber();
-			assertTrue(!phoneNumber.equals("1860143"));
+			assertTrue(phoneNumber.equals(test_phoneno));
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -314,7 +311,7 @@ public class UserTest {
 		//for testing User class setUserAge function
 		try {
 			String ID =newuser.getUserID();
-			assertTrue(!ID.equals("2031"));
+			assertTrue(ID.equals(test_user_id));
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -327,7 +324,7 @@ public class UserTest {
 		//for testing User class setUserAge function
 		try {
 			String age =newuser.getAge();
-			assertTrue(!age.equals("21"));
+			assertTrue(age.equals(test_age));
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -340,7 +337,7 @@ public class UserTest {
 		//for testing User class setUserAge function
 		try {
 			int state =newuser.getState();
-			assertTrue(state!=200);
+			assertTrue(state==test_state);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
@@ -352,7 +349,7 @@ public class UserTest {
 		//for testing User class setUserAge function
 		try {
 			java.sql.Timestamp thisTime =newuser.getTime();
-			assertTrue(thisTime!=time);
+			assertTrue(thisTime==time);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
