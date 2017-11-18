@@ -530,7 +530,7 @@ public class LineMessageController {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_NOTHING)) {
 			//here		
 			List<Tour> listOfTours = database.getTours();
-			List<Message> messages = new ArrayList<Message>();
+			List<com.sun.xml.internal.ws.api.message.Message> messages = new ArrayList<Message>();
 
 			//end
 
@@ -560,10 +560,20 @@ public class LineMessageController {
         			this.replyText(replyToken,reply);
     			}
     			else {
-
+    			       //todo
+    				List<MessageAction> listOfButton=new ArrayList<MessageAction>();
+    				ButtonsTemplate buttonTemplate = new ButtonsTemplate(
+		            			null,
+		            			null,
+		                    null,
+		                    Arrays.asList(new MessageAction("No", "No!"))
+			            		);
+		           
+		            TemplateMessage ButtonMessageBlock = new TemplateMessage("Sepcial requests?",buttonTemplate);
+	
 
     				for (TourOffering tourOffering:listOfTourOfferings) {
-						result += (tourOffering.getOfferingID()+"\nData and time: "+ tourOffering.getDate()+"\nHotel: "+tourOffering.getHotel()+"\nMax people: "+tourOffering.getMaxCapacity()+
+						result += ("Tour Offering "+tourOffering.getOfferingID()+"\nData and time: "+ tourOffering.getDate()+"\nHotel: "+tourOffering.getHotel()+"\nMax people: "+tourOffering.getMaxCapacity()+
 								"\nQuota Left: "+tourOffering.getQuota()+"\nFull price for adult: HKD"+tourOffering.getPrice()+"\nDuration: "+tourOffering.getDuration()+" Days\n\n");
 					}
 
@@ -573,6 +583,17 @@ public class LineMessageController {
     				reply += result;
     				reply += Constant.INSTRTUCTION_ENTER_TOUR_OFFERING_ID;
     				messages.add(new TextMessage(reply));
+    				//prepare button for display
+    				List<MessageAction> listOfButton=new ArrayList<MessageAction>();
+    				for (TourOffering tourOffering:listOfTourOfferings) {
+    					MessageAction button=new MessageAction("Tour Offering "+tourOffering.getOfferingID(), +tourOffering.getOfferingID());
+	    				listOfButton.add(button);
+	    				ButtonsTemplate buttonTemplate = new ButtonsTemplate(
+		            			null,null,null,Arrays.asList(button)
+			            		);
+						messages.add(new TemplateMessage("button",buttonTemplate));
+    				}	
+    				
         			log.info("Returns instruction message {}: {}", replyToken, reply);
         			this.reply(replyToken,messages);
     			}
