@@ -698,7 +698,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
+	public void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 			text=text.replaceAll(" ","");
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
@@ -743,6 +743,7 @@ public class LineMessageController {
 
 		}
 	}
+
 	/**
 	 * BOOKING_CONFIRMATION_handler
 	 * @param replyToken
@@ -750,7 +751,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void BOOKING_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
+	public void BOOKING_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 
@@ -779,7 +780,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void BOOKING_PAYMENT_handler(String replyToken, String text, String userID, String reply) throws Exception {
+	public void BOOKING_PAYMENT_handler(String replyToken, String text, String userID, String reply) throws Exception {
 
 			if(text.toLowerCase().contains("yes")||text.toLowerCase().contains("confirm")) {
 				database.setUserState(userID,Constant.FAQ_AFTER_CONFIRMATION);
@@ -862,7 +863,7 @@ public class LineMessageController {
 	 * @param replyToken
 	 * @param choice
 	 */
-	private boolean checkQuit(String text, String userID, String reply, String replyToken, int choice) throws Exception{
+	public boolean checkQuit(String text, String userID, String reply, String replyToken, int choice) throws Exception{
 		if (text.equals("Q")){
 			String result = database.reviewBookingInformation(userID);
 			if(result.equals("null")) {

@@ -54,9 +54,8 @@ import java.util.TimeZone;
 @Slf4j
 @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
-@SpringBootTest(classes = { UserTest.class,  SQLDatabaseEngine.class })
-public class UserTest {
-	
+@SpringBootTest(classes = { SQLDatabaseEngineTest.class,  SQLDatabaseEngine.class })
+public class SQLDatabaseEngineTest {
 	@Autowired
 	private SQLDatabaseEngine databaseEngine;
 
@@ -64,7 +63,9 @@ public class UserTest {
 	private static final java.util.Date now = calendar.getTime();
 	private static final java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
 
-	private static final String test_user_id = "test_user_id";
+	private static final int test_tour_id = 9;
+	private static final int test_tour_offering_id = 15;
+	private static final String test_user_id = "test_id";
 	private static final String test_name = "test_name";
 	private static final String test_phoneno = "00001111";
 	private static final String test_age = "20";
@@ -72,230 +73,187 @@ public class UserTest {
 
 	private static boolean init = false;
 	private static boolean thrown = false;
-	private static String query_result = null;
-	private static boolean update_result = true;
-	
-	private static User newuser = new User(test_user_id, test_name, test_phoneno, test_age,test_state,time );	
-				
+	private static boolean result = true;
 
-	// public UserTest() {
-	// 	try {
-	// 		databaseEngine.createUser(test_user_id, time, test_state);
-	// 	} catch (Exception e) {
-	// 		log.info("Test User Exist!");
-	// 	}
-	// }
 	@Before
 	public void setUp() {
+        try {
+            init = true;
+            databaseEngine.createUser(test_user_id, time, test_state);
+        } catch (Exception e) {
+            log.info("Test User Exist!");
+        }
 		thrown = false;
-		update_result = true;
+		result = true;
 	}
 
 	@After
 	public void check() {
 		assertFalse(thrown);
 		log.info("No Exception");
-		assertTrue(update_result);
-		log.info("Update Succeed");
-	}
-
-//=======================for user calss====================
-	@Test 
-	public void testConstructor() throws Exception {
-		try {
-			User consUser = new User(test_user_id, test_name, test_phoneno, test_age,test_state,time );	
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	
-	}
-	
-	
-	@Test
-	public void testSetTime() throws Exception {
-		try {
-			newuser.setTime(time);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	
-	}
-	
-	
-	@Test
-	public void testSetName() throws Exception {
-		try {
-			newuser.setName(test_name);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	
-	}
-	
-	@Test
-	public void testSetState() throws Exception {
-		try {
-			newuser.setState(test_state);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	
+		assertTrue(result);
+        log.info("Update Succeed");
+        try {
+			Boolean deleted= databaseEngine.deleteUser(test_user_id);
+			if (!deleted) {
+				log.info("Delete fail!");
+			}
+        }
+        catch (Exception e) {
+            log.info(e.toString());
+        }
 	}
 
 	@Test
-	public void testSetAge() throws Exception {
+	public void testTourOfferingFound() {
+		// for testing this class TourOffering tourOfferingFound
 		try {
-			newuser.setAge(test_age);
+			result = databaseEngine.tourOfferingFound(test_tour_id, test_tour_offering_id);
 		} catch (Exception e) {
-			log.info(e.toString());
 			thrown = true;
 		}
-	
 	}
 
-	
+	@Test
+	public void testDisplayTourOffering() {
+		//for testing this class TourOffering displayTourOffering
+		try {
+			if (databaseEngine.displayTourOffering(test_tour_id).isEmpty()) {
+				result = false;
+			}
+		} catch (Exception e) {
+			thrown = true;
+		}
+	}
+	@Test
+	public void testDisplaytBookingInformation() {
+		//for testing this class TourOffering displayTourOffering
+		try {
+			if (databaseEngine.displaytBookingInformation(test_user_id ) == null) {
+				result = false;
+			}
+		} catch (Exception e) {
+			thrown = true;
+		}
+	}
 
 	@Test
-	public void testSetID() throws Exception {
+	public void testCreateUser() {
+		//for testing User class createUser function
 		try {
-			newuser.setID(test_user_id);
+			log.info(test_user_id);
+			databaseEngine.deleteUser(test_user_id);
+			result = databaseEngine.createUser(test_user_id, time, test_state);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
 		}
-	
 	}
-	
+
 	@Test
-	public void testSetPhoneNumber() throws Exception {
+	public void testSetUserTime() {
+		//for testing User class setUserTime function
 		try {
-			newuser.setPhoneNumber(test_phoneno);
+			result = databaseEngine.setUserTime(test_user_id, time);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
 		}
-	
 	}
-	
+
 	@Test
-	public void testAddTripHistory() throws Exception {
+	public void testSetUserState() {
+		//for testing User class setUserState function
 		try {
-			newuser.addTripHistory("Shenzhen City");
+			result = databaseEngine.setUserState(test_user_id, test_state);
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
 		}
-	
+	}
+
+
+	@Test
+	public void testSetUserName() {
+		//for testing User class setUserName function
+		try {
+			result = databaseEngine.setUserName(test_user_id, test_name);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+
+	@Test
+	public void testSetUserPhoneNum() {
+		//for testing User class setUserPhoneNum function
+		try {
+			result = databaseEngine.setUserPhoneNum(test_user_id, test_phoneno);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+
+	@Test
+	public void testSetUserAge() {
+		//for testing User class setUserAge function
+		try {
+			result = databaseEngine.setUserAge(test_user_id, test_age);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+    }
+    
+	@Test
+	public void testBuffer() {
+		//for testing this class Booking Buffer
+		try {
+			result = databaseEngine.setBufferTourID(test_user_id, test_tour_id);
+		} catch (Exception e) {
+			thrown = true;
+		}
+
+		if (thrown || !result) {
+				return;
+		}
+
+		try {
+			result = (databaseEngine.getBufferTourID(test_user_id) != -1);
+		} catch (Exception e) {
+			thrown = true;
+		}
+
+		if (thrown || !result) {
+				return;
+		}
+
+		try {
+			result = databaseEngine.deleteBufferBookingEntry(test_user_id);
+		} catch (Exception e) {
+			thrown = true;
+		}
+	}
+
+	@Test
+	public void testSetBookingTourOfferingID() {
+		//for testing this class Booking setBookingTourOfferingID
+		try {
+			result =databaseEngine.setBookingTourOfferingID(test_user_id, test_tour_offering_id);
+		} catch (Exception e) {
+			thrown = true;
+		}
 	}
 	
 	@Test
-	public void testSetUser() throws Exception {
+	public void testAddToUnknowndatabase() {
+		//for testing AddToUnknowndatabase()
 		try {
+			result =databaseEngine.addToUnknownDatatabse("Xuxiaofeng");
 			
-			newuser.setUser(test_user_id,time,test_state);
 		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	
-	}
-	
-	
-	
-	@Test
-	public void testGetUserName() throws Exception {
-		//for testing User class setUserAge function
-		try {
-			String name =newuser.getUserName();
-			assertTrue(name.equals(test_name));
-		} catch (Exception e) {
-			log.info(e.toString());
 			thrown = true;
 		}
 	}
-	
-	@Test
-	public void testGetPhoneNumber() throws Exception {
-		//for testing User class setUserAge function
-		try {
-			String phoneNumber =newuser.getPhoneNumber();
-			assertTrue(phoneNumber.equals(test_phoneno));
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-	
-	@Test
-	public void testGetUserID() throws Exception {
-		//for testing User class setUserAge function
-		try {
-			String ID =newuser.getUserID();
-			assertTrue(ID.equals(test_user_id));
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-	
-	
-	@Test
-	public void testGetAge() throws Exception {
-		//for testing User class setUserAge function
-		try {
-			String age =newuser.getAge();
-			assertTrue(age.equals(test_age));
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-	
-	
-	@Test
-	public void testGetState() throws Exception {
-		//for testing User class setUserAge function
-		try {
-			int state =newuser.getState();
-			assertTrue(state==test_state);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-	
-	@Test
-	public void testGetTime() throws Exception {
-		//for testing User class setUserAge function
-		try {
-			java.sql.Timestamp thisTime =newuser.getTime();
-			assertTrue(thisTime==time);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-	
-	
-	@Test
-	public void testOutputTripHistory() throws Exception {
-		//for testing User class setUserAge function
-		try {
-			newuser.outputTripHistory();
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-	
-	
-	
-	
-	
-	
-
 }

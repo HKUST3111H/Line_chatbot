@@ -6,8 +6,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,13 +21,46 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.linecorp.bot.client.LineMessagingClient;
+import com.linecorp.bot.client.MessageContentResponse;
 import com.linecorp.bot.model.ReplyMessage;
+import com.linecorp.bot.model.PushMessage;
+import com.linecorp.bot.model.action.MessageAction;
+import com.linecorp.bot.model.action.PostbackAction;
+import com.linecorp.bot.model.action.URIAction;
+import com.linecorp.bot.model.event.BeaconEvent;
+import com.linecorp.bot.model.event.Event;
+import com.linecorp.bot.model.event.FollowEvent;
+import com.linecorp.bot.model.event.JoinEvent;
 import com.linecorp.bot.model.event.MessageEvent;
+import com.linecorp.bot.model.event.PostbackEvent;
+import com.linecorp.bot.model.event.UnfollowEvent;
+import com.linecorp.bot.model.event.message.AudioMessageContent;
+import com.linecorp.bot.model.event.message.ImageMessageContent;
+import com.linecorp.bot.model.event.message.LocationMessageContent;
+import com.linecorp.bot.model.event.message.StickerMessageContent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.event.source.GroupSource;
-import com.linecorp.bot.model.event.source.UserSource;
+import com.linecorp.bot.model.event.source.RoomSource;
+import com.linecorp.bot.model.event.source.Source;
+import com.linecorp.bot.model.message.AudioMessage;
+import com.linecorp.bot.model.message.ImageMessage;
+import com.linecorp.bot.model.message.ImagemapMessage;
+import com.linecorp.bot.model.message.LocationMessage;
+import com.linecorp.bot.model.message.Message;
+import com.linecorp.bot.model.message.StickerMessage;
+import com.linecorp.bot.model.message.TemplateMessage;
 import com.linecorp.bot.model.message.TextMessage;
+import com.linecorp.bot.model.message.imagemap.ImagemapArea;
+import com.linecorp.bot.model.message.imagemap.ImagemapBaseSize;
+import com.linecorp.bot.model.message.imagemap.MessageImagemapAction;
+import com.linecorp.bot.model.message.imagemap.URIImagemapAction;
+import com.linecorp.bot.model.message.template.ButtonsTemplate;
+import com.linecorp.bot.model.message.template.CarouselColumn;
+import com.linecorp.bot.model.message.template.CarouselTemplate;
+import com.linecorp.bot.model.message.template.ConfirmTemplate;
 import com.linecorp.bot.model.response.BotApiResponse;
+import com.linecorp.bot.spring.boot.annotation.EventMapping;
+import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LineMessageControllerTest {
@@ -85,6 +120,39 @@ public class LineMessageControllerTest {
 	}
 
 	@Test
+	public void test_BOOKING_CONFIRMATION_handler_not_quit() throws Exception {
+		String text = "special request";
+		String userID = "userID";
+		String replyToken = "replyToken";
+		String reply = "";
+
+		ConfirmTemplate confirmTemplate = new ConfirmTemplate(Constant.QUESTION_CONFIRM_OR_NOT,
+				new MessageAction("Yes", "Yes!"), new MessageAction("No", "No!"));
+		TemplateMessage confirmMessageBlock = new TemplateMessage("Confirm booking?", confirmTemplate);
+		List<Message> obj= new ArrayList<Message>();
+		obj.add(new TextMessage(reply));
+		obj.add(confirmMessageBlock);
+		when(lineMessagingClient.replyMessage(
+				new ReplyMessage(replyToken, obj)))
+						.thenReturn(
+								CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
+
+		when(database.setUserState(userID, Constant.BOOKING_PAYMENT)).thenReturn(true);
+		when(database.setBookingSpecialRequest(userID, text)).thenReturn(true);
+		when(database.displaytBookingInformation(userID)).thenReturn("");
+
+		underTest.BOOKING_CONFIRMATION_handler(replyToken, text, userID, reply);
+
+		verify(lineMessagingClient).replyMessage(
+				new ReplyMessage(replyToken, obj));
+
+	}
+	
+	/*@Test
+	public void test_BOOKING_CONFIRMATION_handler_quit() throws Exception {
+		
+	}*/
+	
 	// test faq succesful search for text
 	public void test_faqsearch() throws Exception {
 
@@ -321,9 +389,168 @@ public class LineMessageControllerTest {
         ));
     }
 	
-	
-	
+	@Test
+	// for invalid adult number
+	public void test_BOOKING_ADULT_handler_Invalid() throws Exception {
+
+		String text = "12bb";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		String expectReply = Constant.ERROR_REENTER_ADULT_NUMBER;
+
+		// mock line bot api client response
+		when(lineMessagingClient
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))))).thenReturn(
+						CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
+
+		underTest.BOOKING_ADULT_handler(replyToken, text, userID, "");
+
+		// confirm replyMessage is called with following parameter
+		verify(lineMessagingClient)
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
+	}
+
+	@Test
+	// for successful children number
+	public void test_BOOKING_CHILDREN_handler_success() throws Exception {
+
+		String text = "12";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		String expectReply = Constant.INSTRTUCTION_ENTER_TODDLER_NUMBER;
+
+		// mock line bot api client response
+		when(lineMessagingClient
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))))).thenReturn(
+						CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
+
+		when(database.setUserState(userID, Constant.BOOKING_TODDLER)).thenReturn(true);
+		when(database.setBookingChildrenNumber(userID, Integer.parseInt(text))).thenReturn(true);
+
+		underTest.BOOKING_CHILDREN_handler(replyToken, text, userID, "");
+
+		// confirm replyMessage is called with following parameter
+		verify(lineMessagingClient)
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
+	}
+
+	@Test
+	// for invalid children number
+	public void test_BOOKING_CHILDREN_handler_Invalid() throws Exception {
+
+		String text = "12bb";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		String expectReply = Constant.ERROR_REENTER_CHILDREN_NUMBER;
+
+		// mock line bot api client response
+		when(lineMessagingClient
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))))).thenReturn(
+						CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
+
+		underTest.BOOKING_CHILDREN_handler(replyToken, text, userID, "");
+
+		// confirm replyMessage is called with following parameter
+		verify(lineMessagingClient)
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
+	}
+
+	@Test
+	// for invalid toddler number
+	public void test_BOOKING_TODDLER_handler_Invalid() throws Exception {
+
+		String text = "12bb";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		String expectReply = Constant.ERROR_REENTER_TODDLER_NUMBER;
+
+		// mock line bot api client response
+		when(lineMessagingClient
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))))).thenReturn(
+						CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
+
+		underTest.BOOKING_TODDLER_handler(replyToken, text, userID, "");
+
+		// confirm replyMessage is called with following parameter
+		verify(lineMessagingClient)
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
+	}
+
+	@Test
+    //for successful toddler number
+    public void test_BOOKING_TODDLER_handler_success() throws Exception {
+
+        String text = "12";
+        String userID = "userId";
+        String replyToken = "replyToken";
+        String expectReply = Constant.INSTRTUCTION_ENTER_TODDLER_NUMBER;
+        ButtonsTemplate buttonTemplate = new ButtonsTemplate(
+    			null,
+    			"Special request",
+            "Press \"No\" if you don't have any request.",
+            Arrays.asList(new MessageAction("No", "No!"))
+        		);
+   
+        TemplateMessage ButtonMessageBlock = new TemplateMessage("Sepcial requests?",buttonTemplate);
+        
+        
+        List<Message> obj = new ArrayList<Message>();
+        obj.add(new TextMessage(Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST));
+        obj.add(ButtonMessageBlock);
+        // mock line bot api client response
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, obj))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));
+  
+        underTest.BOOKING_TODDLER_handler(replyToken, text, userID, "");
+
+        // confirm replyMessage is called with following parameter
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, obj));
+    }
 	
 	
 
+    @Test
+    public void test_BOOKING_PAYMENT_handler() throws Exception {
+        
+        String testMsg = "yes";
+        String userID = "userId";
+        String replyToken = "replyToken";
+        String expectReply = Constant.INSTRUCTION_PAYMENT;
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));
+
+        when(database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION)).thenReturn(true);
+        when(database.setBookingConfirmation(userID)).thenReturn(true);
+
+        underTest.BOOKING_PAYMENT_handler(replyToken, testMsg, userID, "");
+
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+    }
+    
+    @Test 
+    public void test_checkQuit() throws Exception{
+		String text = "Q";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		String expectReply = Constant.CANCEL;
+
+		// mock line bot api client response
+		when(lineMessagingClient
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))))).thenReturn(
+						CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
+		when(database.reviewBookingInformation(userID)).thenReturn("Hello");
+        underTest.checkQuit(text,userID,"",replyToken,Constant.DELETING_BOOKING_ENTRY);
+
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+    	  	
+    }
 }
