@@ -63,8 +63,8 @@ public class TourOfferingTest {
 	private static final java.util.Date now = calendar.getTime();
 	private static final java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
 
-	private static final int test_tour_id = 12;
-	private static final int test_tour_offering_id = 1;
+	private static final int test_tour_id = 9;
+	private static final int test_tour_offering_id = 15;
 	private static final String test_user_id = "test_id";
 	private static final int test_state = 1;
 
@@ -108,7 +108,7 @@ public class TourOfferingTest {
 	public void testDisplayTourOffering() throws Exception {
 		//for testing this class TourOffering displayTourOffering
 		try {
-			if (!databaseEngine.displayTourOffering(test_tour_id).isEmpty()) {
+			if (databaseEngine.displayTourOffering(test_tour_id).isEmpty()) {
 				result = false;
 			}
 		} catch (Exception e) {

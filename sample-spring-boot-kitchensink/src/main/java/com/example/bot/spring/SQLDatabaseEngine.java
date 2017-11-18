@@ -369,12 +369,12 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 
-	List<TourOffering> displayTourOffering(int tourID) throws Exception {
+	List<TourOffering> displayTourOffering(int tourID) {
 		//Write your code here
 		List<TourOffering> listOfTourOfferings = new ArrayList<TourOffering>();
-		Connection connection = getConnection();
 		String result="";
 		try {
+			Connection connection = getConnection();
 			PreparedStatement stmt = connection.prepareStatement(
 					"SELECT line_touroffering.id,line_touroffering.offer_date,line_touroffering.hotel,line_touroffering.capacity_max, "
 					+ "line_touroffering.price, line_tour.duration, "
@@ -414,11 +414,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		} finally {
 
 		}
-		if (!listOfTourOfferings.isEmpty())
-			return listOfTourOfferings;
-		if (listOfTourOfferings.isEmpty())
-			return listOfTourOfferings;
-		throw new Exception("NOT FOUND");
+		return listOfTourOfferings;
 	}
 
 	boolean setBufferTourID(String userID, int tourID) throws Exception {
@@ -513,11 +509,11 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 
-	boolean tourOfferingFound(int tourID,int tourOfferingID)throws Exception {
+	boolean tourOfferingFound(int tourID,int tourOfferingID){
 		//Write your code here
-		Connection connection = getConnection();
 		boolean result=false;
 		try {
+			Connection connection = getConnection();
 			PreparedStatement stmt = connection.prepareStatement(
 					"SELECT id,offer_date,hotel,capacity_max FROM line_touroffering WHERE tour_id = ? AND state < 2 AND id = ? AND id IN "
 					+ "(SELECT id FROM line_touroffering WHERE tour_id = ? "
@@ -542,12 +538,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
-		if (1==1)
-			return result;
-		throw new Exception("NOT FOUND");
+		} 
+		return result;
 	}
 
 	int checkQuota(String userID)throws Exception {
