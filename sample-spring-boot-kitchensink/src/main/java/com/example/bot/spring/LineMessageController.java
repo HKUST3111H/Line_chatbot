@@ -359,7 +359,7 @@ public class LineMessageController {
 
 		 }
 	}
-
+	
 	private void FILL_NAME_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		database.setUserState(userID,Constant.FILL_PHONE_NUM);
@@ -368,7 +368,7 @@ public class LineMessageController {
 		reply += Constant.INSTRUCTION_ENTER_PHONE_NUM;
 		log.info("Returns message {}: {}", replyToken, reply);
 		this.replyText(replyToken,reply);
-	}
+	}//tested
 
 
 	private void FILL_PHONE_NUM_handler(String replyToken, String text, String userID, String reply)
@@ -759,7 +759,7 @@ public class LineMessageController {
 		this.reply(replyToken,msgToReply);
 	}
 
-	private void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
+	public void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
 		try {
 		String answer = faqDatabase.search(text, userID);
 		reply += answer;
