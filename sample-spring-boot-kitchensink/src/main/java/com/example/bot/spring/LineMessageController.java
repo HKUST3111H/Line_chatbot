@@ -574,16 +574,19 @@ public class LineMessageController {
     				reply += Constant.INSTRTUCTION_ENTER_TOUR_OFFERING_ID;
     				messages.add(new TextMessage(reply));
     				//prepare button for display
+    				int count=0;
     				List<MessageAction> listOfButton=new ArrayList<MessageAction>();
     				for (TourOffering tourOffering:listOfTourOfferings) {
     					String tourofferingID=Integer.toString(tourOffering.getOfferingID());
     					MessageAction button=new MessageAction("Tour Offering "+tourofferingID, tourofferingID);
 	    				listOfButton.add(button);
-	    				ButtonsTemplate buttonTemplate = new ButtonsTemplate(
-		            			null," "," ",Arrays.asList(button)
-			            		);
-						messages.add(new TemplateMessage("button",buttonTemplate));
+	    				count++;
+	    				if (count%5==0) break;
     				}	
+    				ButtonsTemplate buttonTemplate = new ButtonsTemplate(
+	            			null,"Short Cut","You may press button instead.",Arrays.asList(listOfButton)
+		            		);
+					messages.add(new TemplateMessage("button",buttonTemplate));
     				
         			log.info("Returns instruction message {}: {}", replyToken, reply);
         			this.reply(replyToken,messages);
