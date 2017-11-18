@@ -713,7 +713,7 @@ public class LineMessageController {
 		            			null,
 		            			"Special request",
 		                    "Press \"No\" if you don't have any request.",
-		                    Arrays.asList(new MessageAction("No", "No!"))
+		                    Arrays.asList(new MessageAction("No", "No"))
 			            		);
 		           
 		            TemplateMessage ButtonMessageBlock = new TemplateMessage("Sepcial requests?",buttonTemplate);
@@ -781,12 +781,15 @@ public class LineMessageController {
 	 */
 	private void BOOKING_PAYMENT_handler(String replyToken, String text, String userID, String reply) throws Exception {
 
-			if(text.toLowerCase().contains("y")||text.toLowerCase().contains("confirm")) {
+			if(text.toLowerCase().contains("yes")||text.toLowerCase().contains("confirm")) {
 				database.setUserState(userID,Constant.FAQ_AFTER_CONFIRMATION);
 				database.setBookingConfirmation(userID);
 				reply += Constant.INSTRUCTION_PAYMENT;
-	    			log.info("Returns instruction message {}: {}", replyToken, reply);
-	    			this.replyText(replyToken,reply);
+				log.info("Returns instruction message {}: {}", replyToken, reply);
+	    		List<Message> msgToReply=new ArrayList<Message>();
+	    		msgToReply.add(new TextMessage(reply));
+	    		msgToReply.add(new StickerMessage("1","13"));
+	    		this.reply(replyToken,msgToReply);
 			}
 			else {
 				checkQuit("Q",userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY);
