@@ -561,17 +561,7 @@ public class LineMessageController {
     			}
     			else {
     			       //todo
-    				List<MessageAction> listOfButton=new ArrayList<MessageAction>();
-    				ButtonsTemplate buttonTemplate = new ButtonsTemplate(
-		            			null,
-		            			null,
-		                    null,
-		                    Arrays.asList(new MessageAction("No", "No!"))
-			            		);
-		           
-		            TemplateMessage ButtonMessageBlock = new TemplateMessage("Sepcial requests?",buttonTemplate);
-	
-
+    				
     				for (TourOffering tourOffering:listOfTourOfferings) {
 						result += ("Tour Offering "+tourOffering.getOfferingID()+"\nData and time: "+ tourOffering.getDate()+"\nHotel: "+tourOffering.getHotel()+"\nMax people: "+tourOffering.getMaxCapacity()+
 								"\nQuota Left: "+tourOffering.getQuota()+"\nFull price for adult: HKD"+tourOffering.getPrice()+"\nDuration: "+tourOffering.getDuration()+" Days\n\n");
