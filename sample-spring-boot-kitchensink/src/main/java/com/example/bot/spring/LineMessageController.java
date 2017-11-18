@@ -707,6 +707,7 @@ public class LineMessageController {
 
 		}
 	}
+
 	/**
 	 * BOOKING_CONFIRMATION_handler
 	 * @param replyToken
@@ -714,7 +715,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void BOOKING_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
+	public void BOOKING_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 
