@@ -108,7 +108,7 @@ public class LineMessageController {
 	private LineMessagingClient lineMessagingClient;
 	/**
 	 * Handle Text Message Event
-	 * @param event
+	 * @param event received event by the controller
 	 */
 	@EventMapping
 	public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
@@ -120,7 +120,7 @@ public class LineMessageController {
 	}
 	/**
 	 * Handle Sticker Message Event
-	 * @param event
+	 * @param event received event by the controller
 	 */
 	@EventMapping
 	public void handleStickerMessageEvent(MessageEvent<StickerMessageContent> event) {
@@ -201,7 +201,7 @@ public class LineMessageController {
 //	}
 	/**
 	 * Handle Postback Event
-	 * @param event
+	 * @param event received event by the controller
 	 */
 	@EventMapping
 	public void handlePostbackEvent(PostbackEvent event)  throws Exception  {
@@ -235,16 +235,16 @@ public class LineMessageController {
 //	}
 	/**
 	 * reply
-	 * @param replyToken
-	 * @param message
+	 * @param replyToken line replyToken for replying
+	 * @param message message to be replied
 	 */
 	private void reply(@NonNull String replyToken, @NonNull Message message) {
 		reply(replyToken, Collections.singletonList(message));
 	}
 	/**
 	 * reply
-	 * @param replyToken
-	 * @param messages
+	 * @param replyToken line replyToken for replying
+	 * @param messages message to be replied
 	 */
 	public void reply(@NonNull String replyToken, @NonNull List<Message> messages) {
 		try {
@@ -256,8 +256,8 @@ public class LineMessageController {
 	}
 	/**
 	 * reply text
-	 * @param replyToken
-	 * @param message
+	 * @param replyToken line replyToken for replying
+	 * @param message message to be replied
 	 */
 	public void replyText(@NonNull String replyToken, @NonNull String message) {
 		if (replyToken.isEmpty()) {
@@ -270,17 +270,17 @@ public class LineMessageController {
 	}
   	/**
 	 * Handle Sticker
-	 * @param replyToken
-	 * @param content
+	 * @param replyToken line replyToken for replying
+	 * @param content content
 	 */
 	private void handleSticker(String replyToken, StickerMessageContent content) {
 		reply(replyToken, new StickerMessage(content.getPackageId(), content.getStickerId()));
 	}
 	/**
 	 * Handle Text Content
-	 * @param replyToken
-	 * @param event
-	 * @param content
+	 * @param replyToken line replyToken for replying
+	 * @param event received event by the controller
+	 * @param content content
 	 */
 
 	public void handleTextContent(String replyToken, Event event, TextMessageContent content)
@@ -361,10 +361,10 @@ public class LineMessageController {
 	}
 	/**
 	 * FAQ_NO_USER_INFORMATION_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 
 
@@ -384,10 +384,10 @@ public class LineMessageController {
 	}
 	/**
 	 * FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 	public void FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
@@ -401,10 +401,10 @@ public class LineMessageController {
 	}
 	/**
 	 * FAQ_AFTER_CONFIRMATION_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 	public void FAQ_AFTER_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
@@ -429,10 +429,10 @@ public class LineMessageController {
 
 	/**
 	 * FILL_NAME_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 
 	public void FILL_NAME_handler(String replyToken, String text, String userID, String reply)
@@ -447,10 +447,10 @@ public class LineMessageController {
 	}
 	/**
 	 * FILL_PHONE_NUM_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 
 
@@ -465,10 +465,10 @@ public class LineMessageController {
 	}
 	/**
 	 * FILL_AGE_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 	public void FILL_AGE_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		text=text.replaceAll(" ","");
@@ -488,10 +488,10 @@ public class LineMessageController {
 	}
 	/**
 	 * BOOKING_TOUR_ID_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 	public void BOOKING_TOUR_ID_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		text=text.replaceAll(" ","");
@@ -580,10 +580,10 @@ public class LineMessageController {
 	}
 	/**
 	 * BOOKING_OFFERING_ID_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 	public void BOOKING_OFFERING_ID_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
@@ -606,10 +606,10 @@ public class LineMessageController {
 	}
 	/**
 	 * BOOKING_ADULT_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 	public void BOOKING_ADULT_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
@@ -632,10 +632,10 @@ public class LineMessageController {
 	}
 	/**
 	 * BOOKING_CHILDREN_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 	public void BOOKING_CHILDREN_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
@@ -660,10 +660,10 @@ public class LineMessageController {
 
 	/**
 	 * BOOKING_TODDLER_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 	public void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
@@ -712,10 +712,10 @@ public class LineMessageController {
 
 	/**
 	 * BOOKING_CONFIRMATION_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 	public void BOOKING_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
@@ -741,10 +741,10 @@ public class LineMessageController {
 	}
 	/**
 	 * BOOKING_PAYMENT_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 	public void BOOKING_PAYMENT_handler(String replyToken, String text, String userID, String reply) throws Exception {
 
@@ -766,10 +766,10 @@ public class LineMessageController {
 
 	/**
 	 * BOOKING_OR_REVIEW_handler
-	 * @param replyToken
-	 * @param text
-	 * @param userID
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
 	 */
 	public void BOOKING_OR_REVIEW_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
@@ -788,9 +788,9 @@ public class LineMessageController {
 	}
 	/**
 	 * Welcome Back
-	 * @param difference
+	 * @param difference time difference 
 	 * @param user
-	 * @return result
+	 * @return result welcome back message
 	 */
 	public String welcomeBack(long difference, User user){
 		String result = "";
@@ -823,10 +823,10 @@ public class LineMessageController {
 	}
 	/**
 	 * Check Quit
-	 * @param text
-	 * @param userID
+	 * @param text user input message
+	 * @param userID userID
 	 * @param reply
-	 * @param replyToken
+	 * @param replyToken line replyToken for replying
 	 * @param choice
 	 */
 	public boolean checkQuit(String text, String userID, String reply, String replyToken, int choice) throws Exception{
@@ -856,7 +856,7 @@ public class LineMessageController {
 
 	/**
 	 * Is Numeric
-	 * @param str
+	 * @param str a stirng
 	 */
 	public static boolean isNumeric(String str)
 		 {
@@ -873,9 +873,9 @@ public class LineMessageController {
 
 	/**
 	 * Split Messages
-	 * @param longstring
-	 * @param splitter
-	 * @return messages
+	 * @param longstring a string to be splitted
+	 * @param splitter a splitter string
+	 * @return messages message to be replied
 	 */
 
 	private List<Message> splitMessages(String longstring,String splitter){
@@ -907,8 +907,8 @@ public class LineMessageController {
 	}
 	/**
 	 * List Tour For Booking
-	 * @param replyToken
-	 * @param reply
+	 * @param replyToken line replyToken for replying
+	 * @param reply message to be replied
 	 */
 	public void listTourForBooking(String replyToken, String reply) throws Exception {
 		List<Message> msgToReply=new ArrayList<Message>();
@@ -974,8 +974,8 @@ public class LineMessageController {
 	/**
 	 * parse description
 	 * 
-	 * @param description
-	 * @return parseDescription
+	 * @param description a string to be parsed
+	 * @return parseDescription a string after parsing
 	 */
 	public String parse(String description) {
 		String parseDescription = "";
@@ -991,10 +991,10 @@ public class LineMessageController {
 
 	/**
 	 * Faq Search
-	 * @param replyToken
-	 * @param text
-	 * @param reply
-	 * @param userID
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param reply message to be replied
+	 * @param userID userID
 	 */
 	public void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
 		try {
@@ -1025,7 +1025,7 @@ public class LineMessageController {
 	}
 	/**
 	 * Create Uri
-	 * @param path
+	 * @param path path
 	 */
 	static String createUri(String path) {
 		return "https://comp3111h-line-chatbot.herokuapp.com/" + Constant.IMGPRFIX + path;
@@ -1033,7 +1033,7 @@ public class LineMessageController {
 	}
 	/**
 	 * system
-	 * @param args
+	 * @param args arguments
 	 */
 	private void system(String... args) {
 		ProcessBuilder processBuilder = new ProcessBuilder(args);
@@ -1118,8 +1118,8 @@ public class LineMessageController {
 		private String replyToken;
 		/**
 		 * Constructor
-		 * @param ksc
-		 * @param replyToken
+		 * @param ksc linemessageController
+		 * @param replyToken line replyToken for replying
 		 */
 		public ProfileGetter(LineMessageController ksc, String replyToken) {
 			this.ksc = ksc;
@@ -1128,8 +1128,8 @@ public class LineMessageController {
 		@Override
 		/**
 		 * Accept
-		 * @param profile
-		 * @param throwable
+		 * @param profile UserProfileResponse
+		 * @param throwable Throwable
 		 */
     	public void accept(UserProfileResponse profile, Throwable throwable) {
     		if (throwable != null) {

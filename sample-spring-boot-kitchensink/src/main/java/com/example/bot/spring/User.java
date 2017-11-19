@@ -39,12 +39,12 @@ public class User {
 	
 	/**
 	 * Constructor
-	 * @param id
-	 * @param name
-	 * @param phoneno
-	 * @param age
-	 * @param state
-	 * @param time
+	 * @param id id of a user
+	 * @param name name 
+	 * @param phoneno phone numeber
+	 * @param age age 
+	 * @param state booking state
+	 * @param time last log in time
 	 */
 	public User (String id,String name, String phoneno, String age, int state, java.sql.Timestamp time ){//except for tripHistory
 		tripHistory = new ArrayList<String>();
@@ -60,42 +60,42 @@ public class User {
 	//getter
 	
 	/**
-	 * @return userName
+	 * @return userName user name
 	 */
 	public String getUserName(){
 		return userName;
 	}
 	
 	/**
-	 * @return userID
+	 * @return userID user id 
 	 */
 	public String getUserID(){
 		return userID;
 	}
 	
 	/**
-	 * @return phoneNumber
+	 * @return phoneNumber phone number
 	 */
 	public String getPhoneNumber(){
 		return phoneNumber;
 	}
 	
 	/**
-	 * @return age
+	 * @return age age 
 	 */
 	public String getAge(){
 		return age;
 	}
 	
 	/**
-	 * @return state
+	 * @return state booking state 
 	 */
 	public int getState(){
 		return state;
 	}
 	
 	/**
-	 * @return time
+	 * @return time last log in time
 	 */
 	public java.sql.Timestamp getTime(){
 		return time;
@@ -111,7 +111,7 @@ public class User {
 	}
 	
 	/**
-	 * @param state
+	 * @param state booking state
 	 */
 	//mutator
 	public void setState(int state){
@@ -119,21 +119,21 @@ public class User {
 	}
 	
 	/**
-	 * @param Age
+	 * @param Age age 
 	 */
 	public void setAge(String Age){
 		this.age = Age;
 	}
 	
 	/**
-	 * @param PhoneNo
+	 * @param PhoneNo phone number 
 	 */
 	public void setPhoneNumber(String PhoneNo){
 		this.phoneNumber = PhoneNo;
 	}
 	
 	/**
-	 * @param userID
+	 * @param userID user id 
 	 */
 	public void setID(String userID){
 		this.userID = userID;
