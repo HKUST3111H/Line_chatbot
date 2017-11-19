@@ -417,7 +417,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
+	public void FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
 			faqsearch(replyToken, text, reply, userID);
@@ -434,7 +434,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void FAQ_AFTER_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
+	public void FAQ_AFTER_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
 			faqsearch(replyToken, text, reply, userID);
