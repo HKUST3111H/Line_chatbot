@@ -268,39 +268,6 @@ public class LineMessageController {
 		//}
 		this.reply(replyToken, new TextMessage(message));
 	}
-	/**
-	 * push text
-	 * @param receiver
-	 * @param message
-	 */
-	private void pushText(@NonNull String receiver, @NonNull String message) {
-		if (receiver.isEmpty()) {
-			throw new IllegalArgumentException("receiver must not be empty");
-		}
-		push(receiver, new TextMessage(message));
-	}
-	/**
-	 * push
-	 * @param receiver
-	 * @param message
-	 */
-  private void push(@NonNull String receiver, @NonNull Message message) {
-    push(receiver, Collections.singletonList(message));
-  }
-  	/**
-	 * push
-	 * @param receiver
-	 * @param messages
-	 */
-  private void push(@NonNull String receiver, @NonNull List<Message> messages) {
-    try {
-      BotApiResponse apiResponse = lineMessagingClient.pushMessage(new PushMessage(receiver, messages)).get();
-      log.info("Push messages: {}", apiResponse);
-    } catch (InterruptedException | ExecutionException e) {
-      log.info(e.toString());
-      throw new RuntimeException(e);
-    }
-  }
   	/**
 	 * Handle Sticker
 	 * @param replyToken
@@ -804,20 +771,20 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void BOOKING_OR_REVIEW_handler(String replyToken, String text, String userID, String reply)
+	public void BOOKING_OR_REVIEW_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
-		if(text.toLowerCase().contains("review")) {
-			   	database.setUserState(userID,Constant.FAQ_AFTER_CONFIRMATION);
-			   	String review = database.reviewBookingInformation(userID);
-			   	List<Message> messages = splitMessages(review,"\n\n\n\n");
-			   	log.info("Returns message {}: {}", replyToken, reply);
-			   	this.reply(replyToken,messages);
-		   }
-		   else {
-			   	database.setUserState(userID,Constant.BOOKING_TOUR_ID);
-			   	listTourForBooking(replyToken, reply);
+		if (text.toLowerCase().contains("review")) {
+			database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION);
+			String review = database.reviewBookingInformation(userID);
+			List<Message> messages = splitMessages(review, "\n\n\n\n");
+			log.info("split");
+			log.info("Returns message {}: {}", replyToken, reply);
+			this.reply(replyToken, messages);
+		} else {
+			database.setUserState(userID, Constant.BOOKING_TOUR_ID);
+			listTourForBooking(replyToken, reply);
 
-		   }
+		}
 	}
 	/**
 	 * Welcome Back
@@ -956,16 +923,23 @@ public class LineMessageController {
 		catch(Exception e) {
 			log.info(e.toString());
 			msgToReply.add(new TextMessage("No Tours Avaliable"));
+			log.info(String.valueOf(msgToReply.size()));
 			this.reply(replyToken,msgToReply);
+			return;
 		}
 		
 		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
 		int count=0;
 		for (Tour tour:listOfTours) {
 			String imagePath=" ";
-			String imageUrl = createUri(imagePath);
+			// String imageUrl = createUri(imagePath);
+			String imageUrl="resource/static";
 			String trancatedDescription=tour.getDescription();
 			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 60-2)+"..";
+			log.info(imageUrl);
+			log.info(tour.getTourName());
+			log.info(trancatedDescription);
+			log.info(String.valueOf(tour.getTourID()));
 			CarouselColumn item=new CarouselColumn(imageUrl, tour.getTourName(), trancatedDescription, Arrays.asList(
               new MessageAction("Book",Integer.toString(tour.getTourID()))
               ));
@@ -976,10 +950,12 @@ public class LineMessageController {
 				CarouselTemplate carouselTemplate = new CarouselTemplate(carousel);
 				TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);
 				msgToReply.add(templateMessage);
+				log.info(carousel.size()+"");
 				carousel=new ArrayList<CarouselColumn>();
 			}
 
 		}
+		log.info(msgToReply.size()+"");
 		log.info("Listed tours for booking{}", replyToken);
 		this.reply(replyToken,msgToReply);
 	}
