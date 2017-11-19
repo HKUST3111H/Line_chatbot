@@ -1,34 +1,26 @@
-
 package com.example.bot.spring;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import java.io.IOException;
+import static java.util.Collections.singletonList;
 
-import java.io.OutputStream;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.*;
+import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
-import com.linecorp.bot.model.profile.UserProfileResponse;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Calendar;
+import java.util.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
+import org.junit.Ignore;
+import org.mockito.MockitoAnnotations;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import com.google.common.io.ByteStreams;
-
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.client.MessageContentResponse;
 import com.linecorp.bot.model.ReplyMessage;
@@ -48,7 +40,7 @@ import com.linecorp.bot.model.event.message.ImageMessageContent;
 import com.linecorp.bot.model.event.message.LocationMessageContent;
 import com.linecorp.bot.model.event.message.StickerMessageContent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
-import com.linecorp.bot.model.event.source.GroupSource;
+import com.linecorp.bot.model.event.source.UserSource;
 import com.linecorp.bot.model.event.source.RoomSource;
 import com.linecorp.bot.model.event.source.Source;
 import com.linecorp.bot.model.message.AudioMessage;
@@ -71,50 +63,55 @@ import com.linecorp.bot.model.response.BotApiResponse;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
-import lombok.NonNull;
-import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
+@RunWith(MockitoJUnitRunner.class)
+//@Ignore
+public class LineMessageControllerTest3 {
 
-import java.net.URI;
+	@Mock
+	private LineMessagingClient lineMessagingClient;
+	@Mock
+	private SQLDatabaseEngine database;
+	@InjectMocks
+	private LineMessageController underTest;
 
-
-@Slf4j
-@RestController
-public class RestMessageController {
-
-  @Autowired
-  private LineMessagingClient lineMessagingClient;
-
-  @RequestMapping("/")
-  public String index() {
-    return "hi";
-  }
-
-  @RequestMapping("/push")
-  public String greetUser(@RequestParam(value="receiver", defaultValue="Ufedbdb7c3d944c326a4251ac135b69e3") String receiver, @RequestParam(value="message", defaultValue="Hello") String message) {
-    pushText(receiver, message);
-    return "Message Sent!";
-  }
-
-	private void pushText(@NonNull String receiver, @NonNull String message) {
-		if (receiver.isEmpty()) {
-			throw new IllegalArgumentException("receiver must not be empty");
-		}
-		push(receiver, new TextMessage(message));
+	@Before
+	public void setUp() throws Exception {
+		MockitoAnnotations.initMocks(this);
 	}
 
-  private void push(@NonNull String receiver, @NonNull Message message) {
-    push(receiver, Collections.singletonList(message));
-  }
+	@Test
+	public void test_greeting() throws Exception {
+		String result = underTest.greeting();
+		assertThat(result.contains("Good")).isEqualTo(true);
+	}
 
-  private void push(@NonNull String receiver, @NonNull List<Message> messages) {
-    try {
-      BotApiResponse apiResponse = lineMessagingClient.pushMessage(new PushMessage(receiver, messages)).get();
-      log.info("Push messages: {}", apiResponse);
-    } catch (InterruptedException | ExecutionException e) {
-      log.info(e.toString());
-      throw new RuntimeException(e);
-    }
-  }
+	@Test
+	public void test_faqsearch_image() throws Exception {
+		String text = "where is the gathering point";
+		String userID = "U52a29b672ee486b66b7fb4c45a888de3";
+		String replyToken = "replyToken";
+		String reply = "";
+		boolean thrown = false;
+
+		try {
+			FaqDatabase faq = new FaqDatabase();
+			String path = faq.replyImage(faq.search(text, userID)); //
+			System.out.println("\n\n\n" + path + "\n\n\n");
+			String url = LineMessageController.createUri(path);
+			when(lineMessagingClient.replyMessage(new ReplyMessage(replyToken,
+					Arrays.asList(new TextMessage(faq.search(text, userID)),
+							new ImageMessage(url, url)))))
+									.thenReturn(CompletableFuture
+											.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
+			underTest.faqsearch(replyToken, text, reply, userID);
+			verify(lineMessagingClient)
+					.replyMessage(new ReplyMessage(replyToken, Arrays.asList(new TextMessage(faq.search(text, userID)),
+							new ImageMessage(url, url))));
+		} catch (Exception e) {
+			System.out.println(e.toString());
+			thrown = true;
+		}
+		assertThat(thrown).isEqualTo(false);
+	}
 
 }

@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.Ignore;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Matchers.any;
 import org.mockito.MockitoAnnotations;
@@ -57,7 +58,7 @@ import com.linecorp.bot.spring.boot.annotation.LineBotMessages;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
-import com.example.bot.spring.DatabaseEngine;
+//import com.example.bot.spring.DatabaseEngine;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -65,6 +66,7 @@ import java.util.TimeZone;
 //@RunWith(SpringRunner.class)
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(classes = { FaqTest.class, FaqDatabase.class })
+//@Ignore
 public class FaqTest {
 
 	// @Autowired

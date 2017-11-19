@@ -23,7 +23,7 @@ import java.math.*;
  * This class is a for SQLDatabaseEngine
  */
 @Slf4j
-public class SQLDatabaseEngine extends DatabaseEngine {
+public class SQLDatabaseEngine {
 	//booking state: 0 isBooking; 1 done; 2 confirmed;
 	//offering state: 0 not enough; 1 enough; 2 full; 3 old;
 	/**

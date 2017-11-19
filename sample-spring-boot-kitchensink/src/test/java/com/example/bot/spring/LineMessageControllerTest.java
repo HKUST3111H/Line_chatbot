@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
+import org.junit.Ignore;
 import org.mockito.MockitoAnnotations;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -62,6 +63,7 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
 @RunWith(MockitoJUnitRunner.class)
+//@Ignore
 public class LineMessageControllerTest {
 
 	@Mock
@@ -181,28 +183,6 @@ public class LineMessageControllerTest {
 				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
 	}
 
-	/*
-	 * @Test public void test_faqsearch_image() throws Exception { String text =
-	 * "where is the gathering point"; String userID =
-	 * "U52a29b672ee486b66b7fb4c45a888de3"; String replyToken = "replyToken"; String
-	 * reply = ""; boolean thrown = false;
-	 * 
-	 * try { FaqDatabase faq = new FaqDatabase(); String path =
-	 * faq.replyImage(faq.search(text, userID)); //
-	 * System.out.println("\n\n\n"+path+"\n\n\n"); String url =
-	 * LineMessageController.createUri("static/pictures/"+path);
-	 * when(lineMessagingClient .replyMessage(new ReplyMessage(replyToken,
-	 * Arrays.asList(new TextMessage(faq.search(text, userID)), new
-	 * ImageMessage(any(String.class), any(String.class)))))).thenReturn(
-	 * CompletableFuture.completedFuture(new BotApiResponse("ok",
-	 * Collections.emptyList()))); underTest.faqsearch(replyToken, text, reply,
-	 * userID); verify(lineMessagingClient) .replyMessage(new
-	 * ReplyMessage(replyToken, Arrays.asList(new TextMessage(faq.search(text,
-	 * userID)), new ImageMessage(any(String.class), any(String.class))))); }
-	 * catch(Exception e) { System.out.println(e.toString()); thrown = true; }
-	 * assertThat(thrown).isEqualTo(false); }
-	 */
-
 	@Test
 	public void test_faqsearch_normal() throws Exception {
 		String text = "hello";
@@ -238,6 +218,51 @@ public class LineMessageControllerTest {
 	}
 
 	@Test
+	public void test_FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler_booking() throws Exception {
+		String testMsg = "booking";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		List<Message> expectReply = new ArrayList<Message>();
+		List<Tour> tourList = new ArrayList<Tour>();
+
+		tourList.add(new Tour(1, "1_name", "1_discription", 2, "404.png", ""));
+		tourList.add(new Tour(2, "2_name", "2_discription", 2, "404.png", ""));
+
+		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
+		when(database.getTours()).thenReturn(tourList);
+		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
+
+		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
+		Tour tour = tourList.get(0);
+		String imagePath = tour.getImagePath();
+		String imageUrl = underTest.createUri(imagePath);
+		CarouselColumn item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
+				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
+		carousel.add(item);
+		tour = tourList.get(1);
+		imagePath = tour.getImagePath();
+		imageUrl = underTest.createUri(imagePath);
+		item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
+				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
+		carousel.add(item);
+
+		CarouselTemplate carouselTemplate = new CarouselTemplate(carousel);
+		TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);
+		expectReply.add(templateMessage);
+
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, expectReply
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+		));
+
+		// underTest.BOOKING_OR_REVIEW_handler(replyToken, testMsg, userID, "");
+		underTest.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(replyToken, testMsg, userID, "");
+		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
+		
+	}
+
+	@Test
 	public void test_FAQ_AFTER_CONFIRMATION_handler() throws Exception {
 		String text = "hello";
 		String userID = "U52a29b672ee486b66b7fb4c45a888de3";
@@ -264,7 +289,7 @@ public class LineMessageControllerTest {
 		String reply = "";
 		ConfirmTemplate confirmTemplate = new ConfirmTemplate(Constant.QUESTION_REVIEW_OR_BOOKING,
 				new MessageAction("Review", "Review"),
-				new MessageAction(Constant.TEXT_NEW_BOOKING, Constant.TEXT_NEW_BOOKING));
+				new PostbackAction(Constant.TEXT_NEW_BOOKING, Constant.TEXT_NEW_BOOKING));
 		TemplateMessage whichBook = new TemplateMessage("Review Booking/New Booking", confirmTemplate);
 		when(lineMessagingClient.replyMessage(new ReplyMessage(replyToken, singletonList(whichBook))))
 				.thenReturn(CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
@@ -600,21 +625,23 @@ public class LineMessageControllerTest {
 		List<Message> expectReply = new ArrayList<Message>();
 		List<Tour> tourList = new ArrayList<Tour>();
 
-		tourList.add(new Tour(1, "1_name", "1_discription", 2));
-		tourList.add(new Tour(2, "2_name", "2_discription", 2));
+		tourList.add(new Tour(1, "1_name", "1_discription", 2, "404.png", ""));
+		tourList.add(new Tour(2, "2_name", "2_discription", 2, "404.png", ""));
 
 		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
 		when(database.getTours()).thenReturn(tourList);
 		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
 
-		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
-		String imagePath = " ";
-		String imageUrl = "resource/static";
+		List<CarouselColumn> carousel = new ArrayList<CarouselColumn>();
 		Tour tour = tourList.get(0);
+		String imagePath = tour.getImagePath();
+		String imageUrl = underTest.createUri(imagePath);
 		CarouselColumn item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
 				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
 		carousel.add(item);
 		tour = tourList.get(1);
+		imagePath = tour.getImagePath();
+		imageUrl = underTest.createUri(imagePath);
 		item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
 				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
 		carousel.add(item);
@@ -623,15 +650,12 @@ public class LineMessageControllerTest {
 		TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);
 		expectReply.add(templateMessage);
 
-        when(lineMessagingClient.replyMessage(new ReplyMessage(
-                replyToken, expectReply
-        ))).thenReturn(CompletableFuture.completedFuture(
-                new BotApiResponse("ok", Collections.emptyList())
-		));
+		when(lineMessagingClient.replyMessage(new ReplyMessage(replyToken, expectReply))).thenReturn(
+				CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
 
 		underTest.BOOKING_OR_REVIEW_handler(replyToken, testMsg, userID, "");
 		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
-		
+
 	}
 	@Test
 	// for invalid adult number
@@ -742,34 +766,58 @@ public class LineMessageControllerTest {
 
 	@Test
     //for successful toddler number
-    public void test_BOOKING_TODDLER_handler_success() throws Exception {
+    public void test_BOOKING_TODDLER_handler_success_quota_positive() throws Exception {
 
         String text = "12";
         String userID = "userId";
         String replyToken = "replyToken";
+
         ButtonsTemplate buttonTemplate = new ButtonsTemplate(
     			null,
     			"Special request",
             "Press \"No\" if you don't have any request.",
-            Arrays.asList(new MessageAction("No", "No!"))
+            Arrays.asList(new MessageAction("No", "No"))
         		);
-   
         TemplateMessage ButtonMessageBlock = new TemplateMessage("Sepcial requests?",buttonTemplate);
-        
-        
-        List<Message> obj = new ArrayList<Message>();
-        obj.add(new TextMessage(Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST));
-        obj.add(ButtonMessageBlock);
-        // mock line bot api client response
+
+        when(database.checkQuota(userID)).thenReturn(2);
+        when(database.setUserState(userID,Constant.BOOKING_CONFIRMATION)).thenReturn(true);
         when(lineMessagingClient.replyMessage(new ReplyMessage(
-                replyToken, obj))).thenReturn(CompletableFuture.completedFuture(
+                replyToken,  Arrays.asList(new TextMessage(Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST),ButtonMessageBlock)))).thenReturn(CompletableFuture.completedFuture(
                 new BotApiResponse("ok", Collections.emptyList())
         ));
-  
         underTest.BOOKING_TODDLER_handler(replyToken, text, userID, "");
 
         // confirm replyMessage is called with following parameter
-        verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, obj));
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken,  Arrays.asList(new TextMessage(Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST),ButtonMessageBlock)));
+    }
+	
+	@Test
+    //for successful toddler number
+    public void test_BOOKING_TODDLER_handler_success_quota_negative() throws Exception {
+
+        String text = "12";
+        String userID = "userId";
+        String replyToken = "replyToken";
+        String reply = "";
+        int quota = -1;
+        reply += Constant.QUOTA_FULL_1;
+        reply += quota;
+        reply += Constant.QUOTA_FULL_2;
+        
+        when(database.checkQuota(userID)).thenReturn(-1);
+        when(database.setUserState(userID,Constant.BOOKING_ADULT)).thenReturn(true);
+        // mock line bot api client response
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(reply))))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));
+  
+
+        underTest.BOOKING_TODDLER_handler(replyToken, text, userID, "");
+
+        // confirm replyMessage is called with following parameter
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken,singletonList(new TextMessage(reply))));
     }
 	
 	@Test
@@ -830,25 +878,30 @@ public class LineMessageControllerTest {
 	}
 	
     @Test
-    public void test_BOOKING_PAYMENT_handler_contain_yes() throws Exception {
+    public void test_BOOKING_PAYMENT_handler_contains_yes() throws Exception {
         
         String testMsg = "yes";
         String userID = "userId";
         String replyToken = "replyToken";
         String expectReply = Constant.INSTRUCTION_PAYMENT;
-        when(lineMessagingClient.replyMessage(new ReplyMessage(
-                replyToken, singletonList(new TextMessage(expectReply))
-        ))).thenReturn(CompletableFuture.completedFuture(
-                new BotApiResponse("ok", Collections.emptyList())
-        ));
-
+        
         when(database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION)).thenReturn(true);
         when(database.setBookingConfirmation(userID)).thenReturn(true);
 
+		List<Message> msgToReply=new ArrayList<Message>();
+		msgToReply.add(new StickerMessage("1",Constant.STICKER_ID_CONFIRMBOOK));
+		msgToReply.add(new TextMessage(expectReply));
+		
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, msgToReply
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));
+		
         underTest.BOOKING_PAYMENT_handler(replyToken, testMsg, userID, "");
 
         verify(lineMessagingClient).replyMessage(new ReplyMessage(
-                replyToken, singletonList(new TextMessage(expectReply))
+                replyToken, msgToReply
         ));
     }
     
@@ -859,19 +912,24 @@ public class LineMessageControllerTest {
         String userID = "userId";
         String replyToken = "replyToken";
         String expectReply = Constant.INSTRUCTION_PAYMENT;
-        when(lineMessagingClient.replyMessage(new ReplyMessage(
-                replyToken, singletonList(new TextMessage(expectReply))
-        ))).thenReturn(CompletableFuture.completedFuture(
-                new BotApiResponse("ok", Collections.emptyList())
-        ));
-
+        
         when(database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION)).thenReturn(true);
         when(database.setBookingConfirmation(userID)).thenReturn(true);
 
+		List<Message> msgToReply=new ArrayList<Message>();
+		msgToReply.add(new StickerMessage("1",Constant.STICKER_ID_CONFIRMBOOK));
+		msgToReply.add(new TextMessage(expectReply));
+		
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, msgToReply
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));
+		
         underTest.BOOKING_PAYMENT_handler(replyToken, testMsg, userID, "");
 
         verify(lineMessagingClient).replyMessage(new ReplyMessage(
-                replyToken, singletonList(new TextMessage(expectReply))
+                replyToken, msgToReply
         ));
     }
     
@@ -1351,5 +1409,103 @@ public class LineMessageControllerTest {
         ));
         	  	 	
     }
+    
+    //new here
+    @Test 
+    public void test_HandleTextContent_BOOKING_PAYMENT() throws Exception {
+		String text = "Q";
+		String userID = "21128";
+		String replyToken = "replyToken";
+		String expectReply = Constant.CANCEL;
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("21128","xxf","123","21",Constant.BOOKING_PAYMENT,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION)).thenReturn(true);
+		when(database.setUserState(userID, Constant.BOOKING_PAYMENT)).thenReturn(true);
+		when(database.deleteBookingEntry(userID)).thenReturn(true);
+		when(database.deleteBufferBookingEntry(userID)).thenReturn(true);
+        
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);   
+    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_BOOKING_OR_REVIEW() throws Exception {
+		String text = "review";
+		String userID = "21128";
+		String replyToken = "replyToken";
+		String expectReply = "book\n\n";
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("21128","xxf","123","21",Constant.BOOKING_OR_REVIEW,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+		when(database.reviewBookingInformation(userID)).thenReturn("book");
+		when(database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION)).thenReturn(true);   
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);   
+    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_No_State() throws Exception {
+		String text = "review";
+		String userID = "21128";
+		String replyToken = "replyToken";
+		String expectReply = "book\n\n";
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("21128","xxf","123","21",1000,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+		when(database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION)).thenReturn(true);   
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);   
+    }
+    
+    
+    
+    
     
 }

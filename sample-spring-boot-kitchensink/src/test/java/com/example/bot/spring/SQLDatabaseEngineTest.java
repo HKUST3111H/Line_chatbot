@@ -47,7 +47,7 @@ import com.linecorp.bot.spring.boot.annotation.LineBotMessages;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
-import com.example.bot.spring.DatabaseEngine;
+//import com.example.bot.spring.DatabaseEngine;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -56,7 +56,7 @@ import java.util.TimeZone;
 @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
 @SpringBootTest(classes = { SQLDatabaseEngineTest.class,  SQLDatabaseEngine.class })
-// @Ignore
+@Ignore
 public class SQLDatabaseEngineTest {
 	@Autowired
 	private SQLDatabaseEngine databaseEngine;

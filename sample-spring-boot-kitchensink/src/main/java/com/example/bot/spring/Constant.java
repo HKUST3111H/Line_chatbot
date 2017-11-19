@@ -122,5 +122,7 @@ public  class Constant {
 	
 	public static final String STICKER_ID_CONFIRMBOOK="407";
 	
+	public static final String IMGPRFIX="static/pictures/";
+
 
 }
