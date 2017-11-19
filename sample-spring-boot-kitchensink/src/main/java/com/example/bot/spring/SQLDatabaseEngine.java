@@ -23,7 +23,7 @@ import java.math.*;
  * This class is a for SQLDatabaseEngine
  */
 @Slf4j
-public class SQLDatabaseEngine extends DatabaseEngine {
+public class SQLDatabaseEngine {
 	//booking state: 0 isBooking; 1 done; 2 confirmed;
 	//offering state: 0 not enough; 1 enough; 2 full; 3 old;
 	/**
@@ -414,7 +414,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_tour;");
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-		    	Tour tour=new Tour(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getInt(4));
+		    	Tour tour=new Tour(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getInt(4),rs.getString(7),rs.getString(8));
 		    	listOfTours.add(tour);
 			}
 			rs.close();

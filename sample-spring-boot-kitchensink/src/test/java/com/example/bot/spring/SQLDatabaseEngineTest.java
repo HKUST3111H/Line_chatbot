@@ -47,7 +47,7 @@ import com.linecorp.bot.spring.boot.annotation.LineBotMessages;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
-import com.example.bot.spring.DatabaseEngine;
+//import com.example.bot.spring.DatabaseEngine;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -56,7 +56,7 @@ import java.util.TimeZone;
 @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
 @SpringBootTest(classes = { SQLDatabaseEngineTest.class,  SQLDatabaseEngine.class })
-// @Ignore
+@Ignore
 public class SQLDatabaseEngineTest {
 	@Autowired
 	private SQLDatabaseEngine databaseEngine;
@@ -105,7 +105,26 @@ public class SQLDatabaseEngineTest {
             log.info(e.toString());
         }
 	}
-
+	
+	@Test
+	public void testSetInformation() {
+		// for testing this class TourOffering tourOfferingFound
+		try {
+			databaseEngine.deleteUser(test_user_id);
+			result = databaseEngine.createUser(test_user_id, time, test_state);
+			result = databaseEngine.setUserAge(test_user_id, test_age);
+			result = databaseEngine.setUserPhoneNum(test_user_id, test_phoneno)&&result;
+			result = databaseEngine.setUserName(test_user_id, test_name)&&result;
+			result = databaseEngine.setUserState(test_user_id, test_state)&&result;
+			result = databaseEngine.setUserTime(test_user_id, time)&&result;
+			result = databaseEngine.tourFound(test_tour_id )&&result;
+			databaseEngine.getUserInformation(test_user_id);
+			databaseEngine.getTours(test_user_id);
+			
+		} catch (Exception e) {
+			thrown = true;
+		}
+	}
 	@Test
 	public void testTourOfferingFound() {
 		// for testing this class TourOffering tourOfferingFound
@@ -139,75 +158,7 @@ public class SQLDatabaseEngineTest {
 		}
 	}
 
-	@Test
-	public void testCreateUser() {
-		//for testing User class createUser function
-		try {
-			log.info(test_user_id);
-			databaseEngine.deleteUser(test_user_id);
-			result = databaseEngine.createUser(test_user_id, time, test_state);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
 
-	@Test
-	public void testSetUserTime() {
-		//for testing User class setUserTime function
-		try {
-			result = databaseEngine.setUserTime(test_user_id, time);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-
-	@Test
-	public void testSetUserState() {
-		//for testing User class setUserState function
-		try {
-			result = databaseEngine.setUserState(test_user_id, test_state);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-
-
-	@Test
-	public void testSetUserName() {
-		//for testing User class setUserName function
-		try {
-			result = databaseEngine.setUserName(test_user_id, test_name);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-
-	@Test
-	public void testSetUserPhoneNum() {
-		//for testing User class setUserPhoneNum function
-		try {
-			result = databaseEngine.setUserPhoneNum(test_user_id, test_phoneno);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-	}
-
-	@Test
-	public void testSetUserAge() {
-		//for testing User class setUserAge function
-		try {
-			result = databaseEngine.setUserAge(test_user_id, test_age);
-		} catch (Exception e) {
-			log.info(e.toString());
-			thrown = true;
-		}
-    }
-    
 	@Test
 	public void testBuffer() {
 		//for testing this class Booking Buffer

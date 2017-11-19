@@ -15,9 +15,28 @@ public class Tour {
 	private String tourName;
 	private String description;
 	private int duration;
-	
+	private String imagePath;
+	private String shortDescription;
 	
 	// constructor
+	
+	/**
+	 * Constructor
+	 * @param tourID
+	 * @param tourName
+	 * @param description
+	 * @param duration
+	 * @param imagePath
+	 * @param shortDescription
+	 */
+	public Tour(int tourID, String tourName, String description, int duration,String imagePath, String shortDescription) {
+		this.tourID = tourID;
+		this.tourName = tourName;
+		this.description = description;
+		this.duration = duration;
+		this.imagePath = imagePath;
+		this.shortDescription = shortDescription;
+	}
 	
 	/**
 	 * Constructor
@@ -63,7 +82,18 @@ public class Tour {
 	public int getDuration() {
 		return duration;
 	}
-	
+	/**
+	 * @return imagePath
+	 */
+	public String getImagePath() {
+		return imagePath;
+	}
+	/**
+	 * @return shortDescription
+	 */
+	public String getShortDescription() {
+		return shortDescription;
+	}
 	// set functions
 	/**
 	 * @param tourID
@@ -92,7 +122,18 @@ public class Tour {
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
-
+	/**
+	 * @param imagePath
+	 */
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+	/**
+	 * @param shortDescription
+	 */
+	public void setShortDescription(String shortDescription) {
+		this.shortDescription = shortDescription;
+	}
 	
 	
 }
