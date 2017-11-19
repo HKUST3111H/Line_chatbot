@@ -985,9 +985,10 @@ public class LineMessageController {
 			log.info("Replied image message {}: {}", replyToken, reply);
 
 		}
-
-		log.info("Returns answer message {}: {}", replyToken, reply);
-		this.replyText(replyToken,reply);
+		else {
+			log.info("Returns answer message {}: {}", replyToken, reply);
+			this.replyText(replyToken,reply);
+		}
 		}catch(Exception e) {
 			reply += Constant.FAQ_NOT_FOUND;
 			//unanswered question, add to unknown question database
