@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Group 16
  * This class is a container for Tours
+ * @author Group 16
  */
 @Slf4j
 public class Tour {
+	
 	
 	private int tourID;
 	private String tourName;
@@ -22,12 +23,12 @@ public class Tour {
 	
 	/**
 	 * Constructor
-	 * @param tourID
-	 * @param tourName
-	 * @param description
-	 * @param duration
-	 * @param imagePath
-	 * @param shortDescription
+	 * @param tourID Id number of a tour
+	 * @param tourName Name of the tour
+	 * @param description description of the tour
+	 * @param duration duration of the tour
+	 * @param imagePath path of the image
+	 * @param shortDescription an short version of description
 	 */
 	public Tour(int tourID, String tourName, String description, int duration,String imagePath, String shortDescription) {
 		this.tourID = tourID;
@@ -40,10 +41,10 @@ public class Tour {
 	
 	/**
 	 * Constructor
-	 * @param tourID
-	 * @param tourName
-	 * @param description
-	 * @param duration
+	 * @param tourID Id number of a tour
+	 * @param tourName Name of the tour
+	 * @param description description of the tour
+	 * @param duration duration of the tour
 	 */
 	public Tour(int tourID, String tourName, String description, int duration) {
 		this.tourID = tourID;
@@ -56,80 +57,80 @@ public class Tour {
 	
 	// get functions
 	/**
-	 * @return tourID
+	 * @return tourID id number of a tour
 	 */
 	public int getTourID() {
 		return tourID;
 	}
 	
 	/**
-	 * @return tourName
+	 * @return tourName name of the tour
 	 */
 	public String getTourName() {
 		return tourName;
 	}
 	
 	/**
-	 * @return description
+	 * @return description description of the tour 
 	 */
 	public String getDescription() {
 		return description;
 	}
 	
 	/**
-	 * @return duration
+	 * @return duration duration of the tour
 	 */
 	public int getDuration() {
 		return duration;
 	}
 	/**
-	 * @return imagePath
+	 * @return imagePath path of an image
 	 */
 	public String getImagePath() {
 		return imagePath;
 	}
 	/**
-	 * @return shortDescription
+	 * @return shortDescription short version of description
 	 */
 	public String getShortDescription() {
 		return shortDescription;
 	}
 	// set functions
 	/**
-	 * @param tourID
+	 * @param tourID Id number of a tour
 	 */
 	public void setTourID(int tourID) {
 		this.tourID = tourID;
 	}
 	
 	/**
-	 * @param tourName
+	 * @param tourName Name of the tour
 	 */
 	public void setTourName(String tourName) {
 		this.tourName = tourName;
 	}
 	
 	/**
-	 * @param description
+	 * @param description description of the tour
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 	
 	/**
-	 * @param duration
+	 * @param duration duration of the tour
 	 */
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
 	/**
-	 * @param imagePath
+	 * @param imagePath path of the image
 	 */
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
 	}
 	/**
-	 * @param shortDescription
+	 * @param shortDescription an short version of description
 	 */
 	public void setShortDescription(String shortDescription) {
 		this.shortDescription = shortDescription;
