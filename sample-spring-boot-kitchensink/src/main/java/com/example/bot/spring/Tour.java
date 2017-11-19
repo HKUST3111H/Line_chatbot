@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class is a container for Tours
+ * This class is a container for tours
  * @author Group 16
  */
 @Slf4j

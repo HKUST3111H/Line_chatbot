@@ -14,14 +14,14 @@ import java.util.regex.Pattern;
 import java.util.*;
 
 /**
- * This class is a container for Faq database
+ * This class is a container for faq database
  * @author Group 16 
  */
 @Slf4j
 public class FaqDatabase extends SQLDatabaseEngine {
 
 	/**
-	 * Replys user with a image
+	 * Replies user with a image
 	 * 
 	 * @param answer		a parameter which indactes the need of replying a image
 	 * @return 			url of image
@@ -43,6 +43,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	 * 
 	 * @return		faq question from databse
 	 * @see 			faqEntry
+	 * @throws		Exception when databse is not accessed successfully
 	 */
 	public List<faqEntry> loadQuestion() throws Exception{
 		//return loadQuestionStatic();
@@ -196,7 +197,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	 * @throws			Exception when database is not accessed successfully
 	 */
 	
-	public String dynamic_top_five_tours(String userID) {
+	public String dynamic_top_five_tours(String userID) throws Exception{
 		try {
 			String result = "";
 			Connection connection = super.getConnection();
@@ -243,7 +244,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	 * @throws			Exception when database is not accessed successfully
 	 */
 	
-	public String dynamic_more_tours(String userID) {
+	public String dynamic_more_tours(String userID) throws Exception{
 		try {
 			String result = "";
 			Connection connection = super.getConnection();
@@ -292,7 +293,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	 * @throws			Exception when database is not accessed successfully
 	 */
 	
-	public String dynamic_hot_spring() {
+	public String dynamic_hot_spring() throws Exception{
 		try {
 			String result = "";
 			Connection connection = super.getConnection();
@@ -328,7 +329,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	 * @throws			Exception when database is not accessed successfully
 	 */
 	
-	public String dynamic_mountain() {
+	public String dynamic_mountain() throws Exception{
 		try {
 			String result = "";
 			Connection connection = super.getConnection();

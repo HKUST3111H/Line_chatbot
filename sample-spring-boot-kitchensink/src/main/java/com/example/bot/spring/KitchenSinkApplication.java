@@ -23,10 +23,21 @@ import java.nio.file.Path;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
+/**
+ * This class is a container for kitchen sink application
+ * @author Group 16 
+ */
+
 @SpringBootApplication
 public class KitchenSinkApplication {
     static Path downloadedContentDir;
 
+    /**
+     * main function of class KitchenSinkApplication 
+     * @param args	argument for main function
+     * @throws		IOException when there is a failed I/O operation
+     */
     public static void main(String[] args) throws IOException {
         downloadedContentDir = Files.createTempDirectory("line-bot");
         SpringApplication.run(KitchenSinkApplication.class, args);

@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.*;
 /**
- * This class is a container for Constant which stores a lot of constant variables used in other classes
+ * This class is a container for constant which stores a lot of constant variables used in other classes
  * @author Group 16
  */
 @Slf4j
