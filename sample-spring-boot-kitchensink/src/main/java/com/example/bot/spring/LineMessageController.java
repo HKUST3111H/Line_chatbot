@@ -912,6 +912,7 @@ public class LineMessageController {
 	 */
 	private void listTourForBooking(String replyToken, String reply) throws Exception {
 		List<Message> msgToReply=new ArrayList<Message>();
+		msgToReply.add(new TextMessage(reply));
 		TextMessage heading = new TextMessage(Constant.INSTRUCTION_BOOKING);
 		msgToReply.add(heading);
 		
@@ -932,13 +933,15 @@ public class LineMessageController {
 		int count=0;
 		for (Tour tour:listOfTours) {
 			String imagePath=tour.getImagePath();
-			log.info("6666666666666666666");
-			String imagePrefix=Constant.IMGPRFIX;
-			String imageUrl = createUri(imagePrefix+imagePath);
-			log.info("6666666666666666666");
-			log.info(imageUrl);
-			log.info("6666666666666666666");
-
+			if (imagePath==null) imagePath="404.png";
+			
+				log.info("6666666666666666666");
+				String imagePrefix=Constant.IMGPRFIX;
+				String imageUrl = createUri(imagePrefix+imagePath);
+				log.info("6666666666666666666");
+				log.info(imageUrl);
+				log.info("6666666666666666666");
+			
 			String trancatedDescription=tour.getDescription();
 			if (trancatedDescription.length()>60) trancatedDescription=tour.getShortDescription();
 			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 60-2)+"..";
