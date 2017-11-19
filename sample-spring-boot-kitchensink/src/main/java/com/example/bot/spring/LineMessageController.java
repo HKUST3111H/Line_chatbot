@@ -263,39 +263,6 @@ public class LineMessageController {
 		//}
 		this.reply(replyToken, new TextMessage(message));
 	}
-	/**
-	 * push text
-	 * @param receiver
-	 * @param message
-	 */
-	private void pushText(@NonNull String receiver, @NonNull String message) {
-		if (receiver.isEmpty()) {
-			throw new IllegalArgumentException("receiver must not be empty");
-		}
-		push(receiver, new TextMessage(message));
-	}
-	/**
-	 * push
-	 * @param receiver
-	 * @param message
-	 */
-  private void push(@NonNull String receiver, @NonNull Message message) {
-    push(receiver, Collections.singletonList(message));
-  }
-  	/**
-	 * push
-	 * @param receiver
-	 * @param messages
-	 */
-  private void push(@NonNull String receiver, @NonNull List<Message> messages) {
-    try {
-      BotApiResponse apiResponse = lineMessagingClient.pushMessage(new PushMessage(receiver, messages)).get();
-      log.info("Push messages: {}", apiResponse);
-    } catch (InterruptedException | ExecutionException e) {
-      log.info(e.toString());
-      throw new RuntimeException(e);
-    }
-  }
   	/**
 	 * Handle Sticker
 	 * @param replyToken
@@ -311,7 +278,7 @@ public class LineMessageController {
 	 * @param content
 	 */
 
-	private void handleTextContent(String replyToken, Event event, TextMessageContent content)
+	public void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
 
         String text = content.getText();
@@ -417,7 +384,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
+	public void FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
 			faqsearch(replyToken, text, reply, userID);
@@ -434,7 +401,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void FAQ_AFTER_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
+	public void FAQ_AFTER_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
 			throws Exception {
 		if(!text.toLowerCase().contains("book")) {
 			faqsearch(replyToken, text, reply, userID);
@@ -668,7 +635,7 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
+	public void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {
 			text=text.replaceAll(" ","");
 			if(isNumeric(text) && Integer.parseInt(text)>=0) {
@@ -676,7 +643,6 @@ public class LineMessageController {
 
 					int quota=database.checkQuota(userID);
 					if(quota>=0) {
-						System.out.print("Quata valid????");
 						database.setUserState(userID,Constant.BOOKING_CONFIRMATION);
 						//reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
 			            ButtonsTemplate buttonTemplate = new ButtonsTemplate(
@@ -793,7 +759,7 @@ public class LineMessageController {
 	 * @param user
 	 * @return result
 	 */
-	private String welcomeBack(long difference, User user){
+	public String welcomeBack(long difference, User user){
 		String result = "";
 		if(difference > Constant.TIME_GAPPING){
 			result += greeting();
@@ -808,7 +774,7 @@ public class LineMessageController {
 	/**
 	 * greeting
 	 */
-	private String greeting() {
+	public String greeting() {
 		Calendar now = Calendar.getInstance();
 		int hour = now.get(Calendar.HOUR_OF_DAY);
 
@@ -830,7 +796,7 @@ public class LineMessageController {
 	 * @param replyToken
 	 * @param choice
 	 */
-	private boolean checkQuit(String text, String userID, String reply, String replyToken, int choice) throws Exception{
+	public boolean checkQuit(String text, String userID, String reply, String replyToken, int choice) throws Exception{
 		if (text.equals("Q")){
 			String result = database.reviewBookingInformation(userID);
 			if(result.equals("null")) {

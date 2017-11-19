@@ -51,6 +51,25 @@ public  class Constant {
 	public static final long TIME_GAPPING = 10;
 	
 	
+	public static final int SET_USER_TIME = 1;
+	public static final int SET_USER_STATE = 2;
+	public static final int SET_USER_NAME = 3;
+	public static final int SET_USER_PHONE = 4;
+	public static final int SET_USER_AGE = 5;
+	public static final int CREATE_USER = 6;
+	public static final int DELETE_USER = 7;
+	public static final int TOUR_FOUND = 8;
+	public static final int SET_BUFFER_TOUR_ID = 9;
+	public static final int DELETE_BUFFER_BOOKING = 10;
+	public static final int DELETE_BOOKING = 11;
+	public static final int SET_BOOKING_TOUR_OFFERING_ID = 12;
+	public static final int SET_BOOKING_ADULT_NUMBER = 13;
+	public static final int SET_BOOKING_CHILD_NUMBER = 14;
+	public static final int SET_BOOKING_TODDLER_NUMBER = 15;
+	public static final int SET_BOOKING_SPECIAL_REQUEST = 16;
+	public static final int SET_BOOKING_CONFIRMATION = 17;
+	
+	
 	public static final String GREETING_FIRST_USE = "Thanks for your first use of our app! "
 			+ "You can ask us some questions about touring information "
 			+ "and text \"book\" to book the tour offering which you are interested in!"
