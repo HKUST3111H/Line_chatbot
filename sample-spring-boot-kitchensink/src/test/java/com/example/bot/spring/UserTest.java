@@ -58,7 +58,6 @@ import java.util.TimeZone;
 public class UserTest {
 	
 	@Autowired
-	private SQLDatabaseEngine databaseEngine;
 
 	private static final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 	private static final java.util.Date now = calendar.getTime();

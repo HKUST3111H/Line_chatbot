@@ -311,7 +311,7 @@ public class LineMessageController {
 	 * @param content
 	 */
 
-	private void handleTextContent(String replyToken, Event event, TextMessageContent content)
+	public void handleTextContent(String replyToken, Event event, TextMessageContent content)
             throws Exception {
 
         String text = content.getText();
@@ -676,7 +676,6 @@ public class LineMessageController {
 
 					int quota=database.checkQuota(userID);
 					if(quota>=0) {
-						System.out.print("Quata valid????");
 						database.setUserState(userID,Constant.BOOKING_CONFIRMATION);
 						//reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
 			            ButtonsTemplate buttonTemplate = new ButtonsTemplate(
@@ -793,7 +792,7 @@ public class LineMessageController {
 	 * @param user
 	 * @return result
 	 */
-	private String welcomeBack(long difference, User user){
+	public String welcomeBack(long difference, User user){
 		String result = "";
 		if(difference > Constant.TIME_GAPPING){
 			result += greeting();
@@ -808,7 +807,7 @@ public class LineMessageController {
 	/**
 	 * greeting
 	 */
-	private String greeting() {
+	public String greeting() {
 		Calendar now = Calendar.getInstance();
 		int hour = now.get(Calendar.HOUR_OF_DAY);
 
