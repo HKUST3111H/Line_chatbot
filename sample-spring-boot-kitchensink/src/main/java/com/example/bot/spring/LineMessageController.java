@@ -512,7 +512,7 @@ public class LineMessageController {
 						description=description.replace("* ", "\n");
 						description=description.replace("*", "\n");
 						lines=description.split("[\\r\\n]+");
-						description=tour.getTourName()+;
+						description=tour.getTourName();
 						for (String line :lines) {
 							description+="\n\u2606" +line;
 						}
