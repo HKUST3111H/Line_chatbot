@@ -181,9 +181,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
+		} 
 		if (result!=0)
 			return true;
 		else
@@ -353,8 +351,6 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			log.info("fuck");
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
 		}
 		return result;
 	}
@@ -399,9 +395,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
+		} 
 		if (result!=0)
 			return true;
 		else
@@ -428,8 +422,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			connection.close();	
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {	
-		}
+		} 
 		if (listOfTours != null && !listOfTours.isEmpty())
 			return listOfTours;
 		log.info("tour database probably empty");
@@ -484,9 +477,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
+		} 
 		return listOfTourOfferings;
 	}
 	
@@ -511,9 +502,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
+		} 
 		return result;
 	}
 
@@ -612,9 +601,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
+		} 
 		return result;
 	}
 	
@@ -754,9 +741,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
+		} 
 		if (result == "")
 			return "null";
 		else
@@ -811,8 +796,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-		}
+		} 
 		if (result == "")
 			return "null";
 		else
