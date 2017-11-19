@@ -7,8 +7,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
 import static org.mockito.Matchers.*;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.*;
 
@@ -519,6 +517,122 @@ public class LineMessageControllerTest {
 				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
 	}
 	
+	@Test
+	public void test_BOOKING_OR_REVIEW_handler_review() throws Exception {
+		
+		String testMsg = "review";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		List<Message> expectReply = new ArrayList<Message>();
+
+		expectReply.add(new TextMessage("Booking\n\n"));
+		expectReply.add(new TextMessage("Booking\n\n"));
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, expectReply
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));
+
+		when(database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION)).thenReturn(true);
+        when(database.reviewBookingInformation(userID)).thenReturn("Booking\n\n\n\nBooking");
+
+		underTest.BOOKING_OR_REVIEW_handler(replyToken, testMsg, userID, "");
+
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, expectReply
+		));
+		
+	}
+
+	@Test
+	public void test_BOOKING_OR_REVIEW_handler_exception() throws Exception {
+		
+		String testMsg = "blablablabla";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		List<Message> expectReply = new ArrayList<Message>();
+
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, expectReply
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+		));
+
+		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
+		when(database.getTours()).thenThrow(new Exception("EMPTY DATABASE MOCK"));
+		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
+		expectReply.add(new TextMessage("No Tours Avaliable"));
+
+		underTest.BOOKING_OR_REVIEW_handler(replyToken, testMsg, userID, "");
+		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
+		
+	}
+
+	@Test
+	public void test_BOOKING_OR_REVIEW_handler_empty() throws Exception {
+		
+		String testMsg = "blablablabla";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		List<Message> expectReply = new ArrayList<Message>();
+
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, expectReply
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+		));
+
+		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
+		when(database.getTours()).thenReturn(new ArrayList<Tour>());
+		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
+
+		underTest.BOOKING_OR_REVIEW_handler(replyToken, testMsg, userID, "");
+		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
+		
+	}
+
+	@Test
+	public void test_BOOKING_OR_REVIEW_handler() throws Exception {
+		
+		String testMsg = "blablablabla";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		List<Message> expectReply = new ArrayList<Message>();
+		List<Tour> tourList = new ArrayList<Tour>();
+
+		tourList.add(new Tour(1, "1_name", "1_discription", 2));
+		tourList.add(new Tour(2, "2_name", "2_discription", 2));
+
+		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
+		when(database.getTours()).thenReturn(tourList);
+		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
+
+		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
+		String imagePath = " ";
+		String imageUrl = "resource/static";
+		Tour tour = tourList.get(0);
+		CarouselColumn item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
+				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
+		carousel.add(item);
+		tour = tourList.get(1);
+		item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
+				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
+		carousel.add(item);
+
+		CarouselTemplate carouselTemplate = new CarouselTemplate(carousel);
+		TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);
+		expectReply.add(templateMessage);
+
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, expectReply
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+		));
+
+		underTest.BOOKING_OR_REVIEW_handler(replyToken, testMsg, userID, "");
+		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
+		
+	}
 	@Test
 	// for invalid adult number
 	public void test_BOOKING_ADULT_handler_numeric_less_than_zero() throws Exception {
@@ -1237,11 +1351,5 @@ public class LineMessageControllerTest {
         ));
         	  	 	
     }
-    
-
-    
-    
-    
-    
     
 }
