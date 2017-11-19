@@ -312,7 +312,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	 * @param request
 	 */
 	public boolean setBookingSpecialRequest(String userID,String request) {
-		return generalFuction(Constant.SET_BOOKING_TODDLER_NUMBER, userID, request,0, timeInput);
+		return generalFuction(Constant.SET_BOOKING_SPECIAL_REQUEST, userID, request,0, timeInput);
 	}
 	/**
 	 * Set Booking Confirmation
