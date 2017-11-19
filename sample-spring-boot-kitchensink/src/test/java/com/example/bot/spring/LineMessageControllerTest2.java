@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
-import org.junit.Ignore;
 import org.mockito.MockitoAnnotations;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -63,8 +62,7 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
 @RunWith(MockitoJUnitRunner.class)
-//@Ignore
-public class LineMessageControllerTest3 {
+public class LineMessageControllerTest2 {
 
 	@Mock
 	private LineMessagingClient lineMessagingClient;
@@ -79,38 +77,37 @@ public class LineMessageControllerTest3 {
 	}
 
 	@Test
-	public void test_greeting() throws Exception {
-		String result = underTest.greeting();
-		assertThat(result.contains("Good")).isEqualTo(true);
+	public void test_welcome_back() throws Exception {
+		User user = new User();
+		underTest.welcomeBack(11, user);
+		user.setName("not null");
+		underTest.welcomeBack(11, user);
 	}
 
 	@Test
-	public void test_faqsearch_image() throws Exception {
-		String text = "where is the gathering point";
-		String userID = "U52a29b672ee486b66b7fb4c45a888de3";
+	public void test_FILL_AGE_handler_booking() throws Exception{
+		
+		String testMsg = "30";
+		String userID = "userId";
 		String replyToken = "replyToken";
 		String reply = "";
-		boolean thrown = false;
+		List<Message> expectReply = new ArrayList<Message>();
+		
+		when(database.setUserAge(userID, testMsg)).thenReturn(true);
+		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
+		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
+		expectReply.add(new TextMessage("No Tours Avaliable"));
 
-		try {
-			FaqDatabase faq = new FaqDatabase();
-			String path = faq.replyImage(faq.search(text, userID)); //
-			System.out.println("\n\n\n" + path + "\n\n\n");
-			String url = LineMessageController.createUri("static/pictures/" + path);
-			when(lineMessagingClient.replyMessage(new ReplyMessage(replyToken,
-					Arrays.asList(new TextMessage(faq.search(text, userID)),
-							new ImageMessage(url, url)))))
-									.thenReturn(CompletableFuture
-											.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
-			underTest.faqsearch(replyToken, text, reply, userID);
-//			verify(lineMessagingClient)
-//					.replyMessage(new ReplyMessage(replyToken, Arrays.asList(new TextMessage(faq.search(text, userID)),
-//							new ImageMessage(url, url))));
-		} catch (Exception e) {
-			System.out.println(e.toString());
-			thrown = true;
-		}
-		assertThat(thrown).isEqualTo(false);
+		when(database.getTours()).thenThrow(new Exception("EMPTY DATABASE MOCK"));
+
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, expectReply
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+		));
+
+		underTest.FILL_AGE_handler(replyToken, testMsg, userID, "");
+		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
 	}
-
+    
 }

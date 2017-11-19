@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
+import org.junit.Ignore;
 import org.mockito.MockitoAnnotations;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -62,6 +63,7 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
 @RunWith(MockitoJUnitRunner.class)
+//@Ignore
 public class LineMessageControllerTest {
 
 	@Mock
@@ -213,6 +215,49 @@ public class LineMessageControllerTest {
 		// confirm replyMessage is called with following parameter
 		verify(lineMessagingClient).replyMessage(
 				new ReplyMessage(replyToken, singletonList(new TextMessage("Hi! Do you have any question?"))));
+	}
+
+	@Test
+	public void test_FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler_booking() throws Exception {
+		String testMsg = "booking";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		List<Message> expectReply = new ArrayList<Message>();
+		List<Tour> tourList = new ArrayList<Tour>();
+
+		tourList.add(new Tour(1, "1_name", "1_discription", 2));
+		tourList.add(new Tour(2, "2_name", "2_discription", 2));
+
+		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
+		when(database.getTours()).thenReturn(tourList);
+		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
+
+		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
+		String imagePath = " ";
+		String imageUrl = underTest.createUri(imagePath);
+		Tour tour = tourList.get(0);
+		CarouselColumn item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
+				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
+		carousel.add(item);
+		tour = tourList.get(1);
+		item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
+				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
+		carousel.add(item);
+
+		CarouselTemplate carouselTemplate = new CarouselTemplate(carousel);
+		TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);
+		expectReply.add(templateMessage);
+
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, expectReply
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+		));
+
+		// underTest.BOOKING_OR_REVIEW_handler(replyToken, testMsg, userID, "");
+		underTest.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(replyToken, testMsg, userID, "");
+		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
+		
 	}
 
 	@Test
@@ -585,9 +630,9 @@ public class LineMessageControllerTest {
 		when(database.getTours()).thenReturn(tourList);
 		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
 
-		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
+		List<CarouselColumn> carousel = new ArrayList<CarouselColumn>();
 		String imagePath = " ";
-		String imageUrl = "resource/static";
+		String imageUrl = underTest.createUri(imagePath);
 		Tour tour = tourList.get(0);
 		CarouselColumn item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
 				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
@@ -601,15 +646,12 @@ public class LineMessageControllerTest {
 		TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);
 		expectReply.add(templateMessage);
 
-        when(lineMessagingClient.replyMessage(new ReplyMessage(
-                replyToken, expectReply
-        ))).thenReturn(CompletableFuture.completedFuture(
-                new BotApiResponse("ok", Collections.emptyList())
-		));
+		when(lineMessagingClient.replyMessage(new ReplyMessage(replyToken, expectReply))).thenReturn(
+				CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
 
 		underTest.BOOKING_OR_REVIEW_handler(replyToken, testMsg, userID, "");
 		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
-		
+
 	}
 	@Test
 	// for invalid adult number
