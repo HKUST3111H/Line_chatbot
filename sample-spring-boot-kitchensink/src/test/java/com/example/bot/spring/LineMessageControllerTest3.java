@@ -96,7 +96,7 @@ public class LineMessageControllerTest3 {
 			FaqDatabase faq = new FaqDatabase();
 			String path = faq.replyImage(faq.search(text, userID)); //
 			System.out.println("\n\n\n" + path + "\n\n\n");
-			String url = LineMessageController.createUri("static/pictures/" + path);
+			String url = LineMessageController.createUri(path);
 			when(lineMessagingClient.replyMessage(new ReplyMessage(replyToken,
 					Arrays.asList(new TextMessage(faq.search(text, userID)),
 							new ImageMessage(url, url)))))

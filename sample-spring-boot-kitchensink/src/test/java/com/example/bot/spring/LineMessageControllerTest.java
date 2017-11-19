@@ -225,21 +225,23 @@ public class LineMessageControllerTest {
 		List<Message> expectReply = new ArrayList<Message>();
 		List<Tour> tourList = new ArrayList<Tour>();
 
-		tourList.add(new Tour(1, "1_name", "1_discription", 2));
-		tourList.add(new Tour(2, "2_name", "2_discription", 2));
+		tourList.add(new Tour(1, "1_name", "1_discription", 2, "404.png", ""));
+		tourList.add(new Tour(2, "2_name", "2_discription", 2, "404.png", ""));
 
 		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
 		when(database.getTours()).thenReturn(tourList);
 		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
 
 		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
-		String imagePath = " ";
-		String imageUrl = underTest.createUri(imagePath);
 		Tour tour = tourList.get(0);
+		String imagePath = tour.getImagePath();
+		String imageUrl = underTest.createUri(imagePath);
 		CarouselColumn item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
 				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
 		carousel.add(item);
 		tour = tourList.get(1);
+		imagePath = tour.getImagePath();
+		imageUrl = underTest.createUri(imagePath);
 		item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
 				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
 		carousel.add(item);
@@ -623,21 +625,23 @@ public class LineMessageControllerTest {
 		List<Message> expectReply = new ArrayList<Message>();
 		List<Tour> tourList = new ArrayList<Tour>();
 
-		tourList.add(new Tour(1, "1_name", "1_discription", 2));
-		tourList.add(new Tour(2, "2_name", "2_discription", 2));
+		tourList.add(new Tour(1, "1_name", "1_discription", 2, "404.png", ""));
+		tourList.add(new Tour(2, "2_name", "2_discription", 2, "404.png", ""));
 
 		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
 		when(database.getTours()).thenReturn(tourList);
 		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
 
 		List<CarouselColumn> carousel = new ArrayList<CarouselColumn>();
-		String imagePath = " ";
-		String imageUrl = underTest.createUri(imagePath);
 		Tour tour = tourList.get(0);
+		String imagePath = tour.getImagePath();
+		String imageUrl = underTest.createUri(imagePath);
 		CarouselColumn item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
 				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
 		carousel.add(item);
 		tour = tourList.get(1);
+		imagePath = tour.getImagePath();
+		imageUrl = underTest.createUri(imagePath);
 		item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
 				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
 		carousel.add(item);
