@@ -933,7 +933,7 @@ public class LineMessageController {
 		int count=0;
 		for (Tour tour:listOfTours) {
 			String imagePath=tour.getImagePath();
-			if (imagePath==null) imagePath="404.png";
+			if (imagePath==null || imagePath.replaceAll(" ", "").isEmpty()) imagePath="404.png";
 			
 				log.info("6666666666666666666");
 				String imagePrefix=Constant.IMGPRFIX;
