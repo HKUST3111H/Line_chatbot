@@ -83,5 +83,31 @@ public class LineMessageControllerTest2 {
 		user.setName("not null");
 		underTest.welcomeBack(11, user);
 	}
+
+	@Test
+	public void test_FILL_AGE_handler_booking() throws Exception{
+		
+		String testMsg = "30";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		String reply = "";
+		List<Message> expectReply = new ArrayList<Message>();
+		
+		when(database.setUserAge(userID, testMsg)).thenReturn(true);
+		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
+		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
+		expectReply.add(new TextMessage("No Tours Avaliable"));
+
+		when(database.getTours()).thenThrow(new Exception("EMPTY DATABASE MOCK"));
+
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, expectReply
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+		));
+
+		underTest.FILL_AGE_handler(replyToken, testMsg, userID, "");
+		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
+	}
     
 }

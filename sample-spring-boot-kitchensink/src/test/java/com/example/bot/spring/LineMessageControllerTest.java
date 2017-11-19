@@ -628,7 +628,7 @@ public class LineMessageControllerTest {
 		when(database.getTours()).thenReturn(tourList);
 		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
 
-		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
+		List<CarouselColumn> carousel = new ArrayList<CarouselColumn>();
 		String imagePath = " ";
 		String imageUrl = underTest.createUri(imagePath);
 		Tour tour = tourList.get(0);
@@ -644,15 +644,12 @@ public class LineMessageControllerTest {
 		TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);
 		expectReply.add(templateMessage);
 
-        when(lineMessagingClient.replyMessage(new ReplyMessage(
-                replyToken, expectReply
-        ))).thenReturn(CompletableFuture.completedFuture(
-                new BotApiResponse("ok", Collections.emptyList())
-		));
+		when(lineMessagingClient.replyMessage(new ReplyMessage(replyToken, expectReply))).thenReturn(
+				CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
 
 		underTest.BOOKING_OR_REVIEW_handler(replyToken, testMsg, userID, "");
 		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
-		
+
 	}
 	@Test
 	// for invalid adult number
