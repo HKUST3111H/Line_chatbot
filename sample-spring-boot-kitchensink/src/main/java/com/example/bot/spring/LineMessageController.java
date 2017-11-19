@@ -973,8 +973,10 @@ public class LineMessageController {
 		reply += answer;
 		String imageURL=faqDatabase.replyImage(answer);
 		if (imageURL!=null) {
+			log.info("\n\n\n\n\n\n\n");
 			imageURL=createUri("static/pictures/"+imageURL);
 			log.info("imageURL {}", imageURL);
+			log.info("\n\n\n\n\n\n\n");
 			this.reply(replyToken, Arrays.asList(new TextMessage(reply),new ImageMessage(imageURL, imageURL)));
 			log.info("Replied image message {}: {}", replyToken, reply);
 
