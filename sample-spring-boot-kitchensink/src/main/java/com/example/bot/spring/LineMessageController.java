@@ -932,8 +932,11 @@ public class LineMessageController {
 		int count=0;
 		for (Tour tour:listOfTours) {
 			String imagePath=" ";
+			log.info("6666666666666666666");
 			String imageUrl = createUri(imagePath);
+			log.info("6666666666666666666");
 			log.info(imageUrl);
+			log.info("6666666666666666666");
 //			String imageUrl="resource/static";
 			String trancatedDescription=tour.getDescription();
 			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 60-2)+"..";
