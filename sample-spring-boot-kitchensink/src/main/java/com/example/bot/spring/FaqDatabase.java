@@ -123,7 +123,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		int qid = -1;
 		int hit = 0;
 		// using wagnerFischer Algorithm to select question within 10 unit distance
-		if (!listOfEntry.isEmpty()) {
+//		if (!listOfEntry.isEmpty()) {
 			int dist;
 			int minDistance = 1000000;
 			for (faqEntry entry : listOfEntry) {
@@ -139,7 +139,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 				for (faqEntry entry : listOfEntry) {
 					if (text.toLowerCase().contains(entry.Keyword.toLowerCase())) {
 						dist = new WagnerFischer(entry.Question, text).getDistance();
-						if (dist <= 30 && dist < minDistance) {
+						if (dist < minDistance) {
 							minDistance = dist;
 							if (result == null) {
 								result = entry.Answer + "\n\n";
@@ -148,9 +148,9 @@ public class FaqDatabase extends SQLDatabaseEngine {
 							}
 							qid = entry.questionID;
 							hit = entry.hit;
-							if (qid != -1) {
+//							if (qid != -1) {
 								updateHit(qid, hit + 1);
-							}
+//							}
 						}
 					}
 				}
@@ -169,7 +169,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 					result = dynamic_mountain();
 				}
 			}
-		}
+//		}
 
 		if (result != null)
 			return result;
