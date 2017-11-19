@@ -18,7 +18,6 @@ public class TourOffering {
 	private String hotel;
 	private int maxCapacity;
 	private int minCapacity;
-	private List<User> users;
 	private int state;
 	private int price;
 	private int duration;
@@ -44,21 +43,35 @@ public class TourOffering {
 		this.duration = duration;
 		this.quota = quota;
 	}
-	/**
-	 * @param user
-	 * @see User
-	 */
-	public void registerUser(User user) {
-		if ( !users.contains(user) ) users.add(user);
-	}
-	/**
-	 * @param user
-	 * @see User
-	 */
-	public void unregisterUser(User user) {
-		if ( users.contains(user) ) users.remove(user);
-	}
 	
+	/**
+	 * Constructor
+	 * @param offeringID
+	 * @param date
+	 * @param hotel
+	 * @param maxCapacity
+	 * @param price
+	 * @param duration
+	 * @param quota
+	 * @param guideName
+	 * @param guideAccount
+	 * @param minCapacity
+	 * @param state
+	 */
+	public TourOffering(int offeringID, String date,String hotel,int maxCapacity, int price, int duration, int quota,
+			String guideName,String guideAccount,int minCapacity,int state) {
+		this.offeringID = offeringID;
+		this.date = date;
+		this.hotel = hotel;
+		this.maxCapacity = maxCapacity;
+		this.price = price;
+		this.duration = duration;
+		this.quota = quota;
+		this.guideName = guideName;
+		this.guideAccount = guideAccount;
+		this.minCapacity = minCapacity;
+		this.state = state;
+	}
 	/**
 	 * @return offeringID
 	 */
@@ -108,13 +121,7 @@ public class TourOffering {
 	public int getState() {
 		return state;
 	}
-	/**
-	 * @return users
-	 * @see User
-	 */
-	public List<User> getUsers() {
-		return users;
-	}
+
 	/**
 	 * @return price
 	 */
@@ -176,13 +183,7 @@ public class TourOffering {
 	public void setMinCapacity(int minCapacity) {
 		this.minCapacity = minCapacity;
 	}
-	/**
-	 * @param users list
-	 * @see User
-	 */
-	public void setUsers(List<User> users) {
-		this.users = users;
-	}
+
 	/**
 	 *OPEN = 0;
 	 *CONFIRMED = 1;
