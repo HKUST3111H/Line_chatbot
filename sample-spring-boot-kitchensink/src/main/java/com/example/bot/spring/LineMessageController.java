@@ -246,7 +246,7 @@ public class LineMessageController {
 	 * @param replyToken
 	 * @param messages
 	 */
-	private void reply(@NonNull String replyToken, @NonNull List<Message> messages) {
+	public void reply(@NonNull String replyToken, @NonNull List<Message> messages) {
 		try {
 			BotApiResponse apiResponse = lineMessagingClient.replyMessage(new ReplyMessage(replyToken, messages)).get();
 			log.info("Sent messages: {}", apiResponse);
@@ -259,7 +259,7 @@ public class LineMessageController {
 	 * @param replyToken
 	 * @param message
 	 */
-	private void replyText(@NonNull String replyToken, @NonNull String message) {
+	public void replyText(@NonNull String replyToken, @NonNull String message) {
 		if (replyToken.isEmpty()) {
 			throw new IllegalArgumentException("replyToken must not be empty");
 		}
