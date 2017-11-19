@@ -97,9 +97,10 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				stmt6.close();
 	        	break;
 			case Constant.DELETE_USER:
-				PreparedStatement stmt7 = connection.prepareStatement("DELETE FROM line_booking WHERE user_id = ?; DELETE FROM line_user WHERE id = ?;");
+				PreparedStatement stmt7 = connection.prepareStatement("DELETE FROM line_userchoose WHERE user_id = ?;DELETE FROM line_booking WHERE user_id = ?; DELETE FROM line_user WHERE id = ?;");
 				stmt7.setString(1, userID);
 				stmt7.setString(2, userID);
+				stmt7.setString(3, userID);
 				result=stmt7.executeUpdate();
 				stmt7.close();
 	        	break;
@@ -287,7 +288,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	 * @param userID
 	 * @param number
 	 */
-	public boolean setBookingAdultNumber(String userID,int number) throws Exception {
+	public boolean setBookingAdultNumber(String userID,int number) {
 		return generalFuction(Constant.SET_BOOKING_ADULT_NUMBER, userID, "",number, timeInput);
 	}
 	/**
@@ -548,7 +549,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	 * @param userID
 	 * @return result
 	 */
-	public int checkQuota(String userID)throws Exception {
+	public int checkQuota(String userID) {
 		int result=-1;
 		int max=0;
 		int sum=0;
@@ -610,7 +611,7 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 	 * @param userID
 	 * @return result
 	 */
-	public String displaytBookingInformation(String userID) throws Exception {
+	public String displaytBookingInformation(String userID) {
 		String result="";
 		int result2=0;
 		String special="";
@@ -679,25 +680,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 					rate=rs2.getDouble(5);
 					result+=("Congratulations! You gain a "+discount_name+" for "+seat+" seats in this booking.\n"
 							+ "If you canceled this booking, you will lose this discount.\n\n");
-					if(seat==0) {
-						//pass
-					}
-					else if (adult>=seat && seat>0) {
-						discount_fee += seat*(1.0-rate)*price;
-						seat_for_adult=seat;
-					}
-					else {
-						discount_fee += adult*(1.0-rate)*price;
-						seat_for_adult=adult;
-						if(child>=(seat-seat_for_adult)) {
-							discount_fee += (seat-seat_for_adult)*(1.0-rate)*price*0.8;
-							seat_for_child=(seat-seat_for_adult);
-						}
-						else{
-							discount_fee += child*(1.0-rate)*price;
-							seat_for_child = child;
-						}
-					}
+					discount_fee = calculateDiscount(seat, adult,discount_fee, rate,price,
+							seat_for_adult, child, seat_for_child);
 					total_fee = fee-discount_fee;
 					discount_fee_int = (int)discount_fee;
 					total_fee_int = fee_int-discount_fee_int ;
@@ -708,8 +692,8 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 				+"\n\nGuide line account: "+rs.getString(10)+"\n\nAdult: "+adult+"\n\nChild: "+child+"\n\nToddler: "+toddler
 				+"\n\nSpecial request: "+special);
 				if(has_discount) {
-					result+=("\n\nOriginal fee: HKD "+fee_int+"\n\nTotal dicount fee: HKD "+discount_fee_int+"\nDiscount for "+seat_for_adult+
-							" adults and "+seat_for_child+" children"+"\n\nTotal fee: HKD "+total_fee_int);
+					result+=("\n\nOriginal fee: HKD "+fee_int+"\n\nTotal dicount fee: HKD "+discount_fee_int+
+							"\n\nTotal fee: HKD "+total_fee_int);
 				}
 				else {
 					result+=("\n\nTotal fee: HKD "+total_fee_int+"\n\n");
@@ -748,6 +732,31 @@ public class SQLDatabaseEngine extends DatabaseEngine {
 			return result;
 	}
 	
+	
+
+	public double calculateDiscount(int seat, int adult,double discount_fee, double rate,double price,
+			int seat_for_adult, int child, int seat_for_child) {
+		if(seat==0) {
+			//pass
+		}
+		else if (adult>=seat && seat>0) {
+			discount_fee += seat*(1.0-rate)*price;
+			seat_for_adult=seat;
+		}
+		else {
+			discount_fee += adult*(1.0-rate)*price;
+			seat_for_adult=adult;
+			if(child>=(seat-seat_for_adult)) {
+				discount_fee += (seat-seat_for_adult)*(1.0-rate)*price*0.8;
+				seat_for_child=(seat-seat_for_adult);
+			}
+			else{
+				discount_fee += child*(1.0-rate)*price;
+				seat_for_child = child;
+			}
+		}
+		return discount_fee;
+	}
 	/**
 	 * Review Booking Information
 	 * @param userID

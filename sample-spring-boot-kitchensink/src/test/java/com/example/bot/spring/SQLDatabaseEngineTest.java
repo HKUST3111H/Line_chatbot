@@ -1,4 +1,4 @@
-/*package com.example.bot.spring;
+package com.example.bot.spring;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -65,9 +65,11 @@ public class SQLDatabaseEngineTest {
 	private static final java.util.Date now = calendar.getTime();
 	private static final java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
 
-	private static final int test_tour_id = 2;
-	private static final int test_tour_offering_id_no_discount = 17;
+	private static final int test_tour_id = 8;
+	private static final int test_tour_offering_id_no_discount = 18;
 	private static final String test_user_id = "test_id";
+	private static final String test_user_id_1 = "test_id1";
+	private static final String test_user_id_2 = "test_id2";
 	private static final String test_name = "test_name";
 	private static final String test_phoneno = "00001111";
 	private static final String test_age = "20";
@@ -81,7 +83,7 @@ public class SQLDatabaseEngineTest {
 	public void setUp() {
         try {
             init = true;
-            databaseEngine.createUser(test_user_id, time, test_state);
+            databaseEngine.createUser(test_user_id_2, time, test_state);
         } catch (Exception e) {
             log.info("Test User Exist!");
         }
@@ -96,7 +98,7 @@ public class SQLDatabaseEngineTest {
 		assertTrue(result);
         log.info("Update Succeed");
         try {
-			Boolean deleted= databaseEngine.deleteUser(test_user_id);
+			Boolean deleted= databaseEngine.deleteUser(test_user_id_2);
 			if (!deleted) {
 				log.info("Delete fail!");
 			}
@@ -109,61 +111,144 @@ public class SQLDatabaseEngineTest {
 	@Test
 	public void testSetInformation() {
 		// for testing this class TourOffering tourOfferingFound
-		try {
-			databaseEngine.deleteUser(test_user_id);
-			result = databaseEngine.createUser(test_user_id, time, test_state);
-			result = databaseEngine.setUserAge(test_user_id, test_age);
-			result = databaseEngine.setUserPhoneNum(test_user_id, test_phoneno)&&result;
-			result = databaseEngine.setUserName(test_user_id, test_name)&&result;
-			result = databaseEngine.setUserState(test_user_id, test_state)&&result;
-			result = databaseEngine.setUserTime(test_user_id, time)&&result;
-			result = databaseEngine.tourFound(test_tour_id )&&result;
-			databaseEngine.getUserInformation(test_user_id);
-			databaseEngine.getTours(test_user_id);
-			
-		} catch (Exception e) {
-			thrown = true;
-		}
+			try {
+				result = databaseEngine.createUser(test_user_id_1, time, test_state);
+				log.info("11");
+			} catch (Exception e) {
+				thrown = true;
+			}
+
+			if (thrown || !result) {
+					return;
+			}
+			try {
+				result = databaseEngine.setUserAge(test_user_id_1, test_age);
+				log.info("12");
+			} catch (Exception e) {
+				thrown = true;
+			}
+
+			if (thrown || !result) {
+					return;
+			}
+			try {
+				result = databaseEngine.setUserPhoneNum(test_user_id_1, test_phoneno);
+				log.info("13");
+			} catch (Exception e) {
+				thrown = true;
+			}
+
+			if (thrown || !result) {
+					return;
+			}
+			try {
+				result = databaseEngine.setUserName(test_user_id_1, test_name);
+				log.info("14");
+			} catch (Exception e) {
+				thrown = true;
+			}
+
+			if (thrown || !result) {
+					return;
+			}
+			try {
+				result = databaseEngine.setUserState(test_user_id_1, test_state);
+				log.info("15");
+			} catch (Exception e) {
+				thrown = true;
+			}
+
+			if (thrown || !result) {
+					return;
+			}
+			try {
+				result = databaseEngine.setUserTime(test_user_id_1, time);
+				log.info("16");
+			} catch (Exception e) {
+				thrown = true;
+			}
+
+			if (thrown || !result) {
+					return;
+			}
+			try {
+				result = databaseEngine.tourFound(test_tour_id );
+				log.info("17");
+			} catch (Exception e) {
+				thrown = true;
+			}
+
+			if (thrown || !result) {
+					return;
+			}
+			try {
+				databaseEngine.getUserInformation(test_user_id_1);
+				log.info("18");
+			} catch (Exception e) {
+				thrown = true;
+			}
+
+			if (thrown || !result) {
+					return;
+			}
+			try {
+				if (databaseEngine.getTours().isEmpty()) {
+					result = false;
+				}
+				log.info("19");
+			} catch (Exception e) {
+				thrown = true;
+			}
+
+			if (thrown || !result) {
+					return;
+			}
+			try {
+				result =databaseEngine.addToUnknownDatatabse("Xuxiaofeng");
+				log.info("20");
+			} catch (Exception e) {
+				thrown = true;
+			}
+
+			if (thrown || !result) {
+					return;
+			}
+			try {
+				if (databaseEngine.displayTourOffering(test_tour_id).isEmpty()) {
+					result = false;
+				}
+				log.info("21");
+			} catch (Exception e) {
+				thrown = true;
+			}
+
+			if (thrown || !result) {
+					return;
+			}
+			try {
+				result = databaseEngine.tourOfferingFound(test_tour_id,test_tour_offering_id_no_discount);
+				log.info("22");
+			} catch (Exception e) {
+				thrown = true;
+			}
+			if (thrown || !result) {
+				return;
+			}
+			try {
+				databaseEngine.deleteUser(test_user_id_1);
+				log.info("23");
+			} catch (Exception e) {
+				thrown = true;
+			}
 	}
+	
 	@Test
-	public void testTourOfferingFound() {
+	public void testSetBooking() {
 		// for testing this class TourOffering tourOfferingFound
 		try {
-			result = databaseEngine.tourOfferingFound(test_tour_id, test_tour_offering_id);
-		} catch (Exception e) {
-			thrown = true;
-		}
-	}
-
-	@Test
-	public void testDisplayTourOffering() {
-		//for testing this class TourOffering displayTourOffering
-		try {
-			if (databaseEngine.displayTourOffering(test_tour_id).isEmpty()) {
-				result = false;
-			}
-		} catch (Exception e) {
-			thrown = true;
-		}
-	}
-	@Test
-	public void testDisplaytBookingInformation() {
-		//for testing this class TourOffering displayTourOffering
-		try {
-			if (databaseEngine.displaytBookingInformation(test_user_id ) == null) {
-				result = false;
-			}
-		} catch (Exception e) {
-			thrown = true;
-		}
-	}
-
-
-	@Test
-	public void testBuffer() {
-		//for testing this class Booking Buffer
-		try {
+			databaseEngine.createUser(test_user_id, time, test_state);
 			result = databaseEngine.setBufferTourID(test_user_id, test_tour_id);
+			log.info("31");
 		} catch (Exception e) {
 			thrown = true;
 		}
@@ -174,6 +259,7 @@ public class SQLDatabaseEngineTest {
 
 		try {
 			result = (databaseEngine.getBufferTourID(test_user_id) != -1);
+			log.info("32");
 		} catch (Exception e) {
 			thrown = true;
 		}
@@ -184,31 +270,141 @@ public class SQLDatabaseEngineTest {
 
 		try {
 			result = databaseEngine.deleteBufferBookingEntry(test_user_id);
+			log.info("33");
 		} catch (Exception e) {
 			thrown = true;
 		}
-	}
-
-	@Test
-	public void testSetBookingTourOfferingID() {
-		//for testing this class Booking setBookingTourOfferingID
+		if (thrown || !result) {
+			return;
+		}
 		try {
-			result =databaseEngine.setBookingTourOfferingID(test_user_id, test_tour_offering_id);
+			result = databaseEngine.setBookingTourOfferingID(test_user_id, test_tour_offering_id_no_discount);
+			log.info("34");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		if (thrown || !result) {
+			return;
+		}
+		try {
+			result = databaseEngine.deleteBookingEntry(test_user_id);
+			log.info("35");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		if (thrown || !result) {
+			return;
+		}
+		try {
+			databaseEngine.setBookingTourOfferingID(test_user_id, test_tour_offering_id_no_discount);
+			result = databaseEngine.setBookingAdultNumber(test_user_id, 1);
+			log.info("36");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		if (thrown || !result) {
+			return;
+		}
+		try {
+			result = databaseEngine.setBookingChildrenNumber(test_user_id,1);
+			log.info("37");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		if (thrown || !result) {
+			return;
+		}
+		try {
+			result = databaseEngine.setBookingToddlerNumber(test_user_id,1);
+			log.info("38");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		if (thrown || !result) {
+			return;
+		}
+		try {
+			int quota=databaseEngine.checkQuota(test_user_id);
+			if(quota<-1) {
+				result = false;
+			}
+			log.info("39");
+			log.info(Integer.toString(quota));
+		} catch (Exception e) {
+			thrown = true;
+		}
+		if (thrown || !result) {
+			return;
+		}
+		try {
+			result = databaseEngine.setBookingSpecialRequest(test_user_id,"No");
+			log.info("40");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		if (thrown || !result) {
+			return;
+		}
+		try {
+			result = databaseEngine.setBookingConfirmation(test_user_id);
+			log.info("41");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		if (thrown || !result) {
+			return;
+		}
+		try {
+			if(databaseEngine.displaytBookingInformation(test_user_id).isEmpty()) {
+				result = false;
+			}
+			log.info("42");
+		} catch (Exception e) {
+			thrown = true;
+		}
+		if (thrown || !result) {
+			return;
+		}
+		try {
+			if(databaseEngine.reviewBookingInformation(test_user_id )==null) {
+				result = false;
+			}
+			log.info("43");
+			databaseEngine.deleteUser(test_user_id);
 		} catch (Exception e) {
 			thrown = true;
 		}
 	}
 	
 	@Test
-	public void testAddToUnknowndatabase() {
-		//for testing AddToUnknowndatabase()
+	public void testBookingInformation() {
+		//for testing this class TourOffering displayTourOffering
 		try {
-			result =databaseEngine.addToUnknownDatatabse("Xuxiaofeng");
-			
+			if (databaseEngine.displaytBookingInformation(test_user_id_2 ) == null
+					&&databaseEngine.reviewBookingInformation(test_user_id_2 ) == null) {
+				result = false;
+			}
+		} catch (Exception e) {
+			thrown = true;
+		}
+	}
+
+
+	@Test
+	public void testCalculateDiscount() {
+		//for testing this class Booking setBookingTourOfferingID
+		try {
+			databaseEngine.calculateDiscount(0, 0, 0, 0,0,
+					0, 0, 0);
+			databaseEngine.calculateDiscount(5, 6, 0, 0,0,
+					0, 0, 0);
+			databaseEngine.calculateDiscount(5, 1, 0, 0,0,
+					0, 1, 0);
+			databaseEngine.calculateDiscount(5, 1, 0, 0,0,
+					0, 6, 0);
 		} catch (Exception e) {
 			thrown = true;
 		}
 	}
 	
 }
-*/

@@ -66,6 +66,8 @@ public class TourTest {
 	private static final String test_name = "test_name";
 	private static final String test_description = "hhh";
 	private static final int test_duration = 2;
+	private static final String test_image_path = "abc";
+	private static final String test_short_description = "def";
 
 	private static boolean init = false;
 	private static boolean thrown = false;
@@ -73,7 +75,8 @@ public class TourTest {
 	private static boolean update_result = true;
 	
 				
-	private static Tour newtour = new Tour(test_tour_id, test_name, test_description, test_duration);	
+	private static Tour newtour = new Tour(test_tour_id, test_name, test_description, 
+			test_duration,test_image_path,test_short_description);	
 
 	@Test 
 	public void testConstructor() throws Exception {
@@ -131,6 +134,26 @@ public class TourTest {
 		}
 	
 	}
+	@Test
+	public void testSetImagePath() throws Exception {
+		try {
+			newtour.setImagePath(test_image_path);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
+	@Test
+	public void testSetShortDescription() throws Exception {
+		try {
+			newtour.setShortDescription(test_short_description);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	
+	}
 
 	
 	@Test
@@ -176,6 +199,29 @@ public class TourTest {
 		try {
 			int duration =newtour.getDuration();
 			assertTrue(duration==test_duration);
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	@Test
+	public void testGetImagePath() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			String image =newtour.getImagePath();
+			assertTrue(image.equals(test_image_path));
+		} catch (Exception e) {
+			log.info(e.toString());
+			thrown = true;
+		}
+	}
+	
+	@Test
+	public void testGetShortDescription() throws Exception {
+		//for testing User class setUserAge function
+		try {
+			String description =newtour.getShortDescription();
+			assertTrue(description.equals(test_short_description));
 		} catch (Exception e) {
 			log.info(e.toString());
 			thrown = true;
