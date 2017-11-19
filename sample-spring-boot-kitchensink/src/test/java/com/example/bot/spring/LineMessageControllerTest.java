@@ -39,7 +39,7 @@ import com.linecorp.bot.model.event.message.ImageMessageContent;
 import com.linecorp.bot.model.event.message.LocationMessageContent;
 import com.linecorp.bot.model.event.message.StickerMessageContent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
-import com.linecorp.bot.model.event.source.GroupSource;
+import com.linecorp.bot.model.event.source.UserSource;
 import com.linecorp.bot.model.event.source.RoomSource;
 import com.linecorp.bot.model.event.source.Source;
 import com.linecorp.bot.model.message.AudioMessage;
@@ -553,4 +553,407 @@ public class LineMessageControllerTest {
         ));
     	  	
     }
+    
+    @Test 
+    public void test_HandleTextContent_FAQ_NO_USER_INFORMATION() throws Exception {
+		String text = "book";
+		String userID = "null";
+		String replyToken = "replyToken";
+		String expectReply = underTest.greeting()+"!\n"+Constant.GREETING_FIRST_USE+Constant.INSTRUCTION_FILL_INFORMATION+Constant.INSTRUCTION_ENTER_NAME;
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("null","xxf","123","21",Constant.FAQ_NO_USER_INFORMATION,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION() throws Exception {
+		String text = "no.";
+		String userID = "211";
+		String replyToken = "replyToken";
+		String expectReply = "Got it.";
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("211","xxf","123","21",Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_FAQ_AFTER_CONFIRMATION() throws Exception {
+		String text = "no.";
+		String userID = "211";
+		String replyToken = "replyToken";
+		String expectReply = "Got it.";
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("211","xxf","123","21",Constant.FAQ_AFTER_CONFIRMATION,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_FILL_NAME() throws Exception {
+		String text = "no.";
+		String userID = "211";
+		String replyToken = "replyToken";
+		String expectReply = Constant.INSTRUCTION_ENTER_PHONE_NUM;
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("211","xxf","123","21",Constant.FILL_NAME,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_FILL_PHONE_NUM() throws Exception {
+		String text = "no.";
+		String userID = "211";
+		String replyToken = "replyToken";
+		String expectReply = Constant.INSTRUCTION_ENTER_AGE;
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("211","xxf","123","21",Constant.FILL_PHONE_NUM,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_FILL_AGE() throws Exception {
+		String text = "no.";
+		String userID = "211";
+		String replyToken = "replyToken";
+		String expectReply = Constant.ERROR_REENTER_AGE;
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("211","xxf","123","21",Constant.FILL_AGE,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_BOOKING_TOUR_ID() throws Exception {
+		String text = "Q";
+		String userID = "2211";
+		String replyToken = "replyToken";
+		String expectReply = Constant.CANCEL;
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("2211","xxf","123","21",Constant.BOOKING_TOUR_ID,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION)).thenReturn(true);
+		when(database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION)).thenReturn(true);
+		when(database.deleteBookingEntry(userID)).thenReturn(true);
+		when(database.deleteBufferBookingEntry(userID)).thenReturn(true);
+		
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);   
+    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_BOOKING_OFFERING_ID() throws Exception {
+		String text = "Q";
+		String userID = "2118";
+		String replyToken = "replyToken";
+		String expectReply = Constant.CANCEL;
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("2118","xxf","123","21",Constant.BOOKING_OFFERING_ID,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION)).thenReturn(true);
+		when(database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION)).thenReturn(true);
+		when(database.deleteBookingEntry(userID)).thenReturn(true);
+		when(database.deleteBufferBookingEntry(userID)).thenReturn(true);
+        
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);   
+    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_BOOKING_ADULT() throws Exception {
+		String text = "Q";
+		String userID = "2118";
+		String replyToken = "replyToken";
+		String expectReply = Constant.CANCEL;
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("2118","xxf","123","21",Constant.BOOKING_ADULT,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION)).thenReturn(true);
+		when(database.setUserState(userID, Constant.BOOKING_ADULT)).thenReturn(true);
+		when(database.deleteBookingEntry(userID)).thenReturn(true);
+		when(database.deleteBufferBookingEntry(userID)).thenReturn(true);
+        
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);   
+    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_BOOKING_CHILDREN() throws Exception {
+		String text = "Q";
+		String userID = "2118";
+		String replyToken = "replyToken";
+		String expectReply = Constant.CANCEL;
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("2118","xxf","123","21",Constant.BOOKING_CHILDREN,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION)).thenReturn(true);
+		when(database.setUserState(userID, Constant.BOOKING_CHILDREN)).thenReturn(true);
+		when(database.deleteBookingEntry(userID)).thenReturn(true);
+		when(database.deleteBufferBookingEntry(userID)).thenReturn(true);
+        
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);   
+    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_BOOKING_TODDLER() throws Exception {
+		String text = "Q";
+		String userID = "21128";
+		String replyToken = "replyToken";
+		String expectReply = Constant.CANCEL;
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("21128","xxf","123","21",Constant.BOOKING_TODDLER,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION)).thenReturn(true);
+		when(database.setUserState(userID, Constant.BOOKING_TODDLER)).thenReturn(true);
+		when(database.deleteBookingEntry(userID)).thenReturn(true);
+		when(database.deleteBufferBookingEntry(userID)).thenReturn(true);
+        
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);   
+    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+    @Test 
+    public void test_HandleTextContent_BOOKING_CONFIRMATION() throws Exception {
+		String text = "Q";
+		String userID = "21128";
+		String replyToken = "replyToken";
+		String expectReply = Constant.CANCEL;
+		java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());
+		User user = new User("21128","xxf","123","21",Constant.BOOKING_CONFIRMATION,time);
+		TextMessageContent content = new TextMessageContent(userID,text);
+        MessageEvent event = new MessageEvent<>(
+                "replyToken",
+                new UserSource(userID),
+                content,
+                Instant.now()
+        );
+        
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		when(database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION)).thenReturn(true);
+		when(database.setUserState(userID, Constant.BOOKING_CONFIRMATION)).thenReturn(true);
+		when(database.deleteBookingEntry(userID)).thenReturn(true);
+		when(database.deleteBufferBookingEntry(userID)).thenReturn(true);
+        
+        when(lineMessagingClient.replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ))).thenReturn(CompletableFuture.completedFuture(
+                new BotApiResponse("ok", Collections.emptyList())
+        ));	
+    		when(database.getUserInformation(userID)).thenReturn(user);
+    		underTest.handleTextContent(replyToken,event,content);   
+    		
+        verify(lineMessagingClient).replyMessage(new ReplyMessage(
+                replyToken, singletonList(new TextMessage(expectReply))
+        ));
+        	  	 	
+    }
+    
+
+    
+    
+    
+    
+    
 }

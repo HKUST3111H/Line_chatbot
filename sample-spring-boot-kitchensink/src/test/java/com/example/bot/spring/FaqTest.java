@@ -170,12 +170,14 @@ public class FaqTest {
 		}
 		assertThat(thrown).isEqualTo(false);
 	}
+	
 
 	/*@Test
 	public void test_dynamic_top_five_tours_catch() throws Exception {
 		doThrow(new Exception()).when(stmt).setString(1, "U52a29b672ee486b66b7fb4c45a888de3");
 		//when(this.faqEngine.dynamic_top_five_tours("U52a29b672ee486b66b7fb4c45a888de3")).thenThrow(new Exception());
 	}*/
+	
 
 	@Test
 	public void testSearchToursWithMountain() throws Exception {
