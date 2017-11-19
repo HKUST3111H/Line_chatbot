@@ -194,22 +194,7 @@ public class FaqTest {
 		assertThat(thrown).isEqualTo(false);
 	}
 
-//	@Test
-//	public void testParse() throws Exception {
-//		boolean thrown = false;
-//		String description = "123*456*789";
-//		String result = "";
-//		try {
-//			result = this.faqEngine.parse(description);
-//			System.out.println("\n\n\n\n");
-//			System.out.println(result);
-//			System.out.println("\n\n\n\n");
-//		} catch (Exception e) {
-//			thrown = true;
-//		}
-//		assertThat(thrown).isEqualTo(false);
-//		assertThat(result.equals("123\n*456\n*789")).isEqualTo(true);
-//	}
+
 
 	@Test
 	public void testSearchFound() throws Exception {
