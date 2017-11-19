@@ -63,7 +63,7 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
 @RunWith(MockitoJUnitRunner.class)
-//@Ignore
+@Ignore
 public class LineMessageControllerTest3 {
 
 	@Mock

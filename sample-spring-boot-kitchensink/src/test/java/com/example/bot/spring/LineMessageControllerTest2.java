@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
 import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.doThrow;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 import java.util.*;
@@ -122,20 +123,23 @@ public class LineMessageControllerTest2 {
 
 	}
 	
-	// @Test
-	// public void test_reply() throws Exception{
-	// 	String replyToken = "replyToken";
-	// 	String testMsg = "message";
-	// 	String expectReply = "expectReply";
-
-    //     when(lineMessagingClient.replyMessage(new ReplyMessage(
-    //             replyToken, expectReply
-    //     ))).thenReturn(CompletableFuture.completedFuture(
-    //             new BotApiResponse("ok", Collections.emptyList())
-	// 	));
-
-	// 	underTest.replyText(replyToken, "");
-	// 	verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
-	// }
+	@Test
+	public void test_reply() throws Exception{
+		String replyToken = "replyToken";
+	 	String testMsg = "message";
+	 	String expectReply = "expectReply";
+	 	boolean thrown = false;
+	 	
+	 	try {
+	 		when(lineMessagingClient.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))))).thenThrow(new InterruptedException());
+	 		underTest.replyText(replyToken, expectReply);
+	 	}
+	 	catch(RuntimeException e) {
+	 		thrown = true;
+	 	}
+	 	assertThat(thrown).isEqualTo(true);
+	 	
+//		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
+	 }
 	
 }
