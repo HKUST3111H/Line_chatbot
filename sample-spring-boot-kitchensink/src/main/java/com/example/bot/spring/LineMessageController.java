@@ -912,6 +912,7 @@ public class LineMessageController {
 	 */
 	private void listTourForBooking(String replyToken, String reply) throws Exception {
 		List<Message> msgToReply=new ArrayList<Message>();
+		if (reply!=null && !reply.replaceAll(" ", "").isEmpty()) msgToReply.add(new TextMessage(reply));
 		TextMessage heading = new TextMessage(Constant.INSTRUCTION_BOOKING);
 		msgToReply.add(heading);
 		
@@ -931,9 +932,20 @@ public class LineMessageController {
 		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
 		int count=0;
 		for (Tour tour:listOfTours) {
-			String imagePath=" ";
-			String imageUrl = createUri(imagePath);
+			String imagePath=tour.getImagePath();
+			if (imagePath==null || imagePath.replaceAll(" ", "").isEmpty()) imagePath="404.png";
+			
+				log.info("6666666666666666666");
+				String imagePrefix=Constant.IMGPRFIX;
+				String imageUrl = createUri(imagePrefix+imagePath);
+				log.info("6666666666666666666");
+				log.info(imageUrl);
+				log.info("6666666666666666666");
+				log.info(tour.getTourName());
+
+
 			String trancatedDescription=tour.getDescription();
+			//if (trancatedDescription.length()>60) trancatedDescription=tour.getShortDescription();
 			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 60-2)+"..";
 			log.info(imageUrl);
 			log.info(tour.getTourName());
