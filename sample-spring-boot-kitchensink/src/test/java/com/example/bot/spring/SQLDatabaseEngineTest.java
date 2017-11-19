@@ -56,7 +56,7 @@ import java.util.TimeZone;
 @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
 @SpringBootTest(classes = { SQLDatabaseEngineTest.class,  SQLDatabaseEngine.class })
-@Ignore
+//@Ignore
 public class SQLDatabaseEngineTest {
 	@Autowired
 	private SQLDatabaseEngine databaseEngine;
@@ -70,6 +70,7 @@ public class SQLDatabaseEngineTest {
 	private static final String test_user_id = "test_id";
 	private static final String test_user_id_1 = "test_id1";
 	private static final String test_user_id_2 = "test_id2";
+	private static final String test_user_id_3 = "test_id3";
 	private static final String test_name = "test_name";
 	private static final String test_phoneno = "00001111";
 	private static final String test_age = "20";
@@ -384,6 +385,9 @@ public class SQLDatabaseEngineTest {
 					&&databaseEngine.reviewBookingInformation(test_user_id_2 ) == null) {
 				result = false;
 			}
+			databaseEngine.getUserInformation(test_user_id_1);
+			databaseEngine.tourOfferingFound(test_tour_id,0);
+			databaseEngine.displaytBookingInformation(test_user_id_1);
 		} catch (Exception e) {
 			thrown = true;
 		}
