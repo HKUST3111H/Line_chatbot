@@ -912,8 +912,8 @@ public class LineMessageController {
 	 */
 	private void listTourForBooking(String replyToken, String reply) throws Exception {
 		List<Message> msgToReply=new ArrayList<Message>();
-		if (reply!=null && !reply.replaceAll(" ", "").isEmpty()) msgToReply.add(new TextMessage(reply));
-		TextMessage heading = new TextMessage(Constant.INSTRUCTION_BOOKING);
+		// if (reply!=null && !reply.replaceAll(" ", "").isEmpty()) msgToReply.add(new TextMessage(reply));
+		TextMessage heading = new TextMessage(reply+Constant.INSTRUCTION_BOOKING);
 		msgToReply.add(heading);
 		
 		List<Tour> listOfTours=new ArrayList<Tour>();
@@ -937,7 +937,7 @@ public class LineMessageController {
 			
 				log.info("6666666666666666666");
 				String imagePrefix=Constant.IMGPRFIX;
-				String imageUrl = createUri(imagePrefix+imagePath);
+				String imageUrl = createUri(imagePath);
 				log.info("6666666666666666666");
 				log.info(imageUrl);
 				log.info("6666666666666666666");
@@ -985,7 +985,7 @@ public class LineMessageController {
 		String imageURL=faqDatabase.replyImage(answer);
 		if (imageURL!=null) {
 			log.info("\n\n\n\n\n\n\n");
-			imageURL=createUri("static/pictures/"+imageURL);
+			imageURL=createUri(imageURL);
 			log.info("imageURL {}", imageURL);
 			log.info("\n\n\n\n\n\n\n");
 			this.reply(replyToken, Arrays.asList(new TextMessage(reply),new ImageMessage(imageURL, imageURL)));
@@ -1010,7 +1010,7 @@ public class LineMessageController {
 	 * @param path
 	 */
 	static String createUri(String path) {
-		return "https://comp3111h-line-chatbot.herokuapp.com/" + path;
+		return "https://comp3111h-line-chatbot.herokuapp.com/" + Constant.IMGPRFIX + path;
 //		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
 	}
 	/**

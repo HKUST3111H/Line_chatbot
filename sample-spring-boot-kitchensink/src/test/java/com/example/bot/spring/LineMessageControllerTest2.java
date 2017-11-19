@@ -95,7 +95,7 @@ public class LineMessageControllerTest2 {
 
 		when(database.setUserAge(userID, testMsg)).thenReturn(true);
 		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
-		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
+		expectReply.add(new TextMessage(Constant.CONFIRM_REGISTRATION + Constant.INSTRUCTION_BOOKING));
 		expectReply.add(new TextMessage("No Tours Avaliable"));
 
 		when(database.getTours()).thenThrow(new Exception("EMPTY DATABASE MOCK"));
