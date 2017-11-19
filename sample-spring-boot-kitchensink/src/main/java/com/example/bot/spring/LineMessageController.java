@@ -910,7 +910,7 @@ public class LineMessageController {
 	 * @param replyToken
 	 * @param reply
 	 */
-	private void listTourForBooking(String replyToken, String reply) throws Exception {
+	public void listTourForBooking(String replyToken, String reply) throws Exception {
 		List<Message> msgToReply=new ArrayList<Message>();
 		// if (reply!=null && !reply.replaceAll(" ", "").isEmpty()) msgToReply.add(new TextMessage(reply));
 		TextMessage heading = new TextMessage(reply+Constant.INSTRUCTION_BOOKING);
