@@ -931,14 +931,16 @@ public class LineMessageController {
 		List<CarouselColumn> carousel=new ArrayList<CarouselColumn>();
 		int count=0;
 		for (Tour tour:listOfTours) {
-			String imagePath=" ";
+			String imagePath=tour.getImagePath();
 			log.info("6666666666666666666");
-			String imageUrl = createUri(imagePath);
+			String imagePrefix=Constant.IMGPRFIX;
+			String imageUrl = createUri(imagePrefix+imagePath);
 			log.info("6666666666666666666");
 			log.info(imageUrl);
 			log.info("6666666666666666666");
-//			String imageUrl="resource/static";
+
 			String trancatedDescription=tour.getDescription();
+			if (trancatedDescription.length()>60) trancatedDescription=tour.getShortDescription();
 			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 60-2)+"..";
 			log.info(imageUrl);
 			log.info(tour.getTourName());
