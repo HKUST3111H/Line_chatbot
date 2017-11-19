@@ -12,15 +12,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.*;
 /**
+ * This class is a container for Constant which stores a lot of constant variables used in other classes
  * @author Group 16
- * This class is a container for Constant
  */
 @Slf4j
 public  class Constant {
 	/**
-	 * Prite Constructor means it is singleton
+	 * Private constructor means it is singleton
 	 */
 	private static Constant uniqueInstance = new Constant();
+	
+	/**
+	 * Default constructor for Constant class
+	 */
+	
 	private Constant () {};
 	// FAQ
 	public static final int FAQ_NO_USER_INFORMATION = 100;
