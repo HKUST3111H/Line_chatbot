@@ -45,6 +45,34 @@ public class TourOffering {
 	}
 	
 	/**
+	 * Constructor
+	 * @param offeringID
+	 * @param date
+	 * @param hotel
+	 * @param maxCapacity
+	 * @param price
+	 * @param duration
+	 * @param quota
+	 * @param guideName
+	 * @param guideAccount
+	 * @param minCapacity
+	 * @param state
+	 */
+	public TourOffering(int offeringID, String date,String hotel,int maxCapacity, int price, int duration, int quota,
+			String guideName,String guideAccount,int minCapacity,int state) {
+		this.offeringID = offeringID;
+		this.date = date;
+		this.hotel = hotel;
+		this.maxCapacity = maxCapacity;
+		this.price = price;
+		this.duration = duration;
+		this.quota = quota;
+		this.guideName = guideName;
+		this.guideAccount = guideAccount;
+		this.minCapacity = minCapacity;
+		this.state = state;
+	}
+	/**
 	 * @return offeringID
 	 */
 	// get functions
