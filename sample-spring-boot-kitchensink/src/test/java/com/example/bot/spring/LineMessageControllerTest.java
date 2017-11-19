@@ -414,6 +414,25 @@ public class LineMessageControllerTest {
 		verify(lineMessagingClient)
 				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
 	}
+	
+//	@Test
+//	public void test_BOOKING_OFFERING_ID_handler_not_numeric() throws Exception {
+//
+//		String text = "haha";
+//		String userID = "userId";
+//		String replyToken = "replyToken";
+//		String expectReply = Constant.INSTRTUCTION_ENTER_ADULT_NUMBER;
+//
+//		// mock line bot api client response
+//		when(lineMessagingClient
+//				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))))).thenReturn(
+//						CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
+//		underTest.BOOKING_OFFERING_ID_handler(replyToken, text, userID, "");
+//
+//		// confirm replyMessage is called with following parameter
+//		verify(lineMessagingClient)
+//				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
+//	}
 
 	@Test
     //for successful adult number
