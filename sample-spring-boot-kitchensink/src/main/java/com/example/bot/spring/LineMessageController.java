@@ -941,9 +941,10 @@ public class LineMessageController {
 				log.info("6666666666666666666");
 				log.info(imageUrl);
 				log.info("6666666666666666666");
-			
+				log.info(tour.getTourName());
+
 			String trancatedDescription=tour.getDescription();
-			if (trancatedDescription.length()>60) trancatedDescription=tour.getShortDescription();
+			//if (trancatedDescription.length()>60) trancatedDescription=tour.getShortDescription();
 			if (trancatedDescription.length()>60) trancatedDescription=trancatedDescription.substring(0, 60-2)+"..";
 			log.info(imageUrl);
 			log.info(tour.getTourName());
