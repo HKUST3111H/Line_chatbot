@@ -998,7 +998,8 @@ public class LineMessageController {
 	 * @param path
 	 */
 	static String createUri(String path) {
-		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
+		return "https://comp3111h-line-chatbot.herokuapp.com/" + path;
+//		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
 	}
 	/**
 	 * system
