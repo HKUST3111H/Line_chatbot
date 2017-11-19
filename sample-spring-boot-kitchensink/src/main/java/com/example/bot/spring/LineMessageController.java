@@ -707,7 +707,8 @@ public class LineMessageController {
 	 * @param userID
 	 * @param reply
 	 */
-	private void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
+
+	public void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
 		if (!checkQuit(text, userID, reply, replyToken, Constant.DELETING_BOOKING_ENTRY)) {
 			text = text.replaceAll(" ", "");
 			if (isNumeric(text) && Integer.parseInt(text) >= 0) {
@@ -715,7 +716,7 @@ public class LineMessageController {
 
 				int quota = database.checkQuota(userID);
 				if (quota >= 0) {
-					System.out.print("Quata valid????");
+					// System.out.print("Quata valid????");
 					database.setUserState(userID, Constant.BOOKING_CONFIRMATION);
 					// reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
 					ButtonsTemplate buttonTemplate = new ButtonsTemplate(null, "Special request",
@@ -865,8 +866,8 @@ public class LineMessageController {
 	 * @param replyToken
 	 * @param choice
 	 */
-	private boolean checkQuit(String text, String userID, String reply, String replyToken, int choice)
-			throws Exception {
+
+	public boolean checkQuit(String text, String userID, String reply, String replyToken, int choice) throws Exception {
 		if (text.equals("Q")) {
 			String result = database.reviewBookingInformation(userID);
 			if (result.equals("null")) {
