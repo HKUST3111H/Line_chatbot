@@ -140,14 +140,14 @@ public class User {
 	}
 	
 	/**
-	 * @param userName
+	 * @param userName name of user
 	 */
 	public void setName(String userName){
 		this.userName = userName;
 	}
 	
 	/**
-	 * @param tourID
+	 * @param tourID id of tour
 	 */
 	public void addTripHistory(String tourID){
 		this.tripHistory.add(tourID);
@@ -155,16 +155,16 @@ public class User {
 	}
 	
 	/**
-	 * @param time
+	 * @param time last log in time
 	 */
 	public void setTime(java.sql.Timestamp time){
 		this.time = time;
 	}
 	
 	/**
-	 * @param userID
-	 * @param time
-	 * @param state
+	 * @param userID id of user
+	 * @param time last log in time
+	 * @param state booking state
 	 */
 	public void setUser(String userID, java.sql.Timestamp time, int state) {
 		setID(userID);
