@@ -26,13 +26,13 @@ public class TourOffering {
 	// constructor
 	/**
 	 * Constructor
-	 * @param offeringID
-	 * @param date
-	 * @param hotel
-	 * @param maxCapacity
-	 * @param price
-	 * @param duration
-	 * @param quota
+	 * @param offeringID offeringID
+	 * @param date date of tour offering
+	 * @param hotel hotel of tour offering 
+	 * @param maxCapacity max capacity of tour offering
+	 * @param price price of of tour offering
+	 * @param duration duration of tour offering
+	 * @param quota quota of tour offering
 	 */
 	public TourOffering(int offeringID, String date,String hotel,int maxCapacity, int price, int duration, int quota) {
 		this.offeringID = offeringID;
@@ -46,16 +46,16 @@ public class TourOffering {
 	
 	/**
 	 * Constructor
-	 * @param offeringID
-	 * @param date
-	 * @param hotel
-	 * @param maxCapacity
-	 * @param price
-	 * @param duration
-	 * @param quota
-	 * @param guideName
-	 * @param guideAccount
-	 * @param minCapacity
+	 * @param offeringID offeringID
+	 * @param date date 
+	 * @param hotel hotel 
+	 * @param maxCapacity max capacity 
+	 * @param price price 
+	 * @param duration duration
+	 * @param quota quota 
+	 * @param guideName name of the guide 
+	 * @param guideAccount account of the guide 
+	 * @param minCapacity minimum capacity 
 	 * @param state
 	 */
 	public TourOffering(int offeringID, String date,String hotel,int maxCapacity, int price, int duration, int quota,
@@ -73,112 +73,112 @@ public class TourOffering {
 		this.state = state;
 	}
 	/**
-	 * @return offeringID
+	 * @return offeringID offeringID
 	 */
 	// get functions
 	public int getOfferingID() {
 		return offeringID;
 	}
 	/**
-	 * @return date
+	 * @return date date 
 	 */
 	public String getDate() {
 		return date;
 	}
 	/**
-	 * @return guideName
+	 * @return guideName name of the guide
 	 */
 	public String getGuideName() {
 		return guideName;
 	}
 	/**
-	 * @return guideAccount
+	 * @return guideAccount account of the guide
 	 */
 	public String getGuideAccount() {
 		return guideAccount;
 	}
 	/**
-	 * @return hotel
+	 * @return hotel hotel 
 	 */
 	public String getHotel() {
 		return hotel;
 	}
 	/**
-	 * @return maxCapacity
+	 * @return maxCapacity max capacity
 	 */
 	public int getMaxCapacity() {
 		return maxCapacity;
 	}
 	/**
-	 * @return minCapacity
+	 * @return minCapacity min capacity
 	 */
 	public int getMinCapacity() {
 		return minCapacity;
 	}
 	/**
-	 * @return state
+	 * @return state state
 	 */
 	public int getState() {
 		return state;
 	}
 
 	/**
-	 * @return price
+	 * @return price price
 	 */
 	public int getPrice() {
 		return price;
 	}
 	/**
-	 * @return duration
+	 * @return duration duration
 	 */
 	public int getDuration() {
 		return duration;
 	}
 	/**
-	 * @return quota
+	 * @return quota quota 
 	 */
 	public int getQuota() {
 		return quota;
 	}
 	/**
-	 * @param offeringID
+	 * @param offeringID offeringID
 	 */
 	// set functions
 	public void setOfferingID(int offeringID) {
 		this.offeringID = offeringID;
 	}
 	/**
-	 * @param date
+	 * @param date date
 	 */
 	public void setDate(String date) {
 		this.date = date;
 	}
 	/**
-	 * @param guideName
+	 * @param guideName guideName
 	 */
 	public void setGuideName(String guideName) {
 		this.guideName = guideName;
 	}
 	/**
-	 * @param guideAccount
+	 * @param guideAccount account of the guide 
 	 */
 	public void setGuideAccount(String guideAccount) {
 		this.guideAccount = guideAccount;
 	}
 	/**
-	 * @param hotel
+	 * @param hotel hotel
 	 */
 	public void setHotel(String hotel) {
 		this.hotel = hotel;
 	}
 	/**
-	 * @param maxCapacity
+	 * @param maxCapacity max capacity
 	 */
 	public void setMaxCapacity(int maxCapacity) {
 		this.maxCapacity = maxCapacity;
 	}
 	/**
-	 * @param minCapacity
+	 * @param minCapacity minimum capacity
 	 */
 	public void setMinCapacity(int minCapacity) {
 		this.minCapacity = minCapacity;
@@ -189,25 +189,25 @@ public class TourOffering {
 	 *CONFIRMED = 1;
 	 *CANCLE = 2;
 	 *CLOSED = 3;
-	 * @param state
+	 * @param state state
 	 */
 	public void setState(int state) {
 		this.state = state;
 	}
 	/**
-	 * @param price
+	 * @param price price
 	 */
 	public void setPrice(int price) {
 		this.price = price;
 	}
 	/**
-	 * @param duration
+	 * @param duration duration
 	 */
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
 	/**
-	 * @param quota
+	 * @param quota quota
 	 */
 	public void setQuota(int quota) {
 		this.quota = quota;
