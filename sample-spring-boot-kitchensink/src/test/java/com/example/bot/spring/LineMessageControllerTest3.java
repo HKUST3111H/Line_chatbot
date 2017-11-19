@@ -103,9 +103,9 @@ public class LineMessageControllerTest3 {
 									.thenReturn(CompletableFuture
 											.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
 			underTest.faqsearch(replyToken, text, reply, userID);
-//			verify(lineMessagingClient)
-//					.replyMessage(new ReplyMessage(replyToken, Arrays.asList(new TextMessage(faq.search(text, userID)),
-//							new ImageMessage(url, url))));
+			verify(lineMessagingClient)
+					.replyMessage(new ReplyMessage(replyToken, Arrays.asList(new TextMessage(faq.search(text, userID)),
+							new ImageMessage(url, url))));
 		} catch (Exception e) {
 			System.out.println(e.toString());
 			thrown = true;

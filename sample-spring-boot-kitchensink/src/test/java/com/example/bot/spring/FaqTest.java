@@ -66,7 +66,7 @@ import java.util.TimeZone;
 //@RunWith(SpringRunner.class)
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(classes = { FaqTest.class, FaqDatabase.class })
-//@Ignore
+@Ignore
 public class FaqTest {
 
 	// @Autowired
