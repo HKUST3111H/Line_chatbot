@@ -181,9 +181,7 @@ public class SQLDatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
+		} 
 		if (result!=0)
 			return true;
 		else
@@ -314,7 +312,7 @@ public class SQLDatabaseEngine {
 	 * @param request
 	 */
 	public boolean setBookingSpecialRequest(String userID,String request) {
-		return generalFuction(Constant.SET_BOOKING_TODDLER_NUMBER, userID, request,0, timeInput);
+		return generalFuction(Constant.SET_BOOKING_SPECIAL_REQUEST, userID, request,0, timeInput);
 	}
 	/**
 	 * Set Booking Confirmation
@@ -353,8 +351,6 @@ public class SQLDatabaseEngine {
 			log.info("fuck");
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
 		}
 		return result;
 	}
@@ -399,9 +395,7 @@ public class SQLDatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
+		} 
 		if (result!=0)
 			return true;
 		else
@@ -420,7 +414,7 @@ public class SQLDatabaseEngine {
 			PreparedStatement stmt = connection.prepareStatement("SELECT * FROM line_tour;");
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-		    	Tour tour=new Tour(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getInt(4));
+		    	Tour tour=new Tour(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getInt(4),rs.getString(7),rs.getString(8));
 		    	listOfTours.add(tour);
 			}
 			rs.close();
@@ -428,8 +422,7 @@ public class SQLDatabaseEngine {
 			connection.close();	
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {	
-		}
+		} 
 		if (listOfTours != null && !listOfTours.isEmpty())
 			return listOfTours;
 		log.info("tour database probably empty");
@@ -484,9 +477,7 @@ public class SQLDatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
+		} 
 		return listOfTourOfferings;
 	}
 	
@@ -511,9 +502,7 @@ public class SQLDatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
+		} 
 		return result;
 	}
 
@@ -612,9 +601,7 @@ public class SQLDatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
+		} 
 		return result;
 	}
 	
@@ -754,9 +741,7 @@ public class SQLDatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-
-		}
+		} 
 		if (result == "")
 			return "null";
 		else
@@ -811,8 +796,7 @@ public class SQLDatabaseEngine {
 			connection.close();
 		} catch (Exception e) {
 			log.info(e.toString());
-		} finally {
-		}
+		} 
 		if (result == "")
 			return "null";
 		else
