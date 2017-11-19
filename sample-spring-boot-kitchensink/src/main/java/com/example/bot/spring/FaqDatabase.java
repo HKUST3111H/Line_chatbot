@@ -14,16 +14,17 @@ import java.util.regex.Pattern;
 import java.util.*;
 
 /**
- * @author Group 16 This class is a container for Faq database
+ * This class is a container for faq database
+ * @author Group 16 
  */
 @Slf4j
 public class FaqDatabase extends SQLDatabaseEngine {
 
 	/**
-	 * To reply user with a image
+	 * Replies user with a image
 	 * 
-	 * @param answer This is the parameter which indactes the need of replying a image
-	 * @return String This returns url of image
+	 * @param answer		a parameter which indactes the need of replying a image
+	 * @return 			url of image
 	 */
 	public String replyImage(String answer) {
 		// String pattern = "(\\d+)[.](.*[?])[\\n][>](.*)[\\n]";
@@ -38,7 +39,11 @@ public class FaqDatabase extends SQLDatabaseEngine {
 
 
 	/**
-	 * To load question
+	 * Loads question from database
+	 * 
+	 * @return		faq question from databse
+	 * @see 			faqEntry
+	 * @throws		Exception when databse is not accessed successfully
 	 */
 	public List<faqEntry> loadQuestion() throws Exception{
 		//return loadQuestionStatic();
@@ -47,8 +52,11 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	}
 
 	/**
-	 * To load question from database
-	 * @return listOfEntry
+	 * Loads question from database
+	 * 
+	 * @return		faq question from databse
+	 * @see 			faqEntry
+	 * @throws		Exception when databse is not accessed successfully
 	 */
 	public List<faqEntry> loadQuestionSQL() throws Exception{
 		try {
@@ -83,10 +91,12 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	}
 
 	/**
-	 * Update hit number given the question id
+	 * Updates hit number given the question id
 	 * 
-	 * @param qid
-	 * @param hit
+	 * @param qid	question id
+	 * @param hit	the hit number to be updated to
+	 * @return		indicates whether updateHit function has been successfully called
+	 * @throws		Exception when databse is not accessed successfully
 	 */
 	public boolean updateHit(int qid, int hit) throws Exception {
 		try {
@@ -108,11 +118,13 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	}
 
 	/**
-	 * Search from FAQ list
+	 * Searchs answer from FAQ list
 	 * 
-	 * @param text
-	 * @param userID
-	 * @return result
+	 * @param text		the question which user input
+	 * @param userID		the id of the user
+	 * @return			the answer of the question which user asks
+	 * @see				faqEntry
+	 * @throws			Exception when there is no answer for the given question
 	 */
 
 	public String search(String text, String userID) throws Exception {
@@ -176,7 +188,16 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		throw new Exception("NOT FOUND");
 	}
 
-	public String dynamic_top_five_tours(String userID) {
+	
+	/**
+	 * Returns result of the top five tours
+	 * 
+	 * @param userID		the id of the user
+	 * @return			result of the top five tours without including the tours which the user has visited
+	 * @throws			Exception when database is not accessed successfully
+	 */
+	
+	public String dynamic_top_five_tours(String userID) throws Exception{
 		try {
 			String result = "";
 			Connection connection = super.getConnection();
@@ -214,7 +235,16 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		}
 	}
 
-	public String dynamic_more_tours(String userID) {
+	
+	/**
+	 * Returns more tours after user has asked about hot tours
+	 * 
+	 * @param userID		the id of the user
+	 * @return			more tours which are popular without including the tours which the user has visited
+	 * @throws			Exception when database is not accessed successfully
+	 */
+	
+	public String dynamic_more_tours(String userID) throws Exception{
 		try {
 			String result = "";
 			Connection connection = super.getConnection();
@@ -255,7 +285,15 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		}
 	}
 
-	public String dynamic_hot_spring() {
+	
+	/**
+	 * Returns tours which provide hot spring service
+	 * 
+	 * @return			tours which provide hot spring service
+	 * @throws			Exception when database is not accessed successfully
+	 */
+	
+	public String dynamic_hot_spring() throws Exception{
 		try {
 			String result = "";
 			Connection connection = super.getConnection();
@@ -283,7 +321,15 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		}
 	}
 
-	public String dynamic_mountain() {
+	
+	/**
+	 * Returns tours which organize hiking activity
+	 * 
+	 * @return			tours which organize hiking activity
+	 * @throws			Exception when database is not accessed successfully
+	 */
+	
+	public String dynamic_mountain() throws Exception{
 		try {
 			String result = "";
 			Connection connection = super.getConnection();
@@ -312,15 +358,13 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	}
 
 
-	/*
-	 * public void setFilename(String txt) { this.FILENAME=txt; }
-	 */
 	private String FILENAME = "/static/faq.txt";
 
 }
 
 /**
- * @author Group 16 This class is a container for Faq Entry
+ * This class is a container for faq entry which is loaded from faq database
+ * @author Group 16 
  */
 @Slf4j
 class faqEntry {
@@ -331,6 +375,15 @@ class faqEntry {
 		this.hit = hit;
 	}
 
+	/**
+	 * Constructor of faqEntry class
+	 * 
+	 * @param questionID		question id of faq entry
+	 * @param Question		question of faq entry
+	 * @param Answer			answer of faq entry
+	 * @param Keyword		keyword of faq entry
+	 * @param hit			hit number of faq entry
+	 */
 	faqEntry(int questionID, String Question, String Answer, String Keyword, int hit) {
 		this.questionID = questionID;
 		this.Question = Question;

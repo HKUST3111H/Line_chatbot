@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This class is a container for tour offerings
  * @author Group 16
- * This class is a container for TourOfferings
  */
 @Slf4j
 public class TourOffering {
@@ -56,7 +56,7 @@ public class TourOffering {
 	 * @param guideName name of the guide 
 	 * @param guideAccount account of the guide 
 	 * @param minCapacity minimum capacity 
-	 * @param state
+	 * @param state	state of the tour offering
 	 */
 	public TourOffering(int offeringID, String date,String hotel,int maxCapacity, int price, int duration, int quota,
 			String guideName,String guideAccount,int minCapacity,int state) {

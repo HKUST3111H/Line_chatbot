@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 import java.util.List;
 /**
+ * This class is a container for user
  * @author Group 16
- * This class is a container for Users
  */
 @Slf4j
 public class User {

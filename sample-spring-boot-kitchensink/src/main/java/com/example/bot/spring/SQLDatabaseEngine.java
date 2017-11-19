@@ -19,8 +19,8 @@ import java.net.URI;
 import java.math.*;
 
 /**
+ * This class is a container for SQLDatabaseEngine which operates baased on database
  * @author Group 16
- * This class is a for SQLDatabaseEngine
  */
 @Slf4j
 public class SQLDatabaseEngine {
