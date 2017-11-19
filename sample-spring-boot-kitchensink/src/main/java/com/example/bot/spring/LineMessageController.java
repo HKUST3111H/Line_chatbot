@@ -266,7 +266,7 @@ public class LineMessageController {
 		//if (message.length() > 1000) {
 			//message = message.substring(0, 1000 - 2) + "..";
 		//}
-		this.reply(replyToken, new TextMessage(message));
+		this.reply(replyToken, new TextMessage(parse(message)));
 	}
   	/**
 	 * Handle Sticker
@@ -969,6 +969,24 @@ public class LineMessageController {
 		log.info(msgToReply.size()+"");
 		log.info("Listed tours for booking{}", replyToken);
 		this.reply(replyToken,msgToReply);
+	}
+	
+	/**
+	 * parse description
+	 * 
+	 * @param description
+	 * @return parseDescription
+	 */
+	public String parse(String description) {
+		String parseDescription = "";
+		for (int i = 0; i < description.length(); i++) {
+			if (description.charAt(i) == '*') {
+				parseDescription += "\n*";
+			} else {
+				parseDescription += description.charAt(i);
+			}
+		}
+		return parseDescription;
 	}
 
 	/**

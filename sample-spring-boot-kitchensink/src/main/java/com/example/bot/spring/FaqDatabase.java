@@ -20,10 +20,10 @@ import java.util.*;
 public class FaqDatabase extends SQLDatabaseEngine {
 
 	/**
-	 * To get reply image
+	 * To reply user with a image
 	 * 
-	 * @param answer
-	 * @return image
+	 * @param answer This is the parameter which indactes the need of replying a image
+	 * @return String This returns url of image
 	 */
 	public String replyImage(String answer) {
 		// String pattern = "(\\d+)[.](.*[?])[\\n][>](.*)[\\n]";
@@ -83,7 +83,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	}
 
 	/**
-	 * Update hit number
+	 * Update hit number given the question id
 	 * 
 	 * @param qid
 	 * @param hit
@@ -194,7 +194,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 			ResultSet rs = stmt.executeQuery();
 			int i = 0;
 			while (rs.next() && i < 5) {
-				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + parse(rs.getString(3)) + "\n"
+				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + rs.getString(3) + "\n"
 						+ "Number of people who have visited: " + rs.getInt(4) + "\n\n");
 				i++;
 			}
@@ -236,7 +236,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 				i++;
 			}
 			while (rs.next()) {
-				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + parse(rs.getString(3)) + "\n"
+				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + rs.getString(3) + "\n"
 						+ "Number of people who have visited: " + rs.getInt(4) + "\n\n");
 			}
 			if (result.equals("")) {
@@ -265,7 +265,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 							+ "OR line_tour.description like \'%Hot Spring%\';");
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + parse(rs.getString(3)) + "\n\n");
+				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + rs.getString(3) + "\n\n");
 			}
 			if (result.equals("")) {
 				result = "No tours with hot spring! Thanks for your interest and support!\n";
@@ -293,7 +293,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 							+ "OR line_tour.description like \'%Mountain%\';");
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + parse(rs.getString(3)) + "\n\n");
+				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + rs.getString(3) + "\n\n");
 			}
 			if (result.equals("")) {
 				result = "No tours with mountain! Thanks for your interest and support!\n";
@@ -311,23 +311,6 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		}
 	}
 
-	/**
-	 * parse description
-	 * 
-	 * @param description
-	 * @return parseDescription
-	 */
-	public String parse(String description) {
-		String parseDescription = "";
-		for (int i = 0; i < description.length(); i++) {
-			if (description.charAt(i) == '*') {
-				parseDescription += "\n*";
-			} else {
-				parseDescription += description.charAt(i);
-			}
-		}
-		return parseDescription;
-	}
 
 	/*
 	 * public void setFilename(String txt) { this.FILENAME=txt; }
