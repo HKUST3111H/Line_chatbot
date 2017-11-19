@@ -126,79 +126,79 @@ public class LineMessageController {
 	public void handleStickerMessageEvent(MessageEvent<StickerMessageContent> event) {
 		handleSticker(event.getReplyToken(), event.getMessage());
 	}
-	/**
-	 * Handle Location Event
-	 * @param event
-	 */
-	@EventMapping
-	public void handleLocationMessageEvent(MessageEvent<LocationMessageContent> event) {
-		LocationMessageContent locationMessage = event.getMessage();
-		reply(event.getReplyToken(), new LocationMessage(locationMessage.getTitle(), locationMessage.getAddress(),
-				locationMessage.getLatitude(), locationMessage.getLongitude()));
-	}
-	/**
-	 * Handle Image Event
-	 * @param event
-	 */
-	@EventMapping
-	public void handleImageMessageEvent(MessageEvent<ImageMessageContent> event) throws IOException {
-		final MessageContentResponse response;
-		String replyToken = event.getReplyToken();
-		String messageId = event.getMessage().getId();
-		try {
-			response = lineMessagingClient.getMessageContent(messageId).get();
-		} catch (InterruptedException | ExecutionException e) {
-			reply(replyToken, new TextMessage("Cannot get image: " + e.getMessage()));
-			throw new RuntimeException(e);
-		}
-		DownloadedContent jpg = saveContent("jpg", response);
-		reply(((MessageEvent) event).getReplyToken(), new ImageMessage(jpg.getUri(), jpg.getUri()));
-
-	}
-	/**
-	 * Handle Audio Event
-	 * @param event
-	 */
-	@EventMapping
-	public void handleAudioMessageEvent(MessageEvent<AudioMessageContent> event) throws IOException {
-		final MessageContentResponse response;
-		String replyToken = event.getReplyToken();
-		String messageId = event.getMessage().getId();
-		try {
-			response = lineMessagingClient.getMessageContent(messageId).get();
-		} catch (InterruptedException | ExecutionException e) {
-			reply(replyToken, new TextMessage("Cannot get image: " + e.getMessage()));
-			throw new RuntimeException(e);
-		}
-		DownloadedContent mp4 = saveContent("mp4", response);
-		reply(event.getReplyToken(), new AudioMessage(mp4.getUri(), 100));
-	}
-	/**
-	 * Handle Unfollow Event
-	 * @param event
-	 */
-	@EventMapping
-	public void handleUnfollowEvent(UnfollowEvent event) {
-		log.info("unfollowed this bot: {}", event);
-	}
-	/**
-	 * Handle Follow Event
-	 * @param event
-	 */
-	@EventMapping
-	public void handleFollowEvent(FollowEvent event) {
-		String replyToken = event.getReplyToken();
-		this.replyText(replyToken, "Got followed event");
-	}
-	/**
-	 * Handle Join Event
-	 * @param event
-	 */
-	@EventMapping
-	public void handleJoinEvent(JoinEvent event) {
-		String replyToken = event.getReplyToken();
-		this.replyText(replyToken, "Joined " + event.getSource());
-	}
+//	/**
+//	 * Handle Location Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleLocationMessageEvent(MessageEvent<LocationMessageContent> event) {
+//		LocationMessageContent locationMessage = event.getMessage();
+//		reply(event.getReplyToken(), new LocationMessage(locationMessage.getTitle(), locationMessage.getAddress(),
+//				locationMessage.getLatitude(), locationMessage.getLongitude()));
+//	}
+//	/**
+//	 * Handle Image Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleImageMessageEvent(MessageEvent<ImageMessageContent> event) throws IOException {
+//		final MessageContentResponse response;
+//		String replyToken = event.getReplyToken();
+//		String messageId = event.getMessage().getId();
+//		try {
+//			response = lineMessagingClient.getMessageContent(messageId).get();
+//		} catch (InterruptedException | ExecutionException e) {
+//			reply(replyToken, new TextMessage("Cannot get image: " + e.getMessage()));
+//			throw new RuntimeException(e);
+//		}
+//		DownloadedContent jpg = saveContent("jpg", response);
+//		reply(((MessageEvent) event).getReplyToken(), new ImageMessage(jpg.getUri(), jpg.getUri()));
+//
+//	}
+//	/**
+//	 * Handle Audio Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleAudioMessageEvent(MessageEvent<AudioMessageContent> event) throws IOException {
+//		final MessageContentResponse response;
+//		String replyToken = event.getReplyToken();
+//		String messageId = event.getMessage().getId();
+//		try {
+//			response = lineMessagingClient.getMessageContent(messageId).get();
+//		} catch (InterruptedException | ExecutionException e) {
+//			reply(replyToken, new TextMessage("Cannot get image: " + e.getMessage()));
+//			throw new RuntimeException(e);
+//		}
+//		DownloadedContent mp4 = saveContent("mp4", response);
+//		reply(event.getReplyToken(), new AudioMessage(mp4.getUri(), 100));
+//	}
+//	/**
+//	 * Handle Unfollow Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleUnfollowEvent(UnfollowEvent event) {
+//		log.info("unfollowed this bot: {}", event);
+//	}
+//	/**
+//	 * Handle Follow Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleFollowEvent(FollowEvent event) {
+//		String replyToken = event.getReplyToken();
+//		this.replyText(replyToken, "Got followed event");
+//	}
+//	/**
+//	 * Handle Join Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleJoinEvent(JoinEvent event) {
+//		String replyToken = event.getReplyToken();
+//		this.replyText(replyToken, "Joined " + event.getSource());
+//	}
 	/**
 	 * Handle Postback Event
 	 * @param event
@@ -216,23 +216,23 @@ public class LineMessageController {
 		}
 		//this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
 	}
-	/**
-	 * Handle Beacon Event
-	 * @param event
-	 */
-	@EventMapping
-	public void handleBeaconEvent(BeaconEvent event) {
-		String replyToken = event.getReplyToken();
-		this.replyText(replyToken, "Got beacon message " + event.getBeacon().getHwid());
-	}
-	/**
-	 * Handle Other Event
-	 * @param event
-	 */
-	@EventMapping
-	public void handleOtherEvent(Event event) {
-		log.info("Received message(Ignored): {}", event);
-	}
+//	/**
+//	 * Handle Beacon Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleBeaconEvent(BeaconEvent event) {
+//		String replyToken = event.getReplyToken();
+//		this.replyText(replyToken, "Got beacon message " + event.getBeacon().getHwid());
+//	}
+//	/**
+//	 * Handle Other Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleOtherEvent(Event event) {
+//		log.info("Received message(Ignored): {}", event);
+//	}
 	/**
 	 * reply
 	 * @param replyToken
@@ -972,7 +972,10 @@ public class LineMessageController {
 		reply += answer;
 		String imageURL=faqDatabase.replyImage(answer);
 		if (imageURL!=null) {
+			log.info("\n\n\n\n\n\n\n");
 			imageURL=createUri("static/pictures/"+imageURL);
+			log.info("imageURL {}", imageURL);
+			log.info("\n\n\n\n\n\n\n");
 			this.reply(replyToken, Arrays.asList(new TextMessage(reply),new ImageMessage(imageURL, imageURL)));
 			log.info("Replied image message {}: {}", replyToken, reply);
 
@@ -994,7 +997,8 @@ public class LineMessageController {
 	 * @param path
 	 */
 	static String createUri(String path) {
-		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
+		return "https://comp3111h-line-chatbot.herokuapp.com/" + path;
+//		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
 	}
 	/**
 	 * system
@@ -1013,34 +1017,34 @@ public class LineMessageController {
 			Thread.currentThread().interrupt();
 		}
 	}
-	/**
-	 * Save Content
-	 * @param ext
-	 * @param responseBody
-	 * @return tempFile
-	 */
-	private static DownloadedContent saveContent(String ext, MessageContentResponse responseBody) {
-		log.info("Got content-type: {}", responseBody);
-
-		DownloadedContent tempFile = createTempFile(ext);
-		try (OutputStream outputStream = Files.newOutputStream(tempFile.path)) {
-			ByteStreams.copy(responseBody.getStream(), outputStream);
-			log.info("Saved {}: {}", ext, tempFile);
-			return tempFile;
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-	}
-	/**
-	 * Create Temp File
-	 * @param ext
-	 */
-	private static DownloadedContent createTempFile(String ext) {
-		String fileName = LocalDateTime.now().toString() + '-' + UUID.randomUUID().toString() + '.' + ext;
-		Path tempFile = KitchenSinkApplication.downloadedContentDir.resolve(fileName);
-		tempFile.toFile().deleteOnExit();
-		return new DownloadedContent(tempFile, createUri("/downloaded/" + tempFile.getFileName()));
-	}
+//	/**
+//	 * Save Content
+//	 * @param ext
+//	 * @param responseBody
+//	 * @return tempFile
+//	 */
+//	private static DownloadedContent saveContent(String ext, MessageContentResponse responseBody) {
+//		log.info("Got content-type: {}", responseBody);
+//
+//		DownloadedContent tempFile = createTempFile(ext);
+//		try (OutputStream outputStream = Files.newOutputStream(tempFile.path)) {
+//			ByteStreams.copy(responseBody.getStream(), outputStream);
+//			log.info("Saved {}: {}", ext, tempFile);
+//			return tempFile;
+//		} catch (IOException e) {
+//			throw new UncheckedIOException(e);
+//		}
+//	}
+//	/**
+//	 * Create Temp File
+//	 * @param ext
+//	 */
+//	private static DownloadedContent createTempFile(String ext) {
+//		String fileName = LocalDateTime.now().toString() + '-' + UUID.randomUUID().toString() + '.' + ext;
+//		Path tempFile = KitchenSinkApplication.downloadedContentDir.resolve(fileName);
+//		tempFile.toFile().deleteOnExit();
+//		return new DownloadedContent(tempFile, createUri("/downloaded/" + tempFile.getFileName()));
+//	}
 
 
 
@@ -1057,21 +1061,21 @@ public class LineMessageController {
 	private FaqDatabase faqDatabase;
 	private String itscLOGIN;
 	
-	/**
-	 * Constructor. 
-	 * The annontation @Value is from the package lombok.Value
-	 * Basically what it does is to generate constructor and getter for the class below
-	 * See https://projectlombok.org/features/Value
-	 */
-
-	//The annontation @Value is from the package lombok.Value
-	//Basically what it does is to generate constructor and getter for the class below
-	//See https://projectlombok.org/features/Value
-	@Value
-	public static class DownloadedContent {
-		Path path;
-		String uri;
-	}
+//	/**
+//	 * Constructor. 
+//	 * The annontation @Value is from the package lombok.Value
+//	 * Basically what it does is to generate constructor and getter for the class below
+//	 * See https://projectlombok.org/features/Value
+//	 */
+//
+//	//The annontation @Value is from the package lombok.Value
+//	//Basically what it does is to generate constructor and getter for the class below
+//	//See https://projectlombok.org/features/Value
+//	@Value
+//	public static class DownloadedContent {
+//		Path path;
+//		String uri;
+//	}
 	/**
 	 * @author Group 16
 	 * This class is Profile Getter
