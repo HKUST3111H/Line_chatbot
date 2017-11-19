@@ -1,7 +1,6 @@
 package com.example.bot.spring;
 
 import static java.util.Collections.singletonList;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,8 +63,8 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
 @RunWith(MockitoJUnitRunner.class)
-//@Ignore
-public class LineMessageControllerTest3 {
+
+public class LineMessageControllerTestBookingTourID {
 
 	@Mock
 	private LineMessagingClient lineMessagingClient;
@@ -80,38 +79,83 @@ public class LineMessageControllerTest3 {
 	}
 
 	@Test
-	public void test_greeting() throws Exception {
-		String result = underTest.greeting();
-		assertThat(result.contains("Good")).isEqualTo(true);
-	}
+	//for checkQuit==ture;
+	public void test_BOOKING_TOUR_ID_handler_Quit() throws Exception {
 
-	@Test
-	public void test_faqsearch_image() throws Exception {
-		String text = "where is the gathering point";
-		String userID = "U52a29b672ee486b66b7fb4c45a888de3";
+		String text = "Q";//
+		String userID = "userId";
 		String replyToken = "replyToken";
-		String reply = "";
-		boolean thrown = false;
+		String expectReply = Constant.CANCEL;
 
-		try {
-			FaqDatabase faq = new FaqDatabase();
-			String path = faq.replyImage(faq.search(text, userID)); //
-			System.out.println("\n\n\n" + path + "\n\n\n");
-			String url = LineMessageController.createUri(path);
-			when(lineMessagingClient.replyMessage(new ReplyMessage(replyToken,
-					Arrays.asList(new TextMessage(faq.search(text, userID)),
-							new ImageMessage(url, url)))))
-									.thenReturn(CompletableFuture
-											.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
-			underTest.faqsearch(replyToken, text, reply, userID);
-			verify(lineMessagingClient)
-					.replyMessage(new ReplyMessage(replyToken, Arrays.asList(new TextMessage(faq.search(text, userID)),
-							new ImageMessage(url, url))));
-		} catch (Exception e) {
-			System.out.println(e.toString());
-			thrown = true;
-		}
-		assertThat(thrown).isEqualTo(false);
+		// mock line bot api client response
+		when(lineMessagingClient
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))))).thenReturn(
+						CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
+		when(database.reviewBookingInformation(userID)).thenReturn("null");
+		
+		
+		
+		
+		underTest.BOOKING_TOUR_ID_handler(replyToken, text, userID, "");
+
+		// confirm replyMessage is called with following parameter
+		verify(lineMessagingClient)
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
 	}
+	
+	
+	@Test
+	//for checkQuit==false; several cases below
+	//case 1: input is not an integer tour ID
+	public void test_BOOKING_TOUR_ID_handler_NotQuit_Case1() throws Exception {
 
+		String text = "george";
+		String userID = "userId";
+		String replyToken = "replyToken";
+		String expectReply = Constant.ERROR_REENTER_TOUR_ID;
+		List<Tour> listOfTours = new ArrayList<Tour>();
+		listOfTours.add(new Tour(100,"suzhou","nice city",5,"suzhou.jpeg","nice"));
+
+		// mock line bot api client response
+		when(lineMessagingClient
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))))).thenReturn(
+						CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
+		when(database.getTours()).thenReturn(listOfTours);
+		
+		
+		
+		underTest.BOOKING_TOUR_ID_handler(replyToken, text, userID, "");
+
+		// confirm replyMessage is called with following parameter
+		verify(lineMessagingClient)
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
+	}
+	
+	
+	@Test
+	//for checkQuit==false; several cases below
+	//case 2: tour offering id NOT available 
+	public void test_BOOKING_TOUR_ID_handler_NotQuit_Case2() throws Exception {
+
+		String text = "6";//non int tour id
+		String userID = "userId";
+		String replyToken = "replyToken";
+		String expectReply = Constant.ERROR_REENTER_TOUR_ID;
+		List<Tour> listOfTours = new ArrayList<Tour>();
+		listOfTours.add(new Tour(100,"suzhou","nice city",5,"suzhou.jpeg","nice"));
+
+		// mock line bot api client response
+		when(lineMessagingClient
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))))).thenReturn(
+						CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
+		when(database.getTours()).thenReturn(listOfTours);
+		when(database.tourFound(Integer.parseInt(text))).thenReturn(false);
+		underTest.BOOKING_TOUR_ID_handler(replyToken, text, userID, "");
+
+		// confirm replyMessage is called with following parameter
+		verify(lineMessagingClient)
+				.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
+	}
+	
+	
 }
