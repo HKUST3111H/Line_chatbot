@@ -64,7 +64,7 @@ public class UserTest {
 	private static final java.util.Date now = calendar.getTime();
 	private static final java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
 
-	private static final String test_user_id = "test_user_id";
+	private static final String test_user_id = "test_id";
 	private static final String test_name = "test_name";
 	private static final String test_phoneno = "00001111";
 	private static final String test_age = "20";

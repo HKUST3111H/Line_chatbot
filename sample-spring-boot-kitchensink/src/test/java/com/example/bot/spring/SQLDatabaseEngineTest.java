@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -55,6 +56,7 @@ import java.util.TimeZone;
 @RunWith(SpringRunner.class)
 // @SpringBootTest(classes = { KitchenSinkTester.class, DatabaseEngine.class })
 @SpringBootTest(classes = { SQLDatabaseEngineTest.class,  SQLDatabaseEngine.class })
+@Ignore
 public class SQLDatabaseEngineTest {
 	@Autowired
 	private SQLDatabaseEngine databaseEngine;
