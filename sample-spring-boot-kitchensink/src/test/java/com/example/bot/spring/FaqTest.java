@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.Ignore;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Matchers.any;
 import org.mockito.MockitoAnnotations;
@@ -65,6 +66,7 @@ import java.util.TimeZone;
 //@RunWith(SpringRunner.class)
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(classes = { FaqTest.class, FaqDatabase.class })
+//@Ignore
 public class FaqTest {
 
 	// @Autowired
