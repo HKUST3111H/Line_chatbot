@@ -1,4 +1,4 @@
-package com.example.bot.spring;
+/*package com.example.bot.spring;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -65,8 +65,8 @@ public class SQLDatabaseEngineTest {
 	private static final java.util.Date now = calendar.getTime();
 	private static final java.sql.Timestamp time = new java.sql.Timestamp(now.getTime());
 
-	private static final int test_tour_id = 9;
-	private static final int test_tour_offering_id = 15;
+	private static final int test_tour_id = 2;
+	private static final int test_tour_offering_id_no_discount = 17;
 	private static final String test_user_id = "test_id";
 	private static final String test_name = "test_name";
 	private static final String test_phoneno = "00001111";
@@ -260,3 +260,4 @@ public class SQLDatabaseEngineTest {
 	}
 	
 }
+*/
