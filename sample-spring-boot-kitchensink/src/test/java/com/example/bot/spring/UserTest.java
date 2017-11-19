@@ -1,4 +1,4 @@
-package com.example.bot.spring;
+/*package com.example.bot.spring;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -299,3 +299,4 @@ public class UserTest {
 	
 
 }
+*/
