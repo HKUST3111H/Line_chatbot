@@ -18,7 +18,6 @@ public class TourOffering {
 	private String hotel;
 	private int maxCapacity;
 	private int minCapacity;
-	private List<User> users;
 	private int state;
 	private int price;
 	private int duration;
@@ -43,20 +42,6 @@ public class TourOffering {
 		this.price = price;
 		this.duration = duration;
 		this.quota = quota;
-	}
-	/**
-	 * @param user
-	 * @see User
-	 */
-	public void registerUser(User user) {
-		if ( !users.contains(user) ) users.add(user);
-	}
-	/**
-	 * @param user
-	 * @see User
-	 */
-	public void unregisterUser(User user) {
-		if ( users.contains(user) ) users.remove(user);
 	}
 	
 	/**
@@ -108,13 +93,7 @@ public class TourOffering {
 	public int getState() {
 		return state;
 	}
-	/**
-	 * @return users
-	 * @see User
-	 */
-	public List<User> getUsers() {
-		return users;
-	}
+
 	/**
 	 * @return price
 	 */
@@ -176,13 +155,7 @@ public class TourOffering {
 	public void setMinCapacity(int minCapacity) {
 		this.minCapacity = minCapacity;
 	}
-	/**
-	 * @param users list
-	 * @see User
-	 */
-	public void setUsers(List<User> users) {
-		this.users = users;
-	}
+
 	/**
 	 *OPEN = 0;
 	 *CONFIRMED = 1;
