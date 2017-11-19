@@ -32,7 +32,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
-import javax.xml.ws.Action;
+//import javax.xml.ws.Action;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
@@ -53,6 +53,8 @@ import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.action.MessageAction;
 import com.linecorp.bot.model.action.PostbackAction;
 import com.linecorp.bot.model.action.URIAction;
+import com.linecorp.bot.model.action.Action;
+
 import com.linecorp.bot.model.event.BeaconEvent;
 import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.FollowEvent;
@@ -204,12 +206,15 @@ public class LineMessageController {
 	@EventMapping
 	public void handlePostbackEvent(PostbackEvent event)  throws Exception  {
 		String replyToken = event.getReplyToken();
-		/*String reply="";
+		String reply="";
 		String text=event.getPostbackContent().getData();
+        String userID = event.getSource().getUserId();
+        User user = database.getUserInformation(userID);
 		if (text.contains(Constant.TEXT_NEW_BOOKING)){
+			database.setUserState(userID,Constant.BOOKING_TOUR_ID);
 			listTourForBooking(replyToken, reply);
-		}*/
-		this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
+		}
+		//this.replyText(replyToken, "Got postback " + event.getPostbackContent().getData());
 	}
 	/**
 	 * Handle Beacon Event
@@ -444,7 +449,7 @@ public class LineMessageController {
 		    ConfirmTemplate confirmTemplate = new ConfirmTemplate(
 		    		Constant.QUESTION_REVIEW_OR_BOOKING,
 		            new MessageAction("Review", "Review"),
-		            new MessageAction(Constant.TEXT_NEW_BOOKING, Constant.TEXT_NEW_BOOKING)
+		            new PostbackAction(Constant.TEXT_NEW_BOOKING, Constant.TEXT_NEW_BOOKING)
 		    );
 		    TemplateMessage whichBook = new TemplateMessage("Review Booking/New Booking", confirmTemplate);
 
@@ -533,12 +538,22 @@ public class LineMessageController {
 
 			if(isNumeric(text) && database.tourFound(Integer.parseInt(text))) {
 				String description = " ";
+				String[] lines;
 				for (Tour tour : listOfTours) {
 					if(tour.getTourID()==Integer.parseInt(text)) {
-						description = tour.getDescription();	
-						description.replace("*", "\n");
+						description = tour.getDescription();
+						description=description.replace("* ", "\n");
+						description=description.replace("*", "\n");
+						lines=description.split("[\\r\\n]+");
+						description="";
+						for (String line :lines) {
+							description+="\u2606" +line+"\n";
+						}
+
 					}
 				}
+				
+				
 
 				messages.add(new TextMessage(description));
 				
@@ -557,10 +572,10 @@ public class LineMessageController {
         			this.replyText(replyToken,reply);
     			}
     			else {
-
-
+    			       //todo
+    				
     				for (TourOffering tourOffering:listOfTourOfferings) {
-						result += (tourOffering.getOfferingID()+"\nData and time: "+ tourOffering.getDate()+"\nHotel: "+tourOffering.getHotel()+"\nMax people: "+tourOffering.getMaxCapacity()+
+						result += ("Tour Offering "+tourOffering.getOfferingID()+"\nData and time: "+ tourOffering.getDate()+"\nHotel: "+tourOffering.getHotel()+"\nMax people: "+tourOffering.getMaxCapacity()+
 								"\nQuota Left: "+tourOffering.getQuota()+"\nFull price for adult: HKD"+tourOffering.getPrice()+"\nDuration: "+tourOffering.getDuration()+" Days\n\n");
 					}
 
@@ -570,6 +585,21 @@ public class LineMessageController {
     				reply += result;
     				reply += Constant.INSTRTUCTION_ENTER_TOUR_OFFERING_ID;
     				messages.add(new TextMessage(reply));
+    				//prepare button for display
+    				int count=0;
+    				List<Action> listOfButton=new ArrayList<Action>();
+    				for (TourOffering tourOffering:listOfTourOfferings) {
+    					String tourofferingID=Integer.toString(tourOffering.getOfferingID());
+    					MessageAction button=new MessageAction("Tour Offering "+tourofferingID, tourofferingID);
+	    				listOfButton.add(button);
+	    				count++;
+	    				if (count%5==0) break;
+    				}	
+    				ButtonsTemplate buttonTemplate = new ButtonsTemplate(
+	            			null,"Shortcut","You may press button instead.", listOfButton
+		            		);
+					messages.add(new TemplateMessage("button",buttonTemplate));
+    				
         			log.info("Returns instruction message {}: {}", replyToken, reply);
         			this.reply(replyToken,messages);
     			}
@@ -682,7 +712,7 @@ public class LineMessageController {
 		            			null,
 		            			"Special request",
 		                    "Press \"No\" if you don't have any request.",
-		                    Arrays.asList(new MessageAction("No", "No!"))
+		                    Arrays.asList(new MessageAction("No", "No"))
 			            		);
 		           
 		            TemplateMessage ButtonMessageBlock = new TemplateMessage("Sepcial requests?",buttonTemplate);
@@ -751,12 +781,15 @@ public class LineMessageController {
 	 */
 	public void BOOKING_PAYMENT_handler(String replyToken, String text, String userID, String reply) throws Exception {
 
-			if(text.toLowerCase().contains("y")||text.toLowerCase().contains("confirm")) {
+			if(text.toLowerCase().contains("yes")||text.toLowerCase().contains("confirm")) {
 				database.setUserState(userID,Constant.FAQ_AFTER_CONFIRMATION);
 				database.setBookingConfirmation(userID);
 				reply += Constant.INSTRUCTION_PAYMENT;
-	    			log.info("Returns instruction message {}: {}", replyToken, reply);
-	    			this.replyText(replyToken,reply);
+				log.info("Returns instruction message {}: {}", replyToken, reply);
+	    		List<Message> msgToReply=new ArrayList<Message>();
+	    		msgToReply.add(new StickerMessage("1",Constant.STICKER_ID_CONFIRMBOOK));
+	    		msgToReply.add(new TextMessage(reply));
+	    		this.reply(replyToken,msgToReply);
 			}
 			else {
 				checkQuit("Q",userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY);

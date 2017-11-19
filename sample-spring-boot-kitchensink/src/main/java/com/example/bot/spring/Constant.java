@@ -109,7 +109,7 @@ public  class Constant {
 			+ "\n\nPlease input the number of ADULTS for this tour offering.";
 	public static final String INSTRTUCTION_ENTER_SPECIAL_REQUEST = "Please leave your special request.";
 	public static final String CONFIRM_REGISTRATION = "Great! Basic information registered!\n";
-	public static final String INSTRUCTION_PAYMENT = "Thanks for your interest!\n"
+	public static final String INSTRUCTION_PAYMENT = "Booking Confirmed.\nThanks for your interest!\n"
 			+ "Please pay your tour fee by ATM to 123-345-432-211 of ABC Bank or by cash in our store.\n"
 			+ "You shall send you pay-in slip to us by email or LINE. \n"
 			+ "You are welcome to ask other questions!";
@@ -118,6 +118,9 @@ public  class Constant {
 	public static final String FAQ_NOT_FOUND = "Sorry! We don't have relevant information.";
 	public static final String BOOKING_CANCELLED = "Booking cancelled!";
 	public static final String TEXT_NEW_BOOKING="New Booking";
+	
+	
+	public static final String STICKER_ID_CONFIRMBOOK="407";
 	
 
 }
