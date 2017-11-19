@@ -92,7 +92,7 @@ public class LineMessageControllerTest2 {
 		String replyToken = "replyToken";
 		String reply = "";
 		List<Message> expectReply = new ArrayList<Message>();
-		
+
 		when(database.setUserAge(userID, testMsg)).thenReturn(true);
 		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
 		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
@@ -109,5 +109,33 @@ public class LineMessageControllerTest2 {
 		underTest.FILL_AGE_handler(replyToken, testMsg, userID, "");
 		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
 	}
-    
+
+	@Test
+	public void test_replyText(){
+		String replyToken = "";
+		try {
+			underTest.replyText(replyToken, "");
+		}
+		catch (Exception e) {
+			// log.info(e.toString());
+		}
+
+	}
+	
+	// @Test
+	// public void test_reply() throws Exception{
+	// 	String replyToken = "replyToken";
+	// 	String testMsg = "message";
+	// 	String expectReply = "expectReply";
+
+    //     when(lineMessagingClient.replyMessage(new ReplyMessage(
+    //             replyToken, expectReply
+    //     ))).thenReturn(CompletableFuture.completedFuture(
+    //             new BotApiResponse("ok", Collections.emptyList())
+	// 	));
+
+	// 	underTest.replyText(replyToken, "");
+	// 	verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
+	// }
+	
 }
