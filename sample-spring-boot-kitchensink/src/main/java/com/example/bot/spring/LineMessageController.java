@@ -538,7 +538,7 @@ public class LineMessageController {
 				
 				
 
-				messages.add(new TextMessage(description));
+				messages.add(new TextMessage(parse(description)));
 				
 				List<TourOffering> listOfTourOfferings=new ArrayList<TourOffering>();
 				try {
@@ -567,7 +567,7 @@ public class LineMessageController {
     				reply += Constant.INFORMATION_TOUR_OFFERING;
     				reply += result;
     				reply += Constant.INSTRTUCTION_ENTER_TOUR_OFFERING_ID;
-    				messages.add(new TextMessage(reply));
+    				messages.add(new TextMessage(parse(reply)));
     				//prepare button for display
     				int count=0;
     				List<Action> listOfButton=new ArrayList<Action>();
@@ -757,7 +757,7 @@ public class LineMessageController {
 			log.info("Returns instruction message {}: {}", replyToken, reply);
 
             this.reply(replyToken,
-                    Arrays.asList(new TextMessage(reply),confirmMessageBlock));
+                    Arrays.asList(new TextMessage(parse(reply)),confirmMessageBlock));
 		}
 	}
 	/**
@@ -777,7 +777,7 @@ public class LineMessageController {
 				log.info("Returns instruction message {}: {}", replyToken, reply);
 	    		List<Message> msgToReply=new ArrayList<Message>();
 	    		msgToReply.add(new StickerMessage("1",Constant.STICKER_ID_CONFIRMBOOK));
-	    		msgToReply.add(new TextMessage(reply));
+	    		msgToReply.add(new TextMessage(parse(reply)));
 	    		this.reply(replyToken,msgToReply);
 			}
 			else {
@@ -916,11 +916,11 @@ public class LineMessageController {
 				groupString += shortStrings[i];
 				groupString += "\n\n";
 				if((i+1)%numPerGroup==0) {
-					Message message = new TextMessage(groupString);
+					Message message = new TextMessage(parse(groupString));
 					messages.add(message);
 					groupString = "";//clear the groupString
 				}else if(i+1 ==shortStrings.length) { //dealing with boundary case, e.g 27/5=5 5+1=6, the last one does not give 0
-					Message message = new TextMessage(groupString);
+					Message message = new TextMessage(parse(groupString));
 					messages.add(message);
 					groupString = "";//clear the groupString
 				}
@@ -941,7 +941,7 @@ public class LineMessageController {
 	public void listTourForBooking(String replyToken, String reply) throws Exception {
 		List<Message> msgToReply=new ArrayList<Message>();
 		// if (reply!=null && !reply.replaceAll(" ", "").isEmpty()) msgToReply.add(new TextMessage(reply));
-		TextMessage heading = new TextMessage(reply+Constant.INSTRUCTION_BOOKING);
+		TextMessage heading = new TextMessage(parse(reply+Constant.INSTRUCTION_BOOKING));
 		msgToReply.add(heading);
 		
 		List<Tour> listOfTours=new ArrayList<Tour>();
@@ -1035,7 +1035,7 @@ public class LineMessageController {
 			imageURL=createUri(imageURL);
 			log.info("imageURL {}", imageURL);
 			log.info("\n\n\n\n\n\n\n");
-			this.reply(replyToken, Arrays.asList(new TextMessage(reply),new ImageMessage(imageURL, imageURL)));
+			this.reply(replyToken, Arrays.asList(new TextMessage(parse(reply)),new ImageMessage(imageURL, imageURL)));
 			log.info("Replied image message {}: {}", replyToken, reply);
 
 		}
