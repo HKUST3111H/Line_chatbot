@@ -27,7 +27,7 @@ public class SQLDatabaseEngine {
 	//booking state: 0 isBooking; 1 done; 2 confirmed;
 	//offering state: 0 not enough; 1 enough; 2 full; 3 old;
 	/**
-	 * Connect to database
+	 * Connect to database】‘、
 	 * @return Connection
 	 */
 	private java.sql.Timestamp timeInput = new java.sql.Timestamp(new java.util.Date().getTime());
