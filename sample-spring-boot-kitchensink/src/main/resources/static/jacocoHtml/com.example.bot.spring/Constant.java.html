@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Constant.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sample-spring-boot-kitchensink</a> &gt; <a href="index.source.html" class="el_package">com.example.bot.spring</a> &gt; <span class="el_source">Constant.java</span></div><h1>Constant.java</h1><pre class="source lang-java linenums">package com.example.bot.spring;
+import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+import java.sql.*;
+import java.net.URISyntaxException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.*;
+/**
+ * This class is a container for constant which stores a lot of constant variables used in other classes
+ * @author Group 16
+ */
+<span class="nc" id="L18">@Slf4j</span>
+public  class Constant {
+	/**
+	 * Private constructor means it is singleton
+	 */
+<span class="nc" id="L23">	private static Constant uniqueInstance = new Constant();</span>
+	
+	/**
+	 * Default constructor for Constant class
+	 */
+	
+<span class="nc" id="L29">	private Constant () {};</span>
+	// FAQ
+	public static final int FAQ_NO_USER_INFORMATION = 100;
+	public static final int FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION = 300;
+	public static final int FAQ_AFTER_CONFIRMATION = 500;
+	
+	// tell user to fill in his personal information
+	public static final int FILL_NAME = 200;
+	public static final int FILL_PHONE_NUM = 201; 
+	public static final int FILL_AGE = 202; 
+	
+	// tell user to provide booking information
+	public static final int BOOKING_TOUR_ID = 400;
+	public static final int BOOKING_OFFERING_ID = 401;
+	public static final int BOOKING_ADULT = 402;
+	public static final int BOOKING_CHILDREN = 403;
+	public static final int BOOKING_TODDLER = 404;
+	public static final int BOOKING_CONFIRMATION = 405;
+	public static final int BOOKING_PAYMENT = 406;
+	
+	// tell user to add a new booking or review
+	public static final int BOOKING_OR_REVIEW = 600;
+	
+	public static final int DELETING_BOOKING_ENTRY = 0;
+	public static final int DELETING_BOOKING_BUFFER = 1;
+	public static final int DELETING_NOTHING = 2;
+	
+	public static final long TIME_GAPPING = 10;
+	
+	
+	public static final int SET_USER_TIME = 1;
+	public static final int SET_USER_STATE = 2;
+	public static final int SET_USER_NAME = 3;
+	public static final int SET_USER_PHONE = 4;
+	public static final int SET_USER_AGE = 5;
+	public static final int CREATE_USER = 6;
+	public static final int DELETE_USER = 7;
+	public static final int TOUR_FOUND = 8;
+	public static final int SET_BUFFER_TOUR_ID = 9;
+	public static final int DELETE_BUFFER_BOOKING = 10;
+	public static final int DELETE_BOOKING = 11;
+	public static final int SET_BOOKING_TOUR_OFFERING_ID = 12;
+	public static final int SET_BOOKING_ADULT_NUMBER = 13;
+	public static final int SET_BOOKING_CHILD_NUMBER = 14;
+	public static final int SET_BOOKING_TODDLER_NUMBER = 15;
+	public static final int SET_BOOKING_SPECIAL_REQUEST = 16;
+	public static final int SET_BOOKING_CONFIRMATION = 17;
+	
+	
+	public static final String GREETING_FIRST_USE = &quot;Thanks for your first use of our app! &quot;
+			+ &quot;You can ask us some questions about touring information &quot;
+			+ &quot;and text \&quot;book\&quot; to book the tour offering which you are interested in!&quot;
+			+ &quot;\n\n&quot;; 
+	public static final String MORNING = &quot;Good morning&quot;;
+	public static final String AFTERNOON = &quot;Good afternoon&quot;;
+	public static final String EVENING = &quot;Good evening&quot;;
+	public static final String WELCOME_BACK = &quot;!\nWelcome back!\n\n&quot;;
+	public static final String CANCEL = &quot;Booking cancelled successfully!&quot;;
+	public static final String INSTRUCTION_FILL_INFORMATION = &quot;Thank you for your interest, &quot;
+			+ &quot;we need some of your information.\n&quot;;
+	public static final String INSTRUCTION_ENTER_NAME = &quot;Please enter your name.&quot;;
+	public static final String INSTRUCTION_ENTER_PHONE_NUM = &quot;Please also give us your phone number.&quot;;
+	public static final String INSTRUCTION_ENTER_AGE = &quot;Please also give us your age (number only).&quot;;
+	public static final String ERROR_REENTER_AGE = &quot;Invalid input! Please input your age (number only).&quot;;
+	public static final String INSTRUCTION_BOOKING = &quot;Thank you for your interest, here is a list of tours:\n&quot;
+			+ &quot;Attention: You can terminate the booking procedure by texting \&quot;Q\&quot; at any time!\n&quot;;
+	public static final String INSTRTUCTION_ENTER_TOUR_ID = &quot;\nPlease enter one of the tour IDs (number only).\n&quot;;
+	public static final String ERROR_REENTER_TOUR_ID = &quot;Invalid tour ID! Please reinput tour ID.&quot;;
+	public static final String INFORMATION_NO_TOUR_OFFERING = &quot;Sorry, currently we do not provide any offerings for this tour!\n&quot;
+			+ &quot;Please choose another tour id!&quot;;
+	public static final String INFORMATION_TOUR_OFFERING = &quot;Here are the tour offerings we provide for this tour.\n&quot;
+			+ &quot;Note: Age below 3 (including 3) is free. &quot;
+			+ &quot;Age between 4 to 11 (including 4 and 11) has a discount of 20% off. &quot;
+			+ &quot;Otherwise full fee applies. &quot;
+			+ &quot;The same service charge is applied to all age customers.\n\n&quot;;
+	public static final String INSTRTUCTION_ENTER_TOUR_OFFERING_ID = &quot;Please enter one of the tour offering IDs (number only).&quot;;
+	public static final String ERROR_REENTER_TOUR_OFFERING_ID = &quot;Invalid tour offering ID! Please reinput tour offering ID.&quot;;
+	public static final String INSTRTUCTION_ENTER_ADULT_NUMBER = &quot;Please input the number of ADULTS for this tour offering.&quot;;
+	public static final String ERROR_REENTER_ADULT_NUMBER = &quot;Invalid number! Please reinput the number of ADULTS.&quot;;
+	public static final String INSTRTUCTION_ENTER_CHILDREN_NUMBER = &quot;Please input the number of CHILDREN (age between 4 and 11) for this tour offering.&quot;;
+	public static final String ERROR_REENTER_CHILDREN_NUMBER = &quot;Invalid number! Please reinput the number of CHILDREN.&quot;;
+	public static final String INSTRTUCTION_ENTER_TODDLER_NUMBER = &quot;Please input the number of TODDLERS (age not larger than 3) for this tour offering.&quot;;
+	public static final String ERROR_REENTER_TODDLER_NUMBER = &quot;Invalid number! Please reinput the number of TODDLERS.&quot;;
+	public static final String QUOTA_FULL_1 = &quot;Sorry we do not have enough quota for your booking, only &quot;;
+	public static final String QUOTA_FULL_2 = &quot; quota left. \nYou can re-input the number of people or you can terminate the booking procedure by texting \&quot;Q\&quot;.&quot;
+			+ &quot;\n\nPlease input the number of ADULTS for this tour offering.&quot;;
+	public static final String INSTRTUCTION_ENTER_SPECIAL_REQUEST = &quot;Please leave your special request.&quot;;
+	public static final String CONFIRM_REGISTRATION = &quot;Great! Basic information registered!\n&quot;;
+	public static final String INSTRUCTION_PAYMENT = &quot;Booking Confirmed.\nThanks for your interest!\n&quot;
+			+ &quot;Please pay your tour fee by ATM to 123-345-432-211 of ABC Bank or by cash in our store.\n&quot;
+			+ &quot;You shall send you pay-in slip to us by email or LINE. \n&quot;
+			+ &quot;You are welcome to ask other questions!&quot;;
+	public static final String QUESTION_REVIEW_OR_BOOKING = &quot;Do you want to review your previous booking or do you want to start a new booking?&quot;;
+	public static final String QUESTION_CONFIRM_OR_NOT = &quot;Do you want to confirm your booking&quot;;
+	public static final String FAQ_NOT_FOUND = &quot;Sorry! We don't have relevant information.&quot;;
+	public static final String BOOKING_CANCELLED = &quot;Booking cancelled!&quot;;
+	public static final String TEXT_NEW_BOOKING=&quot;New Booking&quot;;
+	
+	
+	public static final String STICKER_ID_CONFIRMBOOK=&quot;407&quot;;
+	
+	public static final String IMGPRFIX=&quot;static/pictures/&quot;;
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
