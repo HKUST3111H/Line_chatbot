@@ -57,40 +57,40 @@ public class Tour {
 	
 	// get functions
 	/**
-	 * @return tourID id number of a tour
+	 * @return id number of a tour
 	 */
 	public int getTourID() {
 		return tourID;
 	}
 	
 	/**
-	 * @return tourName name of the tour
+	 * @return name of the tour
 	 */
 	public String getTourName() {
 		return tourName;
 	}
 	
 	/**
-	 * @return description description of the tour 
+	 * @return description of the tour 
 	 */
 	public String getDescription() {
 		return description;
 	}
 	
 	/**
-	 * @return duration duration of the tour
+	 * @return duration of the tour
 	 */
 	public int getDuration() {
 		return duration;
 	}
 	/**
-	 * @return imagePath path of an image
+	 * @return path of an image
 	 */
 	public String getImagePath() {
 		return imagePath;
 	}
 	/**
-	 * @return shortDescription short version of description
+	 * @return short version of description
 	 */
 	public String getShortDescription() {
 		return shortDescription;

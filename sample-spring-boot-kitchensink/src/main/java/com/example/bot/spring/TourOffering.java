@@ -73,69 +73,69 @@ public class TourOffering {
 		this.state = state;
 	}
 	/**
-	 * @return offeringID offeringID
+	 * @return tour offering ID
 	 */
 	// get functions
 	public int getOfferingID() {
 		return offeringID;
 	}
 	/**
-	 * @return date date 
+	 * @return date 
 	 */
 	public String getDate() {
 		return date;
 	}
 	/**
-	 * @return guideName name of the guide
+	 * @return name of the guide
 	 */
 	public String getGuideName() {
 		return guideName;
 	}
 	/**
-	 * @return guideAccount account of the guide
+	 * @return account of the guide
 	 */
 	public String getGuideAccount() {
 		return guideAccount;
 	}
 	/**
-	 * @return hotel hotel 
+	 * @return name of the hotel 
 	 */
 	public String getHotel() {
 		return hotel;
 	}
 	/**
-	 * @return maxCapacity max capacity
+	 * @return maximum capacity of a tour
 	 */
 	public int getMaxCapacity() {
 		return maxCapacity;
 	}
 	/**
-	 * @return minCapacity min capacity
+	 * @return min capacity of a tour
 	 */
 	public int getMinCapacity() {
 		return minCapacity;
 	}
 	/**
-	 * @return state state
+	 * @return state of the tour offering
 	 */
 	public int getState() {
 		return state;
 	}
 
 	/**
-	 * @return price price
+	 * @return tour price
 	 */
 	public int getPrice() {
 		return price;
 	}
 	/**
-	 * @return duration duration
+	 * @return duration of the tour
 	 */
 	public int getDuration() {
 		return duration;
 	}
 	/**
-	 * @return quota quota 
+	 * @return quota of the tour
 	 */
 	public int getQuota() {
 		return quota;
@@ -148,13 +148,13 @@ public class TourOffering {
 		this.offeringID = offeringID;
 	}
 	/**
-	 * @param date date
+	 * @param date date of the tour
 	 */
 	public void setDate(String date) {
 		this.date = date;
 	}
 	/**
-	 * @param guideName guideName
+	 * @param guideName name of the guide
 	 */
 	public void setGuideName(String guideName) {
 		this.guideName = guideName;
