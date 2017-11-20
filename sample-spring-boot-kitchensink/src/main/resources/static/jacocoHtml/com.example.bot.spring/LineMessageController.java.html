@@ -1,0 +1,1185 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LineMessageController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sample-spring-boot-kitchensink</a> &gt; <a href="index.source.html" class="el_package">com.example.bot.spring</a> &gt; <span class="el_source">LineMessageController.java</span></div><h1>LineMessageController.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2016 LINE Corporation
+ *
+ * LINE Corporation licenses this file to you under the Apache License,
+ * version 2.0 (the &quot;License&quot;); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+
+package com.example.bot.spring;
+
+import java.io.File;
+import java.io.IOException;
+
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
+
+//import javax.xml.ws.Action;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+import com.linecorp.bot.model.profile.UserProfileResponse;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Calendar;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.google.common.io.ByteStreams;
+
+import com.linecorp.bot.client.LineMessagingClient;
+import com.linecorp.bot.client.MessageContentResponse;
+import com.linecorp.bot.model.ReplyMessage;
+import com.linecorp.bot.model.PushMessage;
+import com.linecorp.bot.model.action.MessageAction;
+import com.linecorp.bot.model.action.PostbackAction;
+import com.linecorp.bot.model.action.URIAction;
+import com.linecorp.bot.model.action.Action;
+
+import com.linecorp.bot.model.event.BeaconEvent;
+import com.linecorp.bot.model.event.Event;
+import com.linecorp.bot.model.event.FollowEvent;
+import com.linecorp.bot.model.event.JoinEvent;
+import com.linecorp.bot.model.event.MessageEvent;
+import com.linecorp.bot.model.event.PostbackEvent;
+import com.linecorp.bot.model.event.UnfollowEvent;
+import com.linecorp.bot.model.event.message.AudioMessageContent;
+import com.linecorp.bot.model.event.message.ImageMessageContent;
+import com.linecorp.bot.model.event.message.LocationMessageContent;
+import com.linecorp.bot.model.event.message.StickerMessageContent;
+import com.linecorp.bot.model.event.message.TextMessageContent;
+import com.linecorp.bot.model.event.source.GroupSource;
+import com.linecorp.bot.model.event.source.RoomSource;
+import com.linecorp.bot.model.event.source.Source;
+import com.linecorp.bot.model.message.AudioMessage;
+import com.linecorp.bot.model.message.ImageMessage;
+import com.linecorp.bot.model.message.ImagemapMessage;
+import com.linecorp.bot.model.message.LocationMessage;
+import com.linecorp.bot.model.message.Message;
+import com.linecorp.bot.model.message.StickerMessage;
+import com.linecorp.bot.model.message.TemplateMessage;
+import com.linecorp.bot.model.message.TextMessage;
+import com.linecorp.bot.model.message.imagemap.ImagemapArea;
+import com.linecorp.bot.model.message.imagemap.ImagemapBaseSize;
+import com.linecorp.bot.model.message.imagemap.MessageImagemapAction;
+import com.linecorp.bot.model.message.imagemap.URIImagemapAction;
+import com.linecorp.bot.model.message.template.ButtonsTemplate;
+import com.linecorp.bot.model.message.template.CarouselColumn;
+import com.linecorp.bot.model.message.template.CarouselTemplate;
+import com.linecorp.bot.model.message.template.ConfirmTemplate;
+import com.linecorp.bot.model.response.BotApiResponse;
+import com.linecorp.bot.spring.boot.annotation.EventMapping;
+import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
+
+import lombok.NonNull;
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
+
+import java.net.URI;
+/**
+ * This class is line message controller which deals with user event
+ * @author Group 16
+ */
+
+<span class="fc" id="L103">@Slf4j</span>
+@LineMessageHandler
+public class LineMessageController {
+
+	@Autowired
+	private LineMessagingClient lineMessagingClient;
+	/**
+	 * Handles text message event
+	 * @param event received text message event from user
+	 * @throws Exception when handleTextContent fails
+	 */
+	@EventMapping
+	public void handleTextMessageEvent(MessageEvent&lt;TextMessageContent&gt; event) throws Exception {
+<span class="nc" id="L116">		log.info(&quot;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX&quot;);</span>
+<span class="nc" id="L117">		log.info(&quot;This is your entry point:&quot;);</span>
+<span class="nc" id="L118">		log.info(&quot;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX&quot;);</span>
+<span class="nc" id="L119">		TextMessageContent message = event.getMessage();</span>
+<span class="nc" id="L120">		handleTextContent(event.getReplyToken(), event, message);</span>
+<span class="nc" id="L121">	}</span>
+	/**
+	 * Handles sticker message event
+	 * @param event received sticker message event from user
+	 */
+	@EventMapping
+	public void handleStickerMessageEvent(MessageEvent&lt;StickerMessageContent&gt; event) {
+<span class="nc" id="L128">		handleSticker(event.getReplyToken(), event.getMessage());</span>
+<span class="nc" id="L129">	}</span>
+//	/**
+//	 * Handle Location Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleLocationMessageEvent(MessageEvent&lt;LocationMessageContent&gt; event) {
+//		LocationMessageContent locationMessage = event.getMessage();
+//		reply(event.getReplyToken(), new LocationMessage(locationMessage.getTitle(), locationMessage.getAddress(),
+//				locationMessage.getLatitude(), locationMessage.getLongitude()));
+//	}
+//	/**
+//	 * Handle Image Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleImageMessageEvent(MessageEvent&lt;ImageMessageContent&gt; event) throws IOException {
+//		final MessageContentResponse response;
+//		String replyToken = event.getReplyToken();
+//		String messageId = event.getMessage().getId();
+//		try {
+//			response = lineMessagingClient.getMessageContent(messageId).get();
+//		} catch (InterruptedException | ExecutionException e) {
+//			reply(replyToken, new TextMessage(&quot;Cannot get image: &quot; + e.getMessage()));
+//			throw new RuntimeException(e);
+//		}
+//		DownloadedContent jpg = saveContent(&quot;jpg&quot;, response);
+//		reply(((MessageEvent) event).getReplyToken(), new ImageMessage(jpg.getUri(), jpg.getUri()));
+//
+//	}
+//	/**
+//	 * Handle Audio Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleAudioMessageEvent(MessageEvent&lt;AudioMessageContent&gt; event) throws IOException {
+//		final MessageContentResponse response;
+//		String replyToken = event.getReplyToken();
+//		String messageId = event.getMessage().getId();
+//		try {
+//			response = lineMessagingClient.getMessageContent(messageId).get();
+//		} catch (InterruptedException | ExecutionException e) {
+//			reply(replyToken, new TextMessage(&quot;Cannot get image: &quot; + e.getMessage()));
+//			throw new RuntimeException(e);
+//		}
+//		DownloadedContent mp4 = saveContent(&quot;mp4&quot;, response);
+//		reply(event.getReplyToken(), new AudioMessage(mp4.getUri(), 100));
+//	}
+//	/**
+//	 * Handle Unfollow Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleUnfollowEvent(UnfollowEvent event) {
+//		log.info(&quot;unfollowed this bot: {}&quot;, event);
+//	}
+//	/**
+//	 * Handle Follow Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleFollowEvent(FollowEvent event) {
+//		String replyToken = event.getReplyToken();
+//		this.replyText(replyToken, &quot;Got followed event&quot;);
+//	}
+//	/**
+//	 * Handle Join Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleJoinEvent(JoinEvent event) {
+//		String replyToken = event.getReplyToken();
+//		this.replyText(replyToken, &quot;Joined &quot; + event.getSource());
+//	}
+	/**
+	 * Handles postback event
+	 * @param event received postback event from user
+	 * @throws Exception when listTourForBooking fails
+	 */
+	@EventMapping
+	public void handlePostbackEvent(PostbackEvent event)  throws Exception  {
+<span class="nc" id="L210">		String replyToken = event.getReplyToken();</span>
+<span class="nc" id="L211">		String reply=&quot;&quot;;</span>
+<span class="nc" id="L212">		String text=event.getPostbackContent().getData();</span>
+<span class="nc" id="L213">        String userID = event.getSource().getUserId();</span>
+<span class="nc" id="L214">        User user = database.getUserInformation(userID);</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">		if (text.contains(Constant.TEXT_NEW_BOOKING)){</span>
+<span class="nc" id="L216">			database.setUserState(userID,Constant.BOOKING_TOUR_ID);</span>
+<span class="nc" id="L217">			listTourForBooking(replyToken, reply);</span>
+		}
+		//this.replyText(replyToken, &quot;Got postback &quot; + event.getPostbackContent().getData());
+<span class="nc" id="L220">	}</span>
+//	/**
+//	 * Handle Beacon Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleBeaconEvent(BeaconEvent event) {
+//		String replyToken = event.getReplyToken();
+//		this.replyText(replyToken, &quot;Got beacon message &quot; + event.getBeacon().getHwid());
+//	}
+//	/**
+//	 * Handle Other Event
+//	 * @param event
+//	 */
+//	@EventMapping
+//	public void handleOtherEvent(Event event) {
+//		log.info(&quot;Received message(Ignored): {}&quot;, event);
+//	}
+	/**
+	 * Replies a single piece of message
+	 * @param replyToken line replyToken for replying
+	 * @param message message to be replied
+	 */
+<span class="pc bpc" id="L243" title="2 of 4 branches missed.">	private void reply(@NonNull String replyToken, @NonNull Message message) {</span>
+<span class="fc" id="L244">		reply(replyToken, Collections.singletonList(message));</span>
+<span class="fc" id="L245">	}</span>
+	/**
+	 * Replies a list of messages
+	 * @param replyToken line replyToken for replying
+	 * @param messages message to be replied
+	 */
+<span class="pc bpc" id="L251" title="2 of 4 branches missed.">	public void reply(@NonNull String replyToken, @NonNull List&lt;Message&gt; messages) {</span>
+		try {
+<span class="fc" id="L253">			BotApiResponse apiResponse = lineMessagingClient.replyMessage(new ReplyMessage(replyToken, messages)).get();</span>
+<span class="fc" id="L254">			log.info(&quot;Sent messages: {}&quot;, apiResponse);</span>
+<span class="nc" id="L255">		} catch (InterruptedException | ExecutionException e) {</span>
+<span class="nc" id="L256">			throw new RuntimeException(e);</span>
+<span class="fc" id="L257">		}</span>
+<span class="fc" id="L258">	}</span>
+	/**
+	 * Replies text content to user
+	 * @param replyToken line replyToken for replying
+	 * @param message message to be replied
+	 */
+<span class="pc bpc" id="L264" title="2 of 4 branches missed.">	public void replyText(@NonNull String replyToken, @NonNull String message) {</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">		if (replyToken.isEmpty()) {</span>
+<span class="fc" id="L266">			throw new IllegalArgumentException(&quot;replyToken must not be empty&quot;);</span>
+		}
+		//if (message.length() &gt; 1000) {
+			//message = message.substring(0, 1000 - 2) + &quot;..&quot;;
+		//}
+<span class="fc" id="L271">		this.reply(replyToken, new TextMessage(parse(message)));</span>
+<span class="fc" id="L272">	}</span>
+  	/**
+	 * Replies sticker to user
+	 * @param replyToken line replyToken for replying
+	 * @param content sticker content
+	 */
+	private void handleSticker(String replyToken, StickerMessageContent content) {
+<span class="nc" id="L279">		reply(replyToken, new StickerMessage(content.getPackageId(), content.getStickerId()));</span>
+<span class="nc" id="L280">	}</span>
+	/**
+	 * Handles text content event from user
+	 * @param replyToken line replyToken for replying
+	 * @param event received event from user
+	 * @param content text message content
+	 * @throws Exception when state handler fails
+	 */
+
+	public void handleTextContent(String replyToken, Event event, TextMessageContent content)
+            throws Exception {
+
+<span class="fc" id="L292">        String text = content.getText();</span>
+<span class="fc" id="L293">        log.info(&quot;Got text message from {}: {}&quot;, replyToken, text);</span>
+
+<span class="fc" id="L295">        java.sql.Timestamp time = new java.sql.Timestamp(new java.util.Date().getTime());</span>
+<span class="fc" id="L296">        String userID = event.getSource().getUserId();</span>
+<span class="fc" id="L297">        User user = database.getUserInformation(userID);</span>
+<span class="fc" id="L298">        String reply = &quot;&quot;;</span>
+
+<span class="fc bfc" id="L300" title="All 2 branches covered.">        if(user.getUserID().equals(&quot;null&quot;)) {</span>
+<span class="fc" id="L301">        		reply += greeting();</span>
+<span class="fc" id="L302">        		reply += &quot;!\n&quot;;</span>
+<span class="fc" id="L303">        		reply += Constant.GREETING_FIRST_USE;</span>
+<span class="fc" id="L304">        		database.createUser(userID,time,Constant.FAQ_NO_USER_INFORMATION);</span>
+<span class="fc" id="L305">        		user.setUser(userID,time,Constant.FAQ_NO_USER_INFORMATION);</span>
+        }
+
+<span class="fc" id="L308">        int state = user.getState();</span>
+<span class="fc" id="L309">        java.sql.Timestamp last_time = user.getTime();</span>
+<span class="fc" id="L310">        long difference = (time.getTime()-last_time.getTime())/(60*1000);</span>
+
+        // welcome user back if the time gapping is larger than 10 minutes
+<span class="fc" id="L313">        reply += welcomeBack(difference,user);</span>
+
+        // update last_time
+<span class="fc" id="L316">        database.setUserTime(userID,time);</span>
+
+<span class="fc bfc" id="L318" title="All 15 branches covered.">        switch(state) {</span>
+        case Constant.FAQ_NO_USER_INFORMATION:
+<span class="fc" id="L320">        		FAQ_NO_USER_INFORMATION_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L321">        		break;</span>
+        case Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION:
+<span class="fc" id="L323">        		FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L324">        		break;</span>
+        case Constant.FAQ_AFTER_CONFIRMATION:
+<span class="fc" id="L326">            FAQ_AFTER_CONFIRMATION_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L327">        		break;</span>
+        case Constant.FILL_NAME:
+<span class="fc" id="L329">        		FILL_NAME_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L330">        		break;</span>
+        case Constant.FILL_PHONE_NUM:
+<span class="fc" id="L332">        		FILL_PHONE_NUM_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L333">        		break;</span>
+        case Constant.FILL_AGE:
+<span class="fc" id="L335">        		FILL_AGE_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L336">        		break;</span>
+        case Constant.BOOKING_TOUR_ID:
+<span class="fc" id="L338">    			BOOKING_TOUR_ID_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L339">    			break;</span>
+        case Constant.BOOKING_OFFERING_ID:
+<span class="fc" id="L341">        		BOOKING_OFFERING_ID_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L342">        		break;</span>
+        case Constant.BOOKING_ADULT:
+<span class="fc" id="L344">    			BOOKING_ADULT_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L345">    			break;</span>
+        case Constant.BOOKING_CHILDREN:
+<span class="fc" id="L347">        		BOOKING_CHILDREN_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L348">        		break;</span>
+        case Constant.BOOKING_TODDLER:
+<span class="fc" id="L350">    			BOOKING_TODDLER_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L351">    			break;</span>
+        case Constant.BOOKING_CONFIRMATION:
+<span class="fc" id="L353">    			BOOKING_CONFIRMATION_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L354">    			break;</span>
+        case Constant.BOOKING_PAYMENT:
+<span class="fc" id="L356">    			BOOKING_PAYMENT_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L357">    			break;</span>
+        case Constant.BOOKING_OR_REVIEW:
+<span class="fc" id="L359">            BOOKING_OR_REVIEW_handler(replyToken, text, userID, reply);</span>
+<span class="fc" id="L360">       		break;</span>
+       	default:
+       		break;
+        }
+<span class="fc" id="L364">	}</span>
+	
+	
+	/**
+	 * Handles event when user asks faq without user information
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID id of the user
+	 * @param reply message to be replied
+	 * @throws Exception when replyText fails
+	 */
+
+	public void FAQ_NO_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+<span class="fc bfc" id="L378" title="All 2 branches covered.">		if(!text.toLowerCase().contains(&quot;book&quot;)) {</span>
+<span class="fc" id="L379">			faqsearch(replyToken, text, reply, userID);</span>
+		}
+		else {
+<span class="fc" id="L382">			database.setUserState(userID,Constant.FILL_NAME);</span>
+<span class="fc" id="L383">			reply += Constant.INSTRUCTION_FILL_INFORMATION;</span>
+<span class="fc" id="L384">			reply += Constant.INSTRUCTION_ENTER_NAME;</span>
+<span class="fc" id="L385">			log.info(&quot;Returns message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L386">			this.replyText(replyToken,reply);</span>
+		}
+<span class="fc" id="L388">	}</span>
+	
+	
+	/**
+	 * Handles event when user asks faq with user information but without confirmation
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when listTourForBooking fails
+	 */
+	public void FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+<span class="fc bfc" id="L401" title="All 2 branches covered.">		if(!text.toLowerCase().contains(&quot;book&quot;)) {</span>
+<span class="fc" id="L402">			faqsearch(replyToken, text, reply, userID);</span>
+		}
+		else {
+<span class="fc" id="L405">			database.setUserState(userID,Constant.BOOKING_TOUR_ID);</span>
+<span class="fc" id="L406">			listTourForBooking(replyToken, reply);</span>
+		}
+<span class="fc" id="L408">	}</span>
+	
+	
+	/**
+	 * Handles event when user asks faq after confirmation
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when reply fails
+	 */
+	public void FAQ_AFTER_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+<span class="fc bfc" id="L421" title="All 2 branches covered.">		if(!text.toLowerCase().contains(&quot;book&quot;)) {</span>
+<span class="fc" id="L422">			faqsearch(replyToken, text, reply, userID);</span>
+		}
+		else{
+<span class="fc" id="L425">		    database.setUserState(userID,Constant.BOOKING_OR_REVIEW);</span>
+<span class="fc" id="L426">		    ConfirmTemplate confirmTemplate = new ConfirmTemplate(</span>
+		    		Constant.QUESTION_REVIEW_OR_BOOKING,
+		            new MessageAction(&quot;Review&quot;, &quot;Review&quot;),
+		            new PostbackAction(Constant.TEXT_NEW_BOOKING, Constant.TEXT_NEW_BOOKING)
+		    );
+<span class="fc" id="L431">		    TemplateMessage whichBook = new TemplateMessage(&quot;Review Booking/New Booking&quot;, confirmTemplate);</span>
+
+<span class="fc" id="L433">		    log.info(&quot;Returns review/new button {}: {}&quot;, replyToken);</span>
+<span class="fc" id="L434">		    this.reply(replyToken,whichBook);</span>
+
+		 }
+<span class="fc" id="L437">	}</span>
+	
+
+	/**
+	 * Handles event when user needs to fill in his/her name
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when replyText fails
+	 */
+
+	public void FILL_NAME_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+<span class="fc" id="L451">		database.setUserState(userID,Constant.FILL_PHONE_NUM);</span>
+		// store the name info
+<span class="fc" id="L453">		database.setUserName(userID,text);</span>
+<span class="fc" id="L454">		reply += Constant.INSTRUCTION_ENTER_PHONE_NUM;</span>
+<span class="fc" id="L455">		log.info(&quot;Returns message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L456">		this.replyText(replyToken,reply);</span>
+
+<span class="fc" id="L458">	}</span>
+	
+	
+	/**
+	 * Handles event when user needs to fill in his/her phone number
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when replyText fails
+	 */
+	public void FILL_PHONE_NUM_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+<span class="fc" id="L471">		database.setUserState(userID,Constant.FILL_AGE);</span>
+		// store phone number
+<span class="fc" id="L473">		database.setUserPhoneNum(userID,text);</span>
+<span class="fc" id="L474">		reply += Constant.INSTRUCTION_ENTER_AGE;</span>
+<span class="fc" id="L475">		log.info(&quot;Returns message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L476">		this.replyText(replyToken,reply);</span>
+<span class="fc" id="L477">	}</span>
+	
+	/**
+	 * Handles event when user needs to fill in his/her age
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when replyText fails
+	 */
+	public void FILL_AGE_handler(String replyToken, String text, String userID, String reply) throws Exception {
+<span class="fc" id="L488">		text=text.replaceAll(&quot; &quot;,&quot;&quot;);</span>
+<span class="fc bfc" id="L489" title="All 4 branches covered.">		if(isNumeric(text) &amp;&amp; Integer.parseInt(text)&gt;=0) {</span>
+<span class="fc" id="L490">    		database.setUserAge(userID,text);//extract number preferred here</span>
+<span class="fc" id="L491">    		database.setUserState(userID,Constant.BOOKING_TOUR_ID);</span>
+<span class="fc" id="L492">    		reply += Constant.CONFIRM_REGISTRATION;</span>
+			// use function here
+<span class="fc" id="L494">			listTourForBooking(replyToken, reply);</span>
+
+	}
+	else {
+<span class="fc" id="L498">		reply += Constant.ERROR_REENTER_AGE;</span>
+<span class="fc" id="L499">		log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L500">		this.replyText(replyToken,reply);</span>
+	}
+<span class="fc" id="L502">	}</span>
+	
+	/**
+	 * Handles event when user needs to fill in tour ID in the booking stage 
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when replyText fails
+	 */
+	public void BOOKING_TOUR_ID_handler(String replyToken, String text, String userID, String reply) throws Exception {
+<span class="fc" id="L513">		text=text.replaceAll(&quot; &quot;,&quot;&quot;);</span>
+<span class="fc" id="L514">		String result=&quot;&quot;;</span>
+<span class="fc bfc" id="L515" title="All 2 branches covered.">		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_NOTHING)) {</span>
+			//here		
+<span class="fc" id="L517">			List&lt;Tour&gt; listOfTours = database.getTours();</span>
+<span class="fc" id="L518">			List&lt;Message&gt; messages = new ArrayList&lt;Message&gt;();</span>
+
+			//end
+
+<span class="pc bpc" id="L522" title="1 of 4 branches missed.">			if(isNumeric(text) &amp;&amp; database.tourFound(Integer.parseInt(text))) {</span>
+<span class="nc" id="L523">				String description = &quot; &quot;;</span>
+				String[] lines;
+<span class="nc bnc" id="L525" title="All 2 branches missed.">				for (Tour tour : listOfTours) {</span>
+<span class="nc bnc" id="L526" title="All 2 branches missed.">					if(tour.getTourID()==Integer.parseInt(text)) {</span>
+<span class="nc" id="L527">						description = tour.getDescription();</span>
+<span class="nc" id="L528">						description=description.replace(&quot;* &quot;, &quot;\n&quot;);</span>
+<span class="nc" id="L529">						description=description.replace(&quot;*&quot;, &quot;\n&quot;);</span>
+<span class="nc" id="L530">						lines=description.split(&quot;[\\r\\n]+&quot;);</span>
+<span class="nc" id="L531">						description=tour.getTourName();</span>
+<span class="nc bnc" id="L532" title="All 2 branches missed.">						for (String line :lines) {</span>
+<span class="nc" id="L533">							description+=&quot;\n\u2606&quot; +line;</span>
+						}
+
+					}
+<span class="nc" id="L537">				}</span>
+				
+				
+
+<span class="nc" id="L541">				messages.add(new TextMessage(parse(description)));</span>
+				
+<span class="nc" id="L543">				List&lt;TourOffering&gt; listOfTourOfferings=new ArrayList&lt;TourOffering&gt;();</span>
+				try {
+<span class="nc" id="L545">					listOfTourOfferings =database.displayTourOffering(Integer.parseInt(text));</span>
+					}
+<span class="nc" id="L547">					catch(Exception e) {</span>
+<span class="nc" id="L548">						reply += Constant.ERROR_REENTER_TOUR_ID;</span>
+<span class="nc" id="L549">		    			log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="nc" id="L550">		    			this.replyText(replyToken,reply);</span>
+<span class="nc" id="L551">					}</span>
+<span class="nc bnc" id="L552" title="All 2 branches missed.">    			if(listOfTourOfferings.isEmpty()) {</span>
+<span class="nc" id="L553">    				reply += Constant.INFORMATION_NO_TOUR_OFFERING;</span>
+<span class="nc" id="L554">    				log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="nc" id="L555">        			this.replyText(replyToken,reply);</span>
+    			}
+    			else {
+    			       //todo
+    				
+<span class="nc bnc" id="L560" title="All 2 branches missed.">    				for (TourOffering tourOffering:listOfTourOfferings) {</span>
+<span class="nc" id="L561">						result += (&quot;Tour Offering &quot;+tourOffering.getOfferingID()+&quot;\nData and time: &quot;+ tourOffering.getDate()+&quot;\nHotel: &quot;+tourOffering.getHotel()+&quot;\nMax people: &quot;+tourOffering.getMaxCapacity()+</span>
+<span class="nc" id="L562">								&quot;\nQuota Left: &quot;+tourOffering.getQuota()+&quot;\nFull price for adult: HKD&quot;+tourOffering.getPrice()+&quot;\nDuration: &quot;+tourOffering.getDuration()+&quot; Days\n\n&quot;);</span>
+<span class="nc" id="L563">					}</span>
+
+<span class="nc" id="L565">    				database.setUserState(userID,Constant.BOOKING_OFFERING_ID);</span>
+<span class="nc" id="L566">    				database.setBufferTourID(userID,Integer.parseInt(text));</span>
+<span class="nc" id="L567">    				reply += Constant.INFORMATION_TOUR_OFFERING;</span>
+<span class="nc" id="L568">    				reply += result;</span>
+<span class="nc" id="L569">    				reply += Constant.INSTRTUCTION_ENTER_TOUR_OFFERING_ID;</span>
+<span class="nc" id="L570">    				messages.add(new TextMessage(parse(reply)));</span>
+    				//prepare button for display
+<span class="nc" id="L572">    				int count=0;</span>
+<span class="nc" id="L573">    				List&lt;Action&gt; listOfButton=new ArrayList&lt;Action&gt;();</span>
+<span class="nc bnc" id="L574" title="All 2 branches missed.">    				for (TourOffering tourOffering:listOfTourOfferings) {</span>
+<span class="nc" id="L575">    					String tourofferingID=Integer.toString(tourOffering.getOfferingID());</span>
+<span class="nc" id="L576">    					MessageAction button=new MessageAction(&quot;Tour Offering &quot;+tourofferingID, tourofferingID);</span>
+<span class="nc" id="L577">	    				listOfButton.add(button);</span>
+<span class="nc" id="L578">	    				count++;</span>
+<span class="nc bnc" id="L579" title="All 2 branches missed.">	    				if (count%5==0) break;</span>
+<span class="nc" id="L580">    				}	</span>
+<span class="nc" id="L581">    				ButtonsTemplate buttonTemplate = new ButtonsTemplate(</span>
+	            			null,&quot;Shortcut&quot;,&quot;You may press button instead.&quot;, listOfButton
+		            		);
+<span class="nc" id="L584">					messages.add(new TemplateMessage(&quot;button&quot;,buttonTemplate));</span>
+    				
+<span class="nc" id="L586">        			log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="nc" id="L587">        			this.reply(replyToken,messages);</span>
+    			}
+<span class="nc" id="L589">			}</span>
+			else {
+<span class="fc" id="L591">				reply += Constant.ERROR_REENTER_TOUR_ID;</span>
+<span class="fc" id="L592">    			log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L593">    			this.replyText(replyToken,reply);</span>
+			}
+		}
+<span class="fc" id="L596">	}</span>
+	/**
+	 * Handles event when user needs to fill in tour offering ID in the booking stage 
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when replyText fails
+	 */
+	public void BOOKING_OFFERING_ID_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+<span class="fc" id="L607">		text=text.replaceAll(&quot; &quot;,&quot;&quot;);</span>
+<span class="fc bfc" id="L608" title="All 2 branches covered.">		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_BUFFER)) {</span>
+<span class="fc bfc" id="L609" title="All 4 branches covered.">			if(isNumeric(text) &amp;&amp; database.tourOfferingFound(database.getBufferTourID(userID),Integer.parseInt(text))) {</span>
+<span class="fc" id="L610">				database.setUserState(userID,Constant.BOOKING_ADULT);</span>
+<span class="fc" id="L611">				database.deleteBufferBookingEntry(userID);</span>
+<span class="fc" id="L612">				database.setBookingTourOfferingID(userID,Integer.parseInt(text));</span>
+<span class="fc" id="L613">				reply += Constant.INSTRTUCTION_ENTER_ADULT_NUMBER;</span>
+<span class="fc" id="L614">				log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L615">					this.replyText(replyToken,reply);</span>
+			}
+			else {
+<span class="fc" id="L618">				reply += Constant.ERROR_REENTER_TOUR_OFFERING_ID;</span>
+<span class="fc" id="L619">				log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L620">				this.replyText(replyToken,reply);</span>
+			}
+		}
+<span class="fc" id="L623">	}</span>
+	/**
+	 * Handles event when user needs to fill in the number of adults in the booking stage 
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when replyText fails
+	 */
+	public void BOOKING_ADULT_handler(String replyToken, String text, String userID, String reply) throws Exception {
+<span class="fc bfc" id="L633" title="All 2 branches covered.">		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {</span>
+<span class="fc" id="L634">			text=text.replaceAll(&quot; &quot;,&quot;&quot;);</span>
+<span class="fc bfc" id="L635" title="All 4 branches covered.">			if(isNumeric(text) &amp;&amp; Integer.parseInt(text)&gt;=0) {</span>
+<span class="fc" id="L636">					database.setUserState(userID,Constant.BOOKING_CHILDREN);</span>
+<span class="fc" id="L637">					database.setBookingAdultNumber(userID,Integer.parseInt(text));</span>
+<span class="fc" id="L638">					reply += Constant.INSTRTUCTION_ENTER_CHILDREN_NUMBER;</span>
+<span class="fc" id="L639">					log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L640">	    				this.replyText(replyToken,reply);</span>
+				}
+				else {
+<span class="fc" id="L643">					reply += Constant.ERROR_REENTER_ADULT_NUMBER;</span>
+<span class="fc" id="L644">    				log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L645">    				this.replyText(replyToken,reply);</span>
+				}
+
+
+		}
+<span class="fc" id="L650">	}</span>
+	/**
+	 * Handles event when user needs to fill in the number of children in the booking stage 
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when replyText fails
+	 */
+	public void BOOKING_CHILDREN_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+<span class="fc bfc" id="L661" title="All 2 branches covered.">		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {</span>
+<span class="fc" id="L662">			text=text.replaceAll(&quot; &quot;,&quot;&quot;);</span>
+<span class="fc bfc" id="L663" title="All 4 branches covered.">			if(isNumeric(text) &amp;&amp; Integer.parseInt(text)&gt;=0) {</span>
+<span class="fc" id="L664">					database.setUserState(userID,Constant.BOOKING_TODDLER);</span>
+<span class="fc" id="L665">					database.setBookingChildrenNumber(userID,Integer.parseInt(text));</span>
+<span class="fc" id="L666">					reply += Constant.INSTRTUCTION_ENTER_TODDLER_NUMBER;</span>
+<span class="fc" id="L667">					log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L668">						this.replyText(replyToken,reply);</span>
+				}
+				else {
+<span class="fc" id="L671">					reply += Constant.ERROR_REENTER_CHILDREN_NUMBER;</span>
+<span class="fc" id="L672">					log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L673">					this.replyText(replyToken,reply);</span>
+				}
+
+
+		}
+<span class="fc" id="L678">	}</span>
+
+	/**
+	 * Handles event when user needs to fill in the number of toddlers in the booking stage 
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when replyText fails
+	 */
+	public void BOOKING_TODDLER_handler(String replyToken, String text, String userID, String reply) throws Exception {
+<span class="fc bfc" id="L689" title="All 2 branches covered.">		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {</span>
+<span class="fc" id="L690">			text=text.replaceAll(&quot; &quot;,&quot;&quot;);</span>
+<span class="fc bfc" id="L691" title="All 4 branches covered.">			if(isNumeric(text) &amp;&amp; Integer.parseInt(text)&gt;=0) {</span>
+<span class="fc" id="L692">					database.setBookingToddlerNumber(userID,Integer.parseInt(text));</span>
+
+<span class="fc" id="L694">					int quota=database.checkQuota(userID);</span>
+<span class="fc bfc" id="L695" title="All 2 branches covered.">					if(quota&gt;=0) {</span>
+<span class="fc" id="L696">						database.setUserState(userID,Constant.BOOKING_CONFIRMATION);</span>
+						//reply += Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST;
+<span class="fc" id="L698">			            ButtonsTemplate buttonTemplate = new ButtonsTemplate(</span>
+		            			null,
+		            			&quot;Special request&quot;,
+		                    &quot;Press \&quot;No\&quot; if you don't have any request.&quot;,
+<span class="fc" id="L702">		                    Arrays.asList(new MessageAction(&quot;No&quot;, &quot;No&quot;))</span>
+			            		);
+		           
+<span class="fc" id="L705">		            TemplateMessage ButtonMessageBlock = new TemplateMessage(&quot;Sepcial requests?&quot;,buttonTemplate);</span>
+	
+<span class="fc" id="L707">					log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L708">					this.reply(replyToken,</span>
+<span class="fc" id="L709">		                    Arrays.asList(new TextMessage(Constant.INSTRTUCTION_ENTER_SPECIAL_REQUEST),ButtonMessageBlock));</span>
+
+<span class="fc" id="L711">					}</span>
+					else {
+<span class="fc" id="L713">						quota=database.checkQuota(userID);</span>
+<span class="fc" id="L714">						database.setUserState(userID,Constant.BOOKING_ADULT);</span>
+<span class="fc" id="L715">						reply += Constant.QUOTA_FULL_1;</span>
+<span class="fc" id="L716">						reply += quota;</span>
+<span class="fc" id="L717">						reply += Constant.QUOTA_FULL_2;</span>
+<span class="fc" id="L718">						log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L719">	    					this.replyText(replyToken,reply);</span>
+	    			}
+
+<span class="fc" id="L722">				}</span>
+				else {
+<span class="fc" id="L724">					reply += Constant.ERROR_REENTER_TODDLER_NUMBER;</span>
+<span class="fc" id="L725">    					log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L726">    					this.replyText(replyToken,reply);</span>
+				}
+			//end
+
+		}
+<span class="fc" id="L731">	}</span>
+
+	/**
+	 * Handles event when user needs to confirm his/her booking in the booking stage 
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when reply fails
+	 */
+	public void BOOKING_CONFIRMATION_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+<span class="fc bfc" id="L743" title="All 2 branches covered.">		if(!checkQuit(text,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY)) {</span>
+
+<span class="fc" id="L745">			database.setUserState(userID,Constant.BOOKING_PAYMENT);</span>
+<span class="fc" id="L746">			database.setBookingSpecialRequest(userID,text);</span>
+			
+<span class="fc" id="L748">			reply += database.displaytBookingInformation(userID);</span>
+
+<span class="fc" id="L750">            ConfirmTemplate confirmTemplate = new ConfirmTemplate(</span>
+                    Constant.QUESTION_CONFIRM_OR_NOT,
+                    new MessageAction(&quot;Yes&quot;, &quot;Yes!&quot;),
+                    new MessageAction(&quot;No&quot;, &quot;No!&quot;)
+            );
+<span class="fc" id="L755">            TemplateMessage confirmMessageBlock = new TemplateMessage(&quot;Confirm booking?&quot;, confirmTemplate);</span>
+
+<span class="fc" id="L757">			log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+
+<span class="fc" id="L759">            this.reply(replyToken,</span>
+<span class="fc" id="L760">                    Arrays.asList(new TextMessage(parse(reply)),confirmMessageBlock));</span>
+		}
+<span class="fc" id="L762">	}</span>
+	/**
+	 * Handles event when user needs to pay for his/her booking in the booking stage 
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when reply fails
+	 */
+	public void BOOKING_PAYMENT_handler(String replyToken, String text, String userID, String reply) throws Exception {
+
+<span class="fc bfc" id="L773" title="All 4 branches covered.">			if(text.toLowerCase().contains(&quot;yes&quot;)||text.toLowerCase().contains(&quot;confirm&quot;)) {</span>
+<span class="fc" id="L774">				database.setUserState(userID,Constant.FAQ_AFTER_CONFIRMATION);</span>
+<span class="fc" id="L775">				database.setBookingConfirmation(userID);</span>
+<span class="fc" id="L776">				reply += Constant.INSTRUCTION_PAYMENT;</span>
+<span class="fc" id="L777">				log.info(&quot;Returns instruction message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L778">	    		List&lt;Message&gt; msgToReply=new ArrayList&lt;Message&gt;();</span>
+<span class="fc" id="L779">	    		msgToReply.add(new StickerMessage(&quot;1&quot;,Constant.STICKER_ID_CONFIRMBOOK));</span>
+<span class="fc" id="L780">	    		msgToReply.add(new TextMessage(parse(reply)));</span>
+<span class="fc" id="L781">	    		this.reply(replyToken,msgToReply);</span>
+<span class="fc" id="L782">			}</span>
+			else {
+<span class="fc" id="L784">				checkQuit(&quot;Q&quot;,userID,reply,replyToken,Constant.DELETING_BOOKING_ENTRY);</span>
+			}
+
+<span class="fc" id="L787">	}</span>
+
+	/**
+	 * Handles event when user needs to choose whether to add a new booking or review his/her old bookings
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply message to be replied
+	 * @throws Exception when reply fails
+	 */
+	public void BOOKING_OR_REVIEW_handler(String replyToken, String text, String userID, String reply)
+			throws Exception {
+<span class="fc bfc" id="L799" title="All 2 branches covered.">		if (text.toLowerCase().contains(&quot;review&quot;)) {</span>
+<span class="fc" id="L800">			database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION);</span>
+<span class="fc" id="L801">			String review = database.reviewBookingInformation(userID);</span>
+<span class="fc" id="L802">			List&lt;Message&gt; messages = splitMessages(review, &quot;\n\n\n\n&quot;);</span>
+<span class="fc" id="L803">			log.info(&quot;split&quot;);</span>
+<span class="fc" id="L804">			log.info(&quot;Returns message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L805">			this.reply(replyToken, messages);</span>
+<span class="fc" id="L806">		} else {</span>
+<span class="fc" id="L807">			database.setUserState(userID, Constant.BOOKING_TOUR_ID);</span>
+<span class="fc" id="L808">			listTourForBooking(replyToken, reply);</span>
+
+		}
+<span class="fc" id="L811">	}</span>
+	/**
+	 * Welcomes user back when time gapping is largr than a specific period
+	 * @param difference time difference 
+	 * @param user	line user
+	 * @return welcome back message
+	 */
+	public String welcomeBack(long difference, User user){
+<span class="fc" id="L819">		String result = &quot;&quot;;</span>
+<span class="fc bfc" id="L820" title="All 2 branches covered.">		if(difference &gt; Constant.TIME_GAPPING){</span>
+<span class="fc" id="L821">			result += greeting();</span>
+<span class="fc bfc" id="L822" title="All 2 branches covered.">			if(!user.getUserName().equals(&quot;null&quot;)) {</span>
+<span class="fc" id="L823">				result += &quot;, &quot;;</span>
+<span class="fc" id="L824">				result += user.getUserName();</span>
+			}
+<span class="fc" id="L826">			result += Constant.WELCOME_BACK;</span>
+		}
+<span class="fc" id="L828">		return result;</span>
+	}
+	/**
+	 * Greets user based on the current time
+	 * @return the greeting message
+	 */
+	public String greeting() {
+<span class="fc" id="L835">		Calendar now = Calendar.getInstance();</span>
+<span class="fc" id="L836">		int hour = now.get(Calendar.HOUR_OF_DAY);</span>
+
+<span class="pc bpc" id="L838" title="1 of 2 branches missed.">		if((hour+8)%24 &lt; 12) {</span>
+<span class="fc" id="L839">        		return Constant.MORNING;</span>
+        }
+<span class="nc bnc" id="L841" title="All 2 branches missed.">        else if((hour+8)%24 &gt;= 18) {</span>
+<span class="nc" id="L842">        		return Constant.EVENING;</span>
+        }
+        else {
+<span class="nc" id="L845">        		return Constant.AFTERNOON;</span>
+        }
+	}
+	/**
+	 * Checks whether user presses 'Q' to cancel booking
+	 * @param text user input message
+	 * @param userID userID
+	 * @param reply reply content
+	 * @param replyToken line replyToken for replying
+	 * @param choice delete choice
+	 * @return the result is true if user presses 'Q', otherwise the result is false
+	 * @throws Exception when replyText fails
+	 */
+	public boolean checkQuit(String text, String userID, String reply, String replyToken, int choice) throws Exception{
+<span class="fc bfc" id="L859" title="All 2 branches covered.">		if (text.equals(&quot;Q&quot;)){</span>
+<span class="fc" id="L860">			String result = database.reviewBookingInformation(userID);</span>
+<span class="fc bfc" id="L861" title="All 2 branches covered.">			if(result.equals(&quot;null&quot;)) {</span>
+<span class="fc" id="L862">				database.setUserState(userID, Constant.FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION);</span>
+			}
+			else {
+<span class="fc" id="L865">				database.setUserState(userID, Constant.FAQ_AFTER_CONFIRMATION);</span>
+			}
+<span class="fc bfc" id="L867" title="All 2 branches covered.">			if(choice == Constant.DELETING_BOOKING_ENTRY) {</span>
+<span class="fc" id="L868">				database.deleteBookingEntry(userID);</span>
+			}
+<span class="fc bfc" id="L870" title="All 2 branches covered.">			else if(choice == Constant.DELETING_BOOKING_BUFFER) {</span>
+<span class="fc" id="L871">				database.deleteBufferBookingEntry(userID);</span>
+			}
+<span class="fc" id="L873">			reply += Constant.CANCEL;</span>
+<span class="fc" id="L874">			log.info(&quot;Returns message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L875">			this.replyText(replyToken,reply);</span>
+<span class="fc" id="L876">			return true;</span>
+		}
+		else {
+<span class="fc" id="L879">			return false;</span>
+		}
+	}
+
+	/**
+	 * Checks whether an input string is numeric
+	 * @param str a stirng
+	 * @return the result is true of the input string can be converted to a numeric number, otherwise returns false
+	 */
+	public static boolean isNumeric(String str)
+		 {
+		   try
+		   {
+<span class="fc" id="L892">		     int d = Integer.parseInt(str);</span>
+		   }
+<span class="fc" id="L894">		   catch(NumberFormatException nfe)</span>
+		   {
+<span class="fc" id="L896">		     return false;</span>
+<span class="fc" id="L897">		   }</span>
+<span class="fc" id="L898">		   return true;</span>
+		 }
+
+	/**
+	 * Splits a long message into list of messages based on the type of splitter
+	 * @param longstring a string to be splitted
+	 * @param splitter a splitter string
+	 * @return message to be replied
+	 */
+
+	private List&lt;Message&gt; splitMessages(String longstring,String splitter){
+<span class="pc bpc" id="L909" title="1 of 2 branches missed.">		if(longstring!=null) {</span>
+
+<span class="fc" id="L911">			List&lt;Message&gt; messages = new ArrayList&lt;Message&gt;();</span>
+<span class="fc" id="L912">			String [] shortStrings = longstring.split(splitter);</span>
+<span class="fc" id="L913">			int numPerGroup = (shortStrings.length/4)+1; //split into 4 groups</span>
+<span class="fc" id="L914">			String groupString = &quot;&quot;;</span>
+<span class="fc bfc" id="L915" title="All 2 branches covered.">			for(int i = 0; i&lt;shortStrings.length;i++ ) {</span>
+<span class="fc" id="L916">				groupString += shortStrings[i];</span>
+<span class="fc" id="L917">				groupString += &quot;\n\n&quot;;</span>
+<span class="pc bpc" id="L918" title="1 of 2 branches missed.">				if((i+1)%numPerGroup==0) {</span>
+<span class="fc" id="L919">					Message message = new TextMessage(parse(groupString));</span>
+<span class="fc" id="L920">					messages.add(message);</span>
+<span class="fc" id="L921">					groupString = &quot;&quot;;//clear the groupString</span>
+<span class="pc bnc" id="L922" title="All 2 branches missed.">				}else if(i+1 ==shortStrings.length) { //dealing with boundary case, e.g 27/5=5 5+1=6, the last one does not give 0</span>
+<span class="nc" id="L923">					Message message = new TextMessage(parse(groupString));</span>
+<span class="nc" id="L924">					messages.add(message);</span>
+<span class="nc" id="L925">					groupString = &quot;&quot;;//clear the groupString</span>
+				}
+			}
+<span class="fc" id="L928">			return messages;</span>
+		}
+		else {
+<span class="nc" id="L931">			return null;</span>
+		}
+
+	}
+	/**
+	 * Lists tours for user to make booking
+	 * @param replyToken line replyToken for replying
+	 * @param reply message to be replied
+	 * @throws Exception when reply fails
+	 */
+	public void listTourForBooking(String replyToken, String reply) throws Exception {
+<span class="fc" id="L942">		List&lt;Message&gt; msgToReply=new ArrayList&lt;Message&gt;();</span>
+		// if (reply!=null &amp;&amp; !reply.replaceAll(&quot; &quot;, &quot;&quot;).isEmpty()) msgToReply.add(new TextMessage(reply));
+<span class="fc" id="L944">		TextMessage heading = new TextMessage(parse(reply+Constant.INSTRUCTION_BOOKING));</span>
+<span class="fc" id="L945">		msgToReply.add(heading);</span>
+		
+<span class="fc" id="L947">		List&lt;Tour&gt; listOfTours=new ArrayList&lt;Tour&gt;();</span>
+		
+		try {
+<span class="fc" id="L950">		listOfTours =database.getTours();</span>
+		}
+<span class="fc" id="L952">		catch(Exception e) {</span>
+<span class="fc" id="L953">			log.info(e.toString());</span>
+<span class="fc" id="L954">			msgToReply.add(new TextMessage(&quot;No Tours Avaliable&quot;));</span>
+<span class="fc" id="L955">			log.info(String.valueOf(msgToReply.size()));</span>
+<span class="fc" id="L956">			this.reply(replyToken,msgToReply);</span>
+<span class="fc" id="L957">			return;</span>
+<span class="fc" id="L958">		}</span>
+		
+<span class="fc" id="L960">		List&lt;CarouselColumn&gt; carousel=new ArrayList&lt;CarouselColumn&gt;();</span>
+<span class="fc" id="L961">		int count=0;</span>
+<span class="fc bfc" id="L962" title="All 2 branches covered.">		for (Tour tour:listOfTours) {</span>
+<span class="fc" id="L963">			String imagePath=tour.getImagePath();</span>
+<span class="fc bfc" id="L964" title="All 4 branches covered.">			if (imagePath==null || imagePath.replaceAll(&quot; &quot;, &quot;&quot;).isEmpty()) imagePath=&quot;404.png&quot;;</span>
+			
+<span class="fc" id="L966">				log.info(&quot;6666666666666666666&quot;);</span>
+<span class="fc" id="L967">				String imagePrefix=Constant.IMGPRFIX;</span>
+<span class="fc" id="L968">				String imageUrl = createUri(imagePath);</span>
+<span class="fc" id="L969">				log.info(&quot;6666666666666666666&quot;);</span>
+<span class="fc" id="L970">				log.info(imageUrl);</span>
+<span class="fc" id="L971">				log.info(&quot;6666666666666666666&quot;);</span>
+<span class="fc" id="L972">				log.info(tour.getTourName());</span>
+
+
+<span class="fc" id="L975">			String trancatedDescription=tour.getDescription();</span>
+			//if (trancatedDescription.length()&gt;60) trancatedDescription=tour.getShortDescription();
+<span class="fc bfc" id="L977" title="All 2 branches covered.">			if (trancatedDescription.length()&gt;60) trancatedDescription=trancatedDescription.substring(0, 60-2)+&quot;..&quot;;</span>
+<span class="fc" id="L978">			log.info(imageUrl);</span>
+<span class="fc" id="L979">			log.info(tour.getTourName());</span>
+<span class="fc" id="L980">			log.info(trancatedDescription);</span>
+<span class="fc" id="L981">			log.info(String.valueOf(tour.getTourID()));</span>
+<span class="fc" id="L982">			CarouselColumn item=new CarouselColumn(imageUrl, tour.getTourName(), trancatedDescription, Arrays.asList(</span>
+<span class="fc" id="L983">              new MessageAction(&quot;Book&quot;,Integer.toString(tour.getTourID()))</span>
+              ));
+<span class="fc" id="L985">			carousel.add(item);</span>
+<span class="fc" id="L986">			count++;</span>
+			//every 4 items one carousel 
+<span class="fc bfc" id="L988" title="All 4 branches covered.">			if (count%4==0 || count==listOfTours.size()) {</span>
+<span class="fc" id="L989">				CarouselTemplate carouselTemplate = new CarouselTemplate(carousel);</span>
+<span class="fc" id="L990">				TemplateMessage templateMessage = new TemplateMessage(&quot;Carousel of List&quot;, carouselTemplate);</span>
+<span class="fc" id="L991">				msgToReply.add(templateMessage);</span>
+<span class="fc" id="L992">				log.info(carousel.size()+&quot;&quot;);</span>
+<span class="fc" id="L993">				carousel=new ArrayList&lt;CarouselColumn&gt;();</span>
+			}
+
+<span class="fc" id="L996">		}</span>
+<span class="fc" id="L997">		log.info(msgToReply.size()+&quot;&quot;);</span>
+<span class="fc" id="L998">		log.info(&quot;Listed tours for booking{}&quot;, replyToken);</span>
+<span class="fc" id="L999">		this.reply(replyToken,msgToReply);</span>
+<span class="fc" id="L1000">	}</span>
+	
+	/**
+	 * Parses description based on '*'
+	 * 
+	 * @param description a string to be parsed
+	 * @return a string after parsing
+	 */
+	public String parse(String description) {
+<span class="fc" id="L1009">		String parseDescription = &quot;&quot;;</span>
+<span class="fc bfc" id="L1010" title="All 2 branches covered.">		for (int i = 0; i &lt; description.length(); i++) {</span>
+<span class="fc bfc" id="L1011" title="All 2 branches covered.">			if (description.charAt(i) == '*') {</span>
+<span class="fc" id="L1012">				parseDescription += &quot;\n*&quot;;</span>
+			} else {
+<span class="fc" id="L1014">				parseDescription += description.charAt(i);</span>
+			}
+		}
+<span class="fc" id="L1017">		return parseDescription;</span>
+	}
+
+	/**
+	 * Faq Search
+	 * @param replyToken line replyToken for replying
+	 * @param text user input message
+	 * @param reply message to be replied
+	 * @param userID userID
+	 * @throws Exception when replyText fails
+	 */
+	public void faqsearch(String replyToken, String text, String reply, String userID) throws Exception {
+		try {
+<span class="fc" id="L1030">		String answer = faqDatabase.search(text, userID);</span>
+<span class="fc" id="L1031">		reply += answer;</span>
+<span class="fc" id="L1032">		String imageURL=faqDatabase.replyImage(answer);</span>
+<span class="fc bfc" id="L1033" title="All 2 branches covered.">		if (imageURL!=null) {</span>
+<span class="fc" id="L1034">			log.info(&quot;\n\n\n\n\n\n\n&quot;);</span>
+<span class="fc" id="L1035">			imageURL=createUri(imageURL);</span>
+<span class="fc" id="L1036">			log.info(&quot;imageURL {}&quot;, imageURL);</span>
+<span class="fc" id="L1037">			log.info(&quot;\n\n\n\n\n\n\n&quot;);</span>
+<span class="fc" id="L1038">			this.reply(replyToken, Arrays.asList(new TextMessage(parse(reply)),new ImageMessage(imageURL, imageURL)));</span>
+<span class="fc" id="L1039">			log.info(&quot;Replied image message {}: {}&quot;, replyToken, reply);</span>
+
+		}
+		else {
+<span class="fc" id="L1043">			log.info(&quot;Returns answer message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L1044">			this.replyText(replyToken,reply);</span>
+		}
+<span class="fc" id="L1046">		}catch(Exception e) {</span>
+<span class="fc" id="L1047">			reply += Constant.FAQ_NOT_FOUND;</span>
+			//unanswered question, add to unknown question database
+<span class="fc" id="L1049">			database.addToUnknownDatatabse(text);</span>
+<span class="fc" id="L1050">			log.info(&quot;Returns message {}: {}&quot;, replyToken, reply);</span>
+<span class="fc" id="L1051">			this.replyText(replyToken,reply);</span>
+
+<span class="fc" id="L1053">		}</span>
+<span class="fc" id="L1054">	}</span>
+	/**
+	 * Create uri based on path
+	 * @param path path of the uri
+	 */
+	static String createUri(String path) {
+<span class="fc" id="L1060">		return &quot;https://comp3111h-line-chatbot.herokuapp.com/&quot; + Constant.IMGPRFIX + path;</span>
+//		return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toUriString();
+	}
+	
+	/**
+	 * system
+	 * @param args arguments
+	 */
+	private void system(String... args) {
+<span class="nc" id="L1069">		ProcessBuilder processBuilder = new ProcessBuilder(args);</span>
+		try {
+<span class="nc" id="L1071">			Process start = processBuilder.start();</span>
+<span class="nc" id="L1072">			int i = start.waitFor();</span>
+<span class="nc" id="L1073">			log.info(&quot;result: {} =&gt;  {}&quot;, Arrays.toString(args), i);</span>
+<span class="nc" id="L1074">		} catch (IOException e) {</span>
+<span class="nc" id="L1075">			throw new UncheckedIOException(e);</span>
+<span class="nc" id="L1076">		} catch (InterruptedException e) {</span>
+<span class="nc" id="L1077">			log.info(&quot;Interrupted&quot;, e);</span>
+<span class="nc" id="L1078">			Thread.currentThread().interrupt();</span>
+<span class="nc" id="L1079">		}</span>
+<span class="nc" id="L1080">	}</span>
+//	/**
+//	 * Save Content
+//	 * @param ext
+//	 * @param responseBody
+//	 * @return tempFile
+//	 */
+//	private static DownloadedContent saveContent(String ext, MessageContentResponse responseBody) {
+//		log.info(&quot;Got content-type: {}&quot;, responseBody);
+//
+//		DownloadedContent tempFile = createTempFile(ext);
+//		try (OutputStream outputStream = Files.newOutputStream(tempFile.path)) {
+//			ByteStreams.copy(responseBody.getStream(), outputStream);
+//			log.info(&quot;Saved {}: {}&quot;, ext, tempFile);
+//			return tempFile;
+//		} catch (IOException e) {
+//			throw new UncheckedIOException(e);
+//		}
+//	}
+//	/**
+//	 * Create Temp File
+//	 * @param ext
+//	 */
+//	private static DownloadedContent createTempFile(String ext) {
+//		String fileName = LocalDateTime.now().toString() + '-' + UUID.randomUUID().toString() + '.' + ext;
+//		Path tempFile = KitchenSinkApplication.downloadedContentDir.resolve(fileName);
+//		tempFile.toFile().deleteOnExit();
+//		return new DownloadedContent(tempFile, createUri(&quot;/downloaded/&quot; + tempFile.getFileName()));
+//	}
+
+
+
+	/**
+	 * Constructor for line message controller
+	 */
+<span class="fc" id="L1115">	public LineMessageController() {</span>
+<span class="fc" id="L1116">		database = new SQLDatabaseEngine();</span>
+<span class="fc" id="L1117">		faqDatabase = new FaqDatabase();</span>
+<span class="fc" id="L1118">		itscLOGIN = System.getenv(&quot;ITSC_LOGIN&quot;);</span>
+<span class="fc" id="L1119">	}</span>
+
+	private SQLDatabaseEngine database;
+	private FaqDatabase faqDatabase;
+	private String itscLOGIN;
+	
+//	/**
+//	 * Constructor. 
+//	 * The annontation @Value is from the package lombok.Value
+//	 * Basically what it does is to generate constructor and getter for the class below
+//	 * See https://projectlombok.org/features/Value
+//	 */
+//
+//	//The annontation @Value is from the package lombok.Value
+//	//Basically what it does is to generate constructor and getter for the class below
+//	//See https://projectlombok.org/features/Value
+//	@Value
+//	public static class DownloadedContent {
+//		Path path;
+//		String uri;
+//	}
+	/**
+	 * This class is a container for profile getter
+	 * @see LineMessageController
+	 * @author Group 16
+	 */
+
+	//an inner class that gets the user profile and status message
+	class ProfileGetter implements BiConsumer&lt;UserProfileResponse, Throwable&gt; {
+		private LineMessageController ksc;
+		private String replyToken;
+		
+		/**
+		 * Constructor for ProfileGetter class
+		 * @param ksc linemessageController
+		 * @param replyToken line replyToken for replying
+		 */
+<span class="nc" id="L1156">		public ProfileGetter(LineMessageController ksc, String replyToken) {</span>
+<span class="nc" id="L1157">			this.ksc = ksc;</span>
+<span class="nc" id="L1158">			this.replyToken = replyToken;</span>
+<span class="nc" id="L1159">		}</span>
+		@Override
+		
+		/**
+		 * Accept
+		 * @param profile an object of UserProfileResponse type
+		 * @param throwable an object of Throwable type
+		 */
+    	public void accept(UserProfileResponse profile, Throwable throwable) {
+<span class="nc bnc" id="L1168" title="All 2 branches missed.">    		if (throwable != null) {</span>
+<span class="nc" id="L1169">            	ksc.replyText(replyToken, throwable.getMessage());</span>
+<span class="nc" id="L1170">            	return;</span>
+        	}
+<span class="nc" id="L1172">        	ksc.reply(</span>
+                	replyToken,
+<span class="nc" id="L1174">                	Arrays.asList(new TextMessage(</span>
+<span class="nc" id="L1175">                		&quot;Display name: &quot; + profile.getDisplayName()),</span>
+                              	new TextMessage(&quot;Status message: &quot;
+<span class="nc" id="L1177">                            		  + profile.getStatusMessage()))</span>
+        	);
+<span class="nc" id="L1179">    	}</span>
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

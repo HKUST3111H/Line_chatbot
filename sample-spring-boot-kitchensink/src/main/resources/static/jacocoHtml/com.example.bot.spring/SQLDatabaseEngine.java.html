@@ -1,0 +1,898 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SQLDatabaseEngine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sample-spring-boot-kitchensink</a> &gt; <a href="index.source.html" class="el_package">com.example.bot.spring</a> &gt; <span class="el_source">SQLDatabaseEngine.java</span></div><h1>SQLDatabaseEngine.java</h1><pre class="source lang-java linenums">package com.example.bot.spring;
+
+import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.net.URISyntaxException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.math.*;
+
+/**
+ * This class is a container for SQLDatabaseEngine which operates baased on database
+ * @author Group 16
+ */
+<span class="fc" id="L25">@Slf4j</span>
+<span class="fc" id="L26">public class SQLDatabaseEngine {</span>
+	//booking state: 0 isBooking; 1 done; 2 confirmed;
+	//offering state: 0 not enough; 1 enough; 2 full; 3 old;
+
+<span class="fc" id="L30">	private java.sql.Timestamp timeInput = new java.sql.Timestamp(new java.util.Date().getTime());</span>
+	
+	/**
+	 * Connects to database
+	 * @return	Connection object for database
+	 * @throws	URISyntaxException when URI access fails
+	 * @throws	SQLException when database is not connected successfully
+	 */
+	protected Connection getConnection() throws URISyntaxException, SQLException {
+		Connection connection;
+<span class="fc" id="L40">		URI dbUri = new URI(System.getenv(&quot;DATABASE_URL&quot;));</span>
+
+<span class="fc" id="L42">		String username = dbUri.getUserInfo().split(&quot;:&quot;)[0];</span>
+<span class="fc" id="L43">		String password = dbUri.getUserInfo().split(&quot;:&quot;)[1];</span>
+<span class="fc" id="L44">		String dbUrl = &quot;jdbc:postgresql://&quot; + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() +  &quot;?ssl=true&amp;sslfactory=org.postgresql.ssl.NonValidatingFactory&quot;;</span>
+
+<span class="fc" id="L46">		log.info(&quot;Username: {} Password: {}&quot;, username, password);</span>
+<span class="fc" id="L47">		log.info (&quot;dbUrl: {}&quot;, dbUrl);</span>
+
+<span class="fc" id="L49">		connection = DriverManager.getConnection(dbUrl, username, password);</span>
+
+<span class="fc" id="L51">		return connection;</span>
+	}
+	
+	/**
+	 * A lot of basic operations based on database
+	 * @param	functionID	the id of the function to be called
+	 * @param	userID		the id of the line user
+	 * @param	stringInput	the input string
+	 * @param	intInput		the input integer
+	 * @param	timeInput	the input timestamp
+	 * @return	the result is true if the opearion successes, otherwise the result is false
+	 * @throws	Exception when database is not accessed successfully
+	 */
+	
+	public boolean generalFuction(int functionID, String userID, String stringInput, int intInput, Timestamp timeInput) throws Exception{
+<span class="fc" id="L66">		int result=0;</span>
+		try {
+<span class="fc" id="L68">			Connection connection = getConnection();</span>
+<span class="pc bpc" id="L69" title="1 of 18 branches missed.">			switch(functionID) {</span>
+			case Constant.SET_USER_TIME:
+<span class="fc" id="L71">        		PreparedStatement stmt1 = connection.prepareStatement(&quot;UPDATE line_user SET last_login = ? WHERE id = ?;&quot;);</span>
+<span class="fc" id="L72">        		stmt1.setTimestamp(1, timeInput);</span>
+<span class="fc" id="L73">        		stmt1.setString(2, userID);</span>
+<span class="fc" id="L74">        		result=stmt1.executeUpdate();</span>
+<span class="fc" id="L75">        		stmt1.close();</span>
+<span class="fc" id="L76">	        	break;</span>
+			case Constant.SET_USER_STATE:
+<span class="fc" id="L78">				PreparedStatement stmt2 = connection.prepareStatement(&quot;UPDATE line_user SET state = ? WHERE id = ?;&quot;);</span>
+<span class="fc" id="L79">				stmt2.setInt(1, intInput);</span>
+<span class="fc" id="L80">				stmt2.setString(2, userID);</span>
+<span class="fc" id="L81">				result=stmt2.executeUpdate();</span>
+<span class="fc" id="L82">				stmt2.close();</span>
+<span class="fc" id="L83">	        	break;</span>
+			case Constant.SET_USER_NAME:
+<span class="fc" id="L85">				PreparedStatement stmt3 = connection.prepareStatement(&quot;UPDATE line_user SET name = ? WHERE id = ?;&quot;);</span>
+<span class="fc" id="L86">				stmt3.setString(1, stringInput);</span>
+<span class="fc" id="L87">				stmt3.setString(2, userID);</span>
+<span class="fc" id="L88">				result=stmt3.executeUpdate();</span>
+<span class="fc" id="L89">				stmt3.close();</span>
+<span class="fc" id="L90">	        	break;</span>
+			case Constant.SET_USER_PHONE:
+<span class="fc" id="L92">				PreparedStatement stmt4 = connection.prepareStatement(&quot;UPDATE line_user SET phone_num = ? WHERE id = ?;&quot;);</span>
+<span class="fc" id="L93">				stmt4.setString(1, stringInput);</span>
+<span class="fc" id="L94">				stmt4.setString(2, userID);</span>
+<span class="fc" id="L95">				result=stmt4.executeUpdate();</span>
+<span class="fc" id="L96">				stmt4.close();</span>
+<span class="fc" id="L97">	        	break;</span>
+			case Constant.SET_USER_AGE:
+<span class="fc" id="L99">				PreparedStatement stmt5 = connection.prepareStatement(&quot;UPDATE line_user SET age = ? WHERE id = ?;&quot;);</span>
+<span class="fc" id="L100">				stmt5.setString(1, stringInput);</span>
+<span class="fc" id="L101">				stmt5.setString(2, userID);</span>
+<span class="fc" id="L102">				result=stmt5.executeUpdate();</span>
+<span class="fc" id="L103">				stmt5.close();</span>
+<span class="fc" id="L104">	        	break;</span>
+			case Constant.CREATE_USER:
+<span class="fc" id="L106">				PreparedStatement stmt6 = connection.prepareStatement(&quot;INSERT INTO line_user (id, state, last_login, name) VALUES (?, ?, ?, ?);&quot;);</span>
+<span class="fc" id="L107">				stmt6.setString(1, userID);</span>
+<span class="fc" id="L108">				stmt6.setInt(2, intInput);</span>
+<span class="fc" id="L109">				stmt6.setTimestamp(3, timeInput);</span>
+<span class="fc" id="L110">				stmt6.setString(4, &quot;null&quot;);</span>
+<span class="fc" id="L111">				result=stmt6.executeUpdate();</span>
+<span class="fc" id="L112">				stmt6.close();</span>
+<span class="fc" id="L113">	        	break;</span>
+			case Constant.DELETE_USER:
+<span class="fc" id="L115">				PreparedStatement stmt7 = connection.prepareStatement(&quot;DELETE FROM line_userchoose WHERE user_id = ?;DELETE FROM line_booking WHERE user_id = ?; DELETE FROM line_user WHERE id = ?;&quot;);</span>
+<span class="fc" id="L116">				stmt7.setString(1, userID);</span>
+<span class="fc" id="L117">				stmt7.setString(2, userID);</span>
+<span class="fc" id="L118">				stmt7.setString(3, userID);</span>
+<span class="fc" id="L119">				result=stmt7.executeUpdate();</span>
+<span class="fc" id="L120">				stmt7.close();</span>
+<span class="fc" id="L121">	        	break;</span>
+			case Constant.TOUR_FOUND:
+<span class="fc" id="L123">				PreparedStatement stmt8 = connection.prepareStatement(&quot;SELECT * FROM line_tour WHERE id = ?;&quot;);</span>
+<span class="fc" id="L124">				stmt8.setInt(1, intInput);</span>
+<span class="fc" id="L125">				ResultSet rs8 = stmt8.executeQuery();</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">				if (rs8.next()) {</span>
+<span class="fc" id="L127">					result=1;</span>
+				}
+<span class="fc" id="L129">				rs8.close();</span>
+<span class="fc" id="L130">				stmt8.close();</span>
+<span class="fc" id="L131">	        	break;</span>
+			case Constant.SET_BUFFER_TOUR_ID:
+<span class="fc" id="L133">				PreparedStatement stmt9 = connection.prepareStatement(&quot;INSERT INTO line_userchoose (user_id, tour_id) VALUES (?, ?);&quot;);</span>
+<span class="fc" id="L134">				stmt9.setString(1, userID);</span>
+<span class="fc" id="L135">				stmt9.setInt(2, intInput);</span>
+<span class="fc" id="L136">				result=stmt9.executeUpdate();</span>
+<span class="fc" id="L137">				stmt9.close();</span>
+<span class="fc" id="L138">	        	break;</span>
+			case Constant.DELETE_BUFFER_BOOKING:
+<span class="fc" id="L140">				PreparedStatement stmt10 = connection.prepareStatement(&quot;DELETE FROM line_userchoose WHERE user_id = ?;&quot;);</span>
+<span class="fc" id="L141">				stmt10.setString(1, userID);</span>
+<span class="fc" id="L142">				result=stmt10.executeUpdate();</span>
+<span class="fc" id="L143">				stmt10.close();</span>
+<span class="fc" id="L144">	        	break;</span>
+			case Constant.DELETE_BOOKING:
+<span class="fc" id="L146">				PreparedStatement stmt11 = connection.prepareStatement(&quot;DELETE FROM line_booking WHERE user_id = ? AND state = 0;&quot;);</span>
+<span class="fc" id="L147">				stmt11.setString(1, userID);</span>
+<span class="fc" id="L148">				result=stmt11.executeUpdate();</span>
+<span class="fc" id="L149">				stmt11.close();</span>
+<span class="fc" id="L150">	        	break;</span>
+			case Constant.SET_BOOKING_TOUR_OFFERING_ID:
+<span class="fc" id="L152">				PreparedStatement stmt12 = connection.prepareStatement(&quot;INSERT INTO line_booking (user_id, \&quot;tourOffering_id\&quot;,state) VALUES (?, ?, ?);&quot;);</span>
+<span class="fc" id="L153">				stmt12.setString(1, userID);</span>
+<span class="fc" id="L154">				stmt12.setInt(2, intInput);</span>
+<span class="fc" id="L155">				stmt12.setInt(3, 0);</span>
+<span class="fc" id="L156">				result=stmt12.executeUpdate();</span>
+<span class="fc" id="L157">				stmt12.close();</span>
+<span class="fc" id="L158">	        	break;</span>
+			case Constant.SET_BOOKING_ADULT_NUMBER:
+<span class="fc" id="L160">				PreparedStatement stmt13 = connection.prepareStatement(&quot;UPDATE line_booking SET adult_num = ? WHERE user_id = ? AND state = 0;&quot;);</span>
+<span class="fc" id="L161">				stmt13.setInt(1, intInput);</span>
+<span class="fc" id="L162">				stmt13.setString(2, userID);</span>
+<span class="fc" id="L163">				result=stmt13.executeUpdate();</span>
+<span class="fc" id="L164">				stmt13.close();</span>
+<span class="fc" id="L165">	        	break;</span>
+			case Constant.SET_BOOKING_CHILD_NUMBER:
+<span class="fc" id="L167">				PreparedStatement stmt14 = connection.prepareStatement(&quot;UPDATE line_booking SET child_num = ? WHERE user_id = ? AND state = 0;&quot;);</span>
+<span class="fc" id="L168">				stmt14.setInt(1, intInput);</span>
+<span class="fc" id="L169">				stmt14.setString(2, userID);</span>
+<span class="fc" id="L170">				result=stmt14.executeUpdate();</span>
+<span class="fc" id="L171">				stmt14.close();</span>
+<span class="fc" id="L172">	        	break;</span>
+			case Constant.SET_BOOKING_TODDLER_NUMBER:
+<span class="fc" id="L174">				PreparedStatement stmt15 = connection.prepareStatement(&quot;UPDATE line_booking SET toddler_num = ? WHERE user_id = ? AND state = 0;&quot;);</span>
+<span class="fc" id="L175">				stmt15.setInt(1, intInput);</span>
+<span class="fc" id="L176">				stmt15.setString(2, userID);</span>
+<span class="fc" id="L177">				result=stmt15.executeUpdate();</span>
+<span class="fc" id="L178">				stmt15.close();</span>
+<span class="fc" id="L179">	        	break;</span>
+			case Constant.SET_BOOKING_SPECIAL_REQUEST:
+<span class="fc" id="L181">				PreparedStatement stmt16 = connection.prepareStatement(&quot;UPDATE line_booking SET special_request = ? WHERE user_id = ? AND state = 0;&quot;);</span>
+<span class="fc" id="L182">				stmt16.setString(1, stringInput);</span>
+<span class="fc" id="L183">				stmt16.setString(2, userID);</span>
+<span class="fc" id="L184">				result=stmt16.executeUpdate();</span>
+<span class="fc" id="L185">				stmt16.close();</span>
+<span class="fc" id="L186">	        	break;</span>
+			case Constant.SET_BOOKING_CONFIRMATION:
+<span class="fc" id="L188">				PreparedStatement stmt17 = connection.prepareStatement(&quot;UPDATE line_booking SET state = 1 WHERE user_id = ? AND state = 0;&quot;);</span>
+<span class="fc" id="L189">				stmt17.setString(1, userID);</span>
+<span class="fc" id="L190">				result=stmt17.executeUpdate();</span>
+<span class="fc" id="L191">				stmt17.close();</span>
+<span class="fc" id="L192">	        	break;</span>
+	        	
+			default:
+	       		break;
+			}
+<span class="fc" id="L197">			connection.close();</span>
+<span class="nc" id="L198">		} catch (Exception e) {</span>
+<span class="nc" id="L199">			log.info(e.toString());</span>
+<span class="fc" id="L200">		} </span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">		if (result!=0)</span>
+<span class="fc" id="L202">			return true;</span>
+		else
+<span class="fc" id="L204">			return false;</span>
+	}
+	
+	/**
+	 * Sets the last response time of user
+	 * @param id		the id of the line user
+	 * @param time	the time stamp to be set
+	 * @return	the result is true if the setting is called successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean setUserTime(String id, java.sql.Timestamp time) throws Exception{
+<span class="fc" id="L215">		return generalFuction(Constant.SET_USER_TIME, id, &quot;&quot;, 0, time);</span>
+	}
+	
+	/**
+	 * Sets the state of user
+	 * @param id		the id of the line user
+	 * @param state	the user state to be set
+	 * @return	the result is true if the setting is called successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean setUserState(String id, int state) throws Exception{
+<span class="fc" id="L226">		return generalFuction(Constant.SET_USER_STATE, id, &quot;&quot;, state, timeInput);</span>
+	}
+	
+	/**
+	 * Sets the name of user
+	 * @param id		the id of the line user
+	 * @param text	the user name to be set
+	 * @return	the result is true if the setting is called successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean setUserName(String id, String text) throws Exception{
+<span class="fc" id="L237">		return generalFuction(Constant.SET_USER_NAME, id, text, 0, timeInput);</span>
+	}
+	
+	/**
+	 * Sets the phone number of user
+	 * @param id		the id of the line user
+	 * @param text	the user's phone number to be set
+	 * @return	the result is true if the setting is called successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean setUserPhoneNum(String id, String text) throws Exception{
+<span class="fc" id="L248">		return generalFuction(Constant.SET_USER_PHONE, id, text, 0, timeInput);</span>
+	}
+	
+	/**
+	 * Sets the age of user
+	 * @param id		the id of the line user
+	 * @param text	the user age to be set
+	 * @return	the result is true if the setting is called successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean setUserAge(String id, String text) throws Exception{
+<span class="fc" id="L259">		return generalFuction(Constant.SET_USER_AGE, id, text, 0, timeInput);</span>
+	}
+	
+	/**
+	 * Creates user in database
+	 * @param id		the id of the line user
+	 * @param time	the last response time of user to be set
+	 * @param state	the user state to be set
+	 * @return	the result is true if the creation is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean createUser(String id, java.sql.Timestamp time, int state) throws Exception{
+<span class="fc" id="L271">		return generalFuction(Constant.CREATE_USER, id, &quot;&quot;, state, time);</span>
+	}
+	
+	/**
+	 * Deletes user in database
+	 * @param id		the id of the line user
+	 * @return	the result is true if the deletion is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean deleteUser(String id)  throws Exception{
+<span class="fc" id="L281">		return generalFuction(Constant.DELETE_USER, id, &quot;&quot;, 0, timeInput);</span>
+	}
+	
+	/**
+	 * Finds the tour with tour ID
+	 * @param tourID		the id of the tour
+	 * @return	the result is true if the tour is found successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */	
+	public boolean tourFound(int tourID) throws Exception{
+<span class="fc" id="L291">		return generalFuction(Constant.TOUR_FOUND, &quot;&quot;, &quot;&quot;,tourID , timeInput);</span>
+	}
+	
+	/**
+	 * Sets the buffering tour with tour ID
+	 * @param userID		the id of the line user
+	 * @param tourID		the id of the tour
+	 * @return	the result is true if the buffering tour is set successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */	
+	public boolean setBufferTourID(String userID, int tourID) throws Exception{
+<span class="fc" id="L302">		return generalFuction(Constant.SET_BUFFER_TOUR_ID, userID, &quot;&quot;,tourID , timeInput);</span>
+	}
+	
+	/**
+	 * Deletes the buffering booking entry with userID
+	 * @param userID		the id of the line user
+	 * @return	the result is true if the deletion is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */	
+	public boolean deleteBufferBookingEntry(String userID) throws Exception{
+<span class="fc" id="L312">		return generalFuction(Constant.DELETE_BUFFER_BOOKING, userID, &quot;&quot;,0, timeInput);</span>
+	}
+
+	/**
+	 * Deletes the booking entry with userID
+	 * @param userID		the id of the line user
+	 * @return	the result is true if the deletion is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */	
+	public boolean deleteBookingEntry(String userID) throws Exception{
+<span class="fc" id="L322">		return generalFuction(Constant.DELETE_BOOKING, userID, &quot;&quot;,0, timeInput);</span>
+	}
+	
+	/**
+	 * Sets the id of the tour offering for booking
+	 * @param userID		the id of the line user
+	 * @param tourOfferingID		the id os the tour offering
+	 * @return	the result is true if the setting is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean setBookingTourOfferingID(String userID, int tourOfferingID) throws Exception{
+<span class="fc" id="L333">		return generalFuction(Constant.SET_BOOKING_TOUR_OFFERING_ID, userID, &quot;&quot;,tourOfferingID, timeInput);</span>
+	}
+	
+	/**
+	 * Sets the number of adults for booking
+	 * @param userID		the id of the line user
+	 * @param number		the number of adults to be set
+	 * @return	the result is true if the setting is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean setBookingAdultNumber(String userID,int number) throws Exception{
+<span class="fc" id="L344">		return generalFuction(Constant.SET_BOOKING_ADULT_NUMBER, userID, &quot;&quot;,number, timeInput);</span>
+	}
+	
+	/**
+	 * Sets the number of children for booking
+	 * @param userID		the id of the line user
+	 * @param number		the number of children to be set
+	 * @return	the result is true if the setting is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean setBookingChildrenNumber(String userID,int number) throws Exception{
+<span class="fc" id="L355">		return generalFuction(Constant.SET_BOOKING_CHILD_NUMBER, userID, &quot;&quot;,number, timeInput);</span>
+	}
+	
+	/**
+	 * Sets the number of toddlers for booking
+	 * @param userID		the id of the line user
+	 * @param number		the number of toddlers to be set
+	 * @return	the result is true if the setting is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean setBookingToddlerNumber(String userID,int number) throws Exception{
+<span class="fc" id="L366">		return generalFuction(Constant.SET_BOOKING_TODDLER_NUMBER, userID, &quot;&quot;,number, timeInput);</span>
+	}
+	
+	/**
+	 * Sets the special request from user for booking
+	 * @param userID		the id of the line user
+	 * @param request	the special request to be set
+	 * @return	the result is true if the setting is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean setBookingSpecialRequest(String userID,String request) throws Exception{
+<span class="fc" id="L377">		return generalFuction(Constant.SET_BOOKING_SPECIAL_REQUEST, userID, request,0, timeInput);</span>
+	}
+	
+	/**
+	 * Sets the confirmation for user after booking
+	 * @param userID		the id of the line user
+	 * @return	the result is true if the setting is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */
+	public boolean setBookingConfirmation(String userID) throws Exception{
+<span class="fc" id="L387">		return generalFuction(Constant.SET_BOOKING_CONFIRMATION, userID, &quot;&quot;,0, timeInput);</span>
+	}
+	
+	/**
+	 * Gets the user information given user ID
+	 * @param id		the id of the line user
+	 * @return 		the user obeject given the user ID
+	 * @see User
+	 */
+	public User getUserInformation(String id){
+<span class="fc" id="L397">		User result=new User();</span>
+		try {
+<span class="fc" id="L399">			Connection connection = getConnection();</span>
+<span class="fc" id="L400">			PreparedStatement stmt = connection.prepareStatement(&quot;SELECT * FROM line_user WHERE id = ?;&quot;);</span>
+<span class="fc" id="L401">			stmt.setString(1, id);</span>
+<span class="fc" id="L402">			ResultSet rs = stmt.executeQuery();</span>
+<span class="fc bfc" id="L403" title="All 2 branches covered.">			if (rs.next()) {</span>
+<span class="fc" id="L404">					result.setID(rs.getString(1));</span>
+<span class="fc" id="L405">					result.setName(rs.getString(2));</span>
+<span class="fc" id="L406">					result.setPhoneNumber(rs.getString(3));</span>
+<span class="fc" id="L407">					result.setAge(rs.getString(4));</span>
+<span class="fc" id="L408">					result.setState(rs.getInt(5));</span>
+<span class="fc" id="L409">					result.setTime(rs.getTimestamp(6));</span>
+					// train offering
+			}
+<span class="fc" id="L412">			rs.close();</span>
+<span class="fc" id="L413">			stmt.close();</span>
+<span class="fc" id="L414">			connection.close();</span>
+<span class="nc" id="L415">		} catch (Exception e) {</span>
+<span class="nc" id="L416">			log.info(e.toString());</span>
+<span class="fc" id="L417">		}</span>
+<span class="fc" id="L418">		return result;</span>
+	}
+	
+	/**
+	 * Adds unknown question to unknown datatabse
+	 * @param text	the unknown questoin
+	 * @return	the result is true if the addition is successful, otherwise the result is false
+	 * @throws	Exception when database is not accessed successfully
+	 */
+	
+	public boolean addToUnknownDatatabse(String text) throws Exception{
+<span class="fc" id="L429">		int result=0;</span>
+<span class="fc" id="L430">		int min_dist = 5;</span>
+<span class="fc" id="L431">		String resultString = null;</span>
+<span class="fc" id="L432">		int dist = min_dist + 1;</span>
+		try {
+<span class="fc" id="L434">			Connection connection = getConnection();</span>
+			//check all entries in databse compare and calculate distance ,update hit numebr
+<span class="fc" id="L436">			PreparedStatement stmt = connection.prepareStatement(&quot;SELECT line_unknownquestion.question, line_unknownquestion.hit FROM line_unknownquestion;&quot;);</span>
+<span class="fc" id="L437">			ResultSet rs = stmt.executeQuery();</span>
+<span class="pc bpc" id="L438" title="1 of 2 branches missed.">			while (rs.next()) {</span>
+<span class="fc" id="L439">				resultString = rs.getString(1);//get question</span>
+<span class="fc" id="L440">				dist=new WagnerFischer(resultString,text).getDistance();</span>
+<span class="fc bfc" id="L441" title="All 2 branches covered.">				if(dist &lt;= min_dist) {//similar question</span>
+<span class="fc" id="L442">					PreparedStatement stmt1 = connection.prepareStatement(&quot;UPDATE line_unknownquestion SET hit = ? WHERE question = ?;&quot;);</span>
+<span class="fc" id="L443">					int hit = rs.getInt(2)+1;</span>
+<span class="fc" id="L444">					stmt1.setInt(1, hit);</span>
+<span class="fc" id="L445">					stmt1.setString(2,resultString);</span>
+<span class="fc" id="L446">					result = stmt1.executeUpdate();</span>
+<span class="fc" id="L447">					stmt1.close();</span>
+<span class="fc" id="L448">					break;</span>
+				}
+			}
+<span class="pc bpc" id="L451" title="1 of 2 branches missed.">			if(dist &gt; min_dist ) {</span>
+				//insert new entry
+<span class="nc" id="L453">				PreparedStatement stmt2 = connection.prepareStatement(&quot;INSERT INTO line_unknownquestion (question,hit) VALUES (?, ?);&quot;);</span>
+<span class="nc" id="L454">				stmt2.setString(1, text);</span>
+<span class="nc" id="L455">				stmt2.setInt(2, 1);</span>
+<span class="nc" id="L456">				result = stmt2.executeUpdate();</span>
+<span class="nc" id="L457">				stmt2.close();	</span>
+			}
+<span class="fc" id="L459">			rs.close();</span>
+<span class="fc" id="L460">			stmt.close();</span>
+<span class="fc" id="L461">			connection.close();</span>
+<span class="nc" id="L462">		} catch (Exception e) {</span>
+<span class="nc" id="L463">			log.info(e.toString());</span>
+<span class="fc" id="L464">		} </span>
+<span class="pc bpc" id="L465" title="1 of 2 branches missed.">		if (result!=0)</span>
+<span class="fc" id="L466">			return true;</span>
+		else
+<span class="nc" id="L468">			return false;</span>
+	}
+	/**
+	 * Gets current available tours
+	 * @return list of current available tours
+	 * @see Tour
+	 * @throws	Exception when database is not accessed successfully
+	 */
+	
+	public List&lt;Tour&gt; getTours()throws Exception {
+<span class="fc" id="L478">		List&lt;Tour&gt; listOfTours = new ArrayList&lt;Tour&gt;();</span>
+		try {
+<span class="fc" id="L480">			Connection connection = getConnection();</span>
+<span class="fc" id="L481">			PreparedStatement stmt = connection.prepareStatement(&quot;SELECT * FROM line_tour;&quot;);</span>
+<span class="fc" id="L482">			ResultSet rs = stmt.executeQuery();</span>
+<span class="fc bfc" id="L483" title="All 2 branches covered.">			while (rs.next()) {</span>
+<span class="fc" id="L484">		    	Tour tour=new Tour(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getInt(4),rs.getString(7),rs.getString(8));</span>
+<span class="fc" id="L485">		    	listOfTours.add(tour);</span>
+<span class="fc" id="L486">			}</span>
+<span class="fc" id="L487">			rs.close();</span>
+<span class="fc" id="L488">			stmt.close();</span>
+<span class="fc" id="L489">			connection.close();	</span>
+<span class="nc" id="L490">		} catch (Exception e) {</span>
+<span class="nc" id="L491">			log.info(e.toString());</span>
+<span class="fc" id="L492">		} </span>
+<span class="pc bpc" id="L493" title="2 of 4 branches missed.">		if (listOfTours != null &amp;&amp; !listOfTours.isEmpty())</span>
+<span class="fc" id="L494">			return listOfTours;</span>
+<span class="nc" id="L495">		log.info(&quot;tour database probably empty&quot;);</span>
+<span class="nc" id="L496">		throw new Exception(&quot;EMPTY DATABASE&quot;);</span>
+	}
+
+	/**
+	 * Gets available tour offerings
+	 * @param tourID		the id of the given tour
+	 * @return list of current available tour offerings
+	 * @see TourOffering
+	 * @throws	Exception when database is not accessed successfully
+	 */
+
+	public List&lt;TourOffering&gt; displayTourOffering(int tourID) throws Exception{
+<span class="fc" id="L508">		List&lt;TourOffering&gt; listOfTourOfferings = new ArrayList&lt;TourOffering&gt;();</span>
+<span class="fc" id="L509">		String result=&quot;&quot;;</span>
+		try {
+<span class="fc" id="L511">			Connection connection = getConnection();</span>
+<span class="fc" id="L512">			PreparedStatement stmt = connection.prepareStatement(</span>
+					&quot;SELECT line_touroffering.id,line_touroffering.offer_date,line_touroffering.hotel,line_touroffering.capacity_max, &quot;
+					+ &quot;line_touroffering.price, line_tour.duration, &quot;
+					+ &quot;SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) &quot;
+					+ &quot;FROM line_tour, line_touroffering LEFT JOIN line_booking ON line_touroffering.id=line_booking.\&quot;tourOffering_id\&quot; &quot;
+					+ &quot;AND line_booking.state&gt;0 &quot;
+					+ &quot;WHERE line_touroffering.tour_id = ? &quot;
+					+ &quot;AND line_touroffering.state &lt; 2 AND line_touroffering.tour_id=line_tour.id &quot;
+					+ &quot;AND line_touroffering.id IN &quot;
+					+ &quot;(SELECT id FROM line_touroffering WHERE tour_id = ? EXCEPT SELECT line_touroffering.id &quot;
+					+ &quot;FROM line_touroffering, line_booking WHERE line_touroffering.tour_id = ? &quot;
+					+ &quot;AND line_touroffering.id=line_booking.\&quot;tourOffering_id\&quot; AND line_booking.state&gt;0 &quot;
+					+ &quot;GROUP BY line_touroffering.id &quot;
+					+ &quot;HAVING SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) &gt;= &quot;
+					+ &quot;line_touroffering.capacity_max) &quot;
+					+ &quot;GROUP BY line_touroffering.id,line_touroffering.offer_date,line_touroffering.hotel, &quot;
+					+ &quot;line_touroffering.capacity_max,  line_touroffering.price, line_tour.duration;&quot;);
+<span class="fc" id="L529">			stmt.setInt(1, tourID);</span>
+<span class="fc" id="L530">			stmt.setInt(2, tourID);</span>
+<span class="fc" id="L531">			stmt.setInt(3, tourID);</span>
+<span class="fc" id="L532">			ResultSet rs = stmt.executeQuery();</span>
+<span class="fc bfc" id="L533" title="All 2 branches covered.">			while (rs.next()) {</span>
+<span class="fc" id="L534">				Timestamp time=rs.getTimestamp(2);</span>
+<span class="fc" id="L535">				String time_change_2=&quot;&quot;+time;</span>
+<span class="fc" id="L536">				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);</span>
+<span class="fc" id="L537">				double price=rs.getDouble(5);</span>
+<span class="fc" id="L538">				int price_int = (int)price;</span>
+<span class="fc" id="L539">				int quota = -rs.getInt(7)+rs.getInt(4);</span>
+<span class="fc" id="L540">				TourOffering tourOffering=new TourOffering(rs.getInt(1),time_change,rs.getString(3),rs.getInt(4),price_int,rs.getInt(6),quota);</span>
+<span class="fc" id="L541">				listOfTourOfferings.add(tourOffering);</span>
+<span class="fc" id="L542">			}</span>
+<span class="fc" id="L543">			rs.close();</span>
+<span class="fc" id="L544">			stmt.close();</span>
+<span class="fc" id="L545">			connection.close();</span>
+<span class="nc" id="L546">		} catch (Exception e) {</span>
+<span class="nc" id="L547">			log.info(e.toString());</span>
+<span class="fc" id="L548">		} </span>
+<span class="fc" id="L549">		return listOfTourOfferings;</span>
+	}
+	
+	
+	/**
+	 * Gets buffering tour ID
+	 * @param userID		the ID of the line user
+	 * @return buffering tour ID given the user ID
+	 * @throws	Exception when database is not accessed successfully
+	 */
+	public int getBufferTourID(String userID) throws Exception{
+<span class="fc" id="L560">		int result=-1;</span>
+		try {
+<span class="fc" id="L562">			Connection connection = getConnection();</span>
+<span class="fc" id="L563">			PreparedStatement stmt = connection.prepareStatement(&quot;SELECT * FROM line_userchoose WHERE user_id = ?;&quot;);</span>
+<span class="fc" id="L564">			stmt.setString(1, userID);</span>
+<span class="fc" id="L565">			ResultSet rs = stmt.executeQuery();</span>
+<span class="pc bpc" id="L566" title="1 of 2 branches missed.">			if (rs.next()) {</span>
+<span class="fc" id="L567">					result=rs.getInt(2);</span>
+			}
+<span class="fc" id="L569">			rs.close();</span>
+<span class="fc" id="L570">			stmt.close();</span>
+<span class="fc" id="L571">			connection.close();</span>
+<span class="nc" id="L572">		} catch (Exception e) {</span>
+<span class="nc" id="L573">			log.info(e.toString());</span>
+<span class="fc" id="L574">		} </span>
+<span class="fc" id="L575">		return result;</span>
+	}
+
+	/**
+	 * Checks tour ID and tour offering ID are matched
+	 * @param tourID		the ID of the tour
+	 * @param tourOfferingID		the ID of the tour offering
+	 * @return	the result is true if tour ID and tour offering ID are matched, otherwise the result is false
+	 * @throws	Exception when database is not accessed successfully
+	 */
+
+	public boolean tourOfferingFound(int tourID,int tourOfferingID) throws Exception{
+<span class="fc" id="L587">		boolean result=false;</span>
+		try {
+<span class="fc" id="L589">			Connection connection = getConnection();</span>
+<span class="fc" id="L590">			PreparedStatement stmt = connection.prepareStatement(</span>
+					&quot;SELECT id,offer_date,hotel,capacity_max FROM line_touroffering WHERE tour_id = ? AND state &lt; 2 AND id = ? AND id IN &quot;
+					+ &quot;(SELECT id FROM line_touroffering WHERE tour_id = ? &quot;
+					+ &quot;EXCEPT SELECT line_touroffering.id &quot;
+					+ &quot;FROM line_touroffering, line_booking &quot;
+					+ &quot;WHERE line_touroffering.tour_id = ? &quot;
+					+ &quot;AND line_touroffering.id=line_booking.\&quot;tourOffering_id\&quot; &quot;
+					+ &quot;AND line_booking.state&gt;0 &quot;
+					+ &quot;GROUP BY line_touroffering.id &quot;
+					+ &quot;HAVING SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) &gt;= &quot;
+					+ &quot;line_touroffering.capacity_max);&quot;);
+<span class="fc" id="L601">			stmt.setInt(1, tourID);</span>
+<span class="fc" id="L602">			stmt.setInt(2, tourOfferingID);</span>
+<span class="fc" id="L603">			stmt.setInt(3, tourID);</span>
+<span class="fc" id="L604">			stmt.setInt(4, tourID);</span>
+<span class="fc" id="L605">			ResultSet rs = stmt.executeQuery();</span>
+<span class="fc bfc" id="L606" title="All 2 branches covered.">			if (rs.next()) {</span>
+<span class="fc" id="L607">				result=true;</span>
+			}
+<span class="fc" id="L609">			rs.close();</span>
+<span class="fc" id="L610">			stmt.close();</span>
+<span class="fc" id="L611">			connection.close();</span>
+<span class="nc" id="L612">		} catch (Exception e) {</span>
+<span class="nc" id="L613">			log.info(e.toString());</span>
+<span class="fc" id="L614">		} </span>
+<span class="fc" id="L615">		return result;</span>
+	}
+	/**
+	 * Gets quota for booking of the user
+	 * @param userID		the id of the line user
+	 * @return the remaining quota for the user
+	 * @throws	Exception when database is not accessed successfully
+	 */
+	public int checkQuota(String userID) throws Exception{
+<span class="fc" id="L624">		int result=-1;</span>
+<span class="fc" id="L625">		int max=0;</span>
+<span class="fc" id="L626">		int sum=0;</span>
+<span class="fc" id="L627">		int adult=0;</span>
+<span class="fc" id="L628">		int child=0;</span>
+<span class="fc" id="L629">		int toddler=0;</span>
+		try {
+<span class="fc" id="L631">			Connection connection = getConnection();</span>
+<span class="fc" id="L632">			PreparedStatement stmt = connection.prepareStatement(</span>
+					&quot;SELECT SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num), line_touroffering.capacity_max &quot;
+					+ &quot;FROM line_tour,line_touroffering LEFT JOIN line_booking ON line_touroffering.id=line_booking.\&quot;tourOffering_id\&quot; &quot;  
+					+ &quot;AND line_booking.state&gt;0 &quot;
+					+ &quot;WHERE line_touroffering.state &lt; 2 &quot;
+					+ &quot;AND line_touroffering.tour_id=line_tour.id &quot;
+					+ &quot;AND line_touroffering.id IN &quot;
+					+ &quot;(SELECT line_booking.\&quot;tourOffering_id\&quot; FROM line_booking WHERE user_id = ? AND state = 0) &quot;
+					+ &quot;GROUP BY line_touroffering.id,line_touroffering.capacity_max;&quot;);
+<span class="fc" id="L641">			stmt.setString(1, userID);</span>
+<span class="fc" id="L642">			ResultSet rs = stmt.executeQuery();</span>
+<span class="pc bpc" id="L643" title="1 of 2 branches missed.">			if (rs.next()) {</span>
+<span class="fc" id="L644">				sum=rs.getInt(1);</span>
+<span class="fc" id="L645">				max=rs.getInt(2);</span>
+			}
+<span class="fc" id="L647">			rs.close();</span>
+<span class="fc" id="L648">			stmt.close();</span>
+			
+<span class="fc" id="L650">			PreparedStatement stmt2 = connection.prepareStatement(</span>
+					&quot;SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num &quot;
+					+ &quot;FROM line_booking WHERE user_id = ? AND state = 0;&quot;);
+<span class="fc" id="L653">			stmt2.setString(1, userID);</span>
+<span class="fc" id="L654">			ResultSet rs2 = stmt2.executeQuery();</span>
+<span class="pc bpc" id="L655" title="1 of 2 branches missed.">			if (rs2.next()) {</span>
+<span class="fc" id="L656">				adult=rs2.getInt(1);</span>
+<span class="fc" id="L657">				child=rs2.getInt(2);</span>
+<span class="fc" id="L658">				toddler=rs2.getInt(3);</span>
+			}
+<span class="fc" id="L660">			rs2.close();</span>
+<span class="fc" id="L661">			stmt2.close();</span>
+<span class="fc" id="L662">			result=max-sum-adult-child-toddler;</span>
+<span class="pc bpc" id="L663" title="1 of 2 branches missed.">			if (result&lt;0) {</span>
+<span class="nc" id="L664">				PreparedStatement stmt3 = connection.prepareStatement(&quot;UPDATE line_booking SET adult_num = ?, child_num = ?, toddler_num = ? &quot;</span>
+						+ &quot;WHERE user_id = ? AND state = 0;&quot;);
+<span class="nc" id="L666">				stmt3.setInt(1, 0);</span>
+<span class="nc" id="L667">				stmt3.setInt(2, 0);</span>
+<span class="nc" id="L668">				stmt3.setInt(3, 0);</span>
+<span class="nc" id="L669">				stmt3.setString(4, userID);</span>
+<span class="nc" id="L670">				stmt3.executeUpdate();</span>
+<span class="nc" id="L671">				stmt3.close();</span>
+			}
+<span class="fc" id="L673">			connection.close();</span>
+<span class="nc" id="L674">		} catch (Exception e) {</span>
+<span class="nc" id="L675">			log.info(e.toString());</span>
+<span class="fc" id="L676">		} </span>
+<span class="fc" id="L677">		return result;</span>
+	}
+	
+	/**
+	 * Displays booking information given user ID
+	 * @param userID		the id of the line user
+	 * @return the booking information of a particular user
+	 * @throws	Exception when database is not accessed successfully
+	 */
+	public String displaytBookingInformation(String userID) throws Exception{
+<span class="fc" id="L687">		String result=&quot;&quot;;</span>
+<span class="fc" id="L688">		int result2=0;</span>
+<span class="fc" id="L689">		String special=&quot;&quot;;</span>
+<span class="fc" id="L690">		int adult=0;</span>
+<span class="fc" id="L691">		int child=0;</span>
+<span class="fc" id="L692">		int toddler=0;</span>
+<span class="fc" id="L693">		double fee=0;</span>
+<span class="fc" id="L694">		double price=0;</span>
+		
+<span class="fc" id="L696">		String discount_name=&quot;&quot;;</span>
+<span class="fc" id="L697">		int discount_id=0;</span>
+<span class="fc" id="L698">		int booking_id=0;</span>
+<span class="fc" id="L699">		int seat=0;</span>
+<span class="fc" id="L700">		int seat_for_adult=0;</span>
+<span class="fc" id="L701">		int seat_for_child=0;</span>
+<span class="fc" id="L702">		double rate=0.0;</span>
+<span class="fc" id="L703">		double discount_fee=0.0;</span>
+<span class="fc" id="L704">		double total_fee=0.0;</span>
+<span class="fc" id="L705">		int discount_fee_int=0;</span>
+<span class="fc" id="L706">		int total_fee_int=0;</span>
+<span class="fc" id="L707">		int fee_int=0;</span>
+		
+<span class="fc" id="L709">		boolean has_discount= false;</span>
+		try {
+<span class="fc" id="L711">			Connection connection = getConnection();</span>
+<span class="fc" id="L712">			PreparedStatement stmt = connection.prepareStatement(</span>
+					&quot;SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num, line_touroffering.price, &quot;
+					+ &quot;line_booking.special_request, line_touroffering.offer_date, line_touroffering.hotel, &quot;
+					+ &quot;line_touroffering.capacity_max, line_touroffering.guide_name, line_touroffering.guide_line, &quot;
+					+ &quot;line_tour.name, line_tour.description, line_tour.duration FROM line_booking, &quot;
+					+ &quot;line_touroffering, line_tour WHERE line_booking.user_id = ? AND line_booking.state = 0 AND &quot;
+					+ &quot;line_booking.\&quot;tourOffering_id\&quot;=line_touroffering.id AND line_touroffering.tour_id=line_tour.id;&quot;);
+<span class="fc" id="L719">			stmt.setString(1, userID);</span>
+<span class="fc" id="L720">			ResultSet rs = stmt.executeQuery();</span>
+<span class="pc bpc" id="L721" title="1 of 2 branches missed.">			if (rs.next()) {</span>
+<span class="nc" id="L722">				adult=rs.getInt(1);</span>
+<span class="nc" id="L723">				child=rs.getInt(2);</span>
+<span class="nc" id="L724">				toddler=rs.getInt(3);</span>
+<span class="nc" id="L725">				price=rs.getDouble(4);</span>
+<span class="nc" id="L726">				special=rs.getString(5);</span>
+<span class="nc" id="L727">				Timestamp time=rs.getTimestamp(6);</span>
+<span class="nc" id="L728">				String time_change_2=&quot;&quot;+time;</span>
+<span class="nc" id="L729">				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);</span>
+<span class="nc" id="L730">				fee = price*adult + price*0.8*child;</span>
+<span class="nc" id="L731">				fee_int = (int)fee;</span>
+<span class="nc" id="L732">				total_fee = fee;</span>
+<span class="nc" id="L733">				total_fee_int = (int)total_fee;</span>
+				
+<span class="nc" id="L735">				PreparedStatement stmt2 = connection.prepareStatement(</span>
+						&quot;SELECT line_discount.name, line_discount.id, line_booking.id, line_discount.seat, line_discount.rate FROM line_booking, &quot;
+						+ &quot;line_touroffering, line_discount WHERE line_booking.user_id = ? AND line_booking.state = 0 AND &quot;
+						+ &quot;line_booking.\&quot;tourOffering_id\&quot;=line_touroffering.id AND line_touroffering.id=line_discount.\&quot;tourOffering_id\&quot; &quot;
+						+ &quot;AND line_discount.id IN &quot;
+						+ &quot;(SELECT line_discount.id FROM line_discount LEFT JOIN line_booking ON line_booking.discount_id=line_discount.id &quot;
+						+ &quot;GROUP BY line_discount.id &quot;
+						+ &quot;HAVING COUNT(line_booking.discount_id=line_discount.id) &lt; line_discount.quota);&quot;);
+<span class="nc" id="L743">				stmt2.setString(1, userID);</span>
+<span class="nc" id="L744">				ResultSet rs2 = stmt2.executeQuery();</span>
+<span class="nc bnc" id="L745" title="All 2 branches missed.">				if (rs2.next()) {</span>
+<span class="nc" id="L746">					has_discount= true;</span>
+<span class="nc" id="L747">					discount_name=rs2.getString(1);</span>
+<span class="nc" id="L748">					discount_id=rs2.getInt(2);</span>
+<span class="nc" id="L749">					booking_id=rs2.getInt(3);</span>
+<span class="nc" id="L750">					seat=rs2.getInt(4);</span>
+<span class="nc" id="L751">					rate=rs2.getDouble(5);</span>
+<span class="nc" id="L752">					result+=(&quot;Congratulations! You gain a &quot;+discount_name+&quot; for &quot;+seat+&quot; seats in this booking.\n&quot;</span>
+							+ &quot;If you canceled this booking, you will lose this discount.\n\n&quot;);
+<span class="nc" id="L754">					discount_fee = calculateDiscount(seat, adult,discount_fee, rate,price,</span>
+							seat_for_adult, child, seat_for_child);
+<span class="nc" id="L756">					total_fee = fee-discount_fee;</span>
+<span class="nc" id="L757">					discount_fee_int = (int)discount_fee;</span>
+<span class="nc" id="L758">					total_fee_int = fee_int-discount_fee_int ;</span>
+				}
+					
+<span class="nc" id="L761">				result+=(&quot;Tour name: &quot;+rs.getString(11)+&quot;\n\nDescription: &quot;+rs.getString(12)+&quot;\n\nDuration: &quot;+rs.getInt(13)+&quot;\n\nOffer date: &quot;</span>
+<span class="nc" id="L762">				+time_change+&quot;\n\nHotel: &quot;+rs.getString(7)+&quot;\n\nMax people: &quot;+rs.getInt(8)+&quot;\n\nGuide name: &quot;+rs.getString(9)</span>
+<span class="nc" id="L763">				+&quot;\n\nGuide line account: &quot;+rs.getString(10)+&quot;\n\nAdult: &quot;+adult+&quot;\n\nChild: &quot;+child+&quot;\n\nToddler: &quot;+toddler</span>
+				+&quot;\n\nSpecial request: &quot;+special);
+<span class="nc bnc" id="L765" title="All 2 branches missed.">				if(has_discount) {</span>
+<span class="nc" id="L766">					result+=(&quot;\n\nOriginal fee: HKD &quot;+fee_int+&quot;\n\nTotal dicount fee: HKD &quot;+discount_fee_int+</span>
+							&quot;\n\nTotal fee: HKD &quot;+total_fee_int);
+				}
+				else {
+<span class="nc" id="L770">					result+=(&quot;\n\nTotal fee: HKD &quot;+total_fee_int+&quot;\n\n&quot;);</span>
+				}
+<span class="nc" id="L772">				rs2.close();</span>
+<span class="nc" id="L773">				stmt2.close();</span>
+			}
+<span class="fc" id="L775">			rs.close();</span>
+<span class="fc" id="L776">			stmt.close();</span>
+<span class="pc bpc" id="L777" title="1 of 2 branches missed.">			if(has_discount) {</span>
+<span class="nc" id="L778">				PreparedStatement stmt2 = connection.prepareStatement(</span>
+						&quot;UPDATE line_booking SET tour_fee = ?, paid_fee = ?, discount_id = ? WHERE user_id = ? AND state = 0;&quot;);
+<span class="nc" id="L780">				stmt2.setDouble(1, total_fee);</span>
+<span class="nc" id="L781">				stmt2.setDouble(2, 0.0);</span>
+<span class="nc" id="L782">				stmt2.setInt(3, discount_id);</span>
+<span class="nc" id="L783">				stmt2.setString(4, userID);</span>
+<span class="nc" id="L784">				result2=stmt2.executeUpdate();</span>
+<span class="nc" id="L785">				stmt2.close();</span>
+<span class="nc" id="L786">			}</span>
+			else {
+<span class="fc" id="L788">			PreparedStatement stmt2 = connection.prepareStatement(</span>
+					&quot;UPDATE line_booking SET tour_fee = ?, paid_fee = ? WHERE user_id = ? AND state = 0;&quot;);
+<span class="fc" id="L790">			stmt2.setDouble(1, total_fee);</span>
+<span class="fc" id="L791">			stmt2.setDouble(2, 0.0);</span>
+<span class="fc" id="L792">			stmt2.setString(3, userID);</span>
+<span class="fc" id="L793">			result2=stmt2.executeUpdate();</span>
+<span class="fc" id="L794">			stmt2.close();</span>
+			}
+<span class="fc" id="L796">			connection.close();</span>
+<span class="nc" id="L797">		} catch (Exception e) {</span>
+<span class="nc" id="L798">			log.info(e.toString());</span>
+<span class="fc" id="L799">		} </span>
+<span class="pc bpc" id="L800" title="1 of 2 branches missed.">		if (result == &quot;&quot;)</span>
+<span class="fc" id="L801">			return &quot;null&quot;;</span>
+		else
+<span class="nc" id="L803">			return result;</span>
+	}
+	
+	/**
+	 * Calculates the discount fee if a user gets the discount quota
+	 * @param seat	the number of seats of the discount campaign
+	 * @param adult  the number of adults
+	 * @param discount_fee the fee to be calculated
+	 * @param rate 	the discount rate
+	 * @param price	the full price
+	 * @param seat_for_adult the number of seats for aults
+	 * @param child 	the number of children
+	 * @param seat_for_child the numeber of seats for children
+	 * @return the discount fee
+	 */
+
+	public double calculateDiscount(int seat, int adult,double discount_fee, double rate,double price,
+			int seat_for_adult, int child, int seat_for_child) {
+<span class="fc bfc" id="L821" title="All 2 branches covered.">		if(seat==0) {</span>
+			//pass
+		}
+<span class="pc bpc" id="L824" title="1 of 4 branches missed.">		else if (adult&gt;=seat &amp;&amp; seat&gt;0) {</span>
+<span class="fc" id="L825">			discount_fee += seat*(1.0-rate)*price;</span>
+<span class="fc" id="L826">			seat_for_adult=seat;</span>
+		}
+		else {
+<span class="fc" id="L829">			discount_fee += adult*(1.0-rate)*price;</span>
+<span class="fc" id="L830">			seat_for_adult=adult;</span>
+<span class="fc bfc" id="L831" title="All 2 branches covered.">			if(child&gt;=(seat-seat_for_adult)) {</span>
+<span class="fc" id="L832">				discount_fee += (seat-seat_for_adult)*(1.0-rate)*price*0.8;</span>
+<span class="fc" id="L833">				seat_for_child=(seat-seat_for_adult);</span>
+			}
+			else{
+<span class="fc" id="L836">				discount_fee += child*(1.0-rate)*price;</span>
+<span class="fc" id="L837">				seat_for_child = child;</span>
+			}
+		}
+<span class="fc" id="L840">		return discount_fee;</span>
+	}
+	/**
+	 * Reviews booking information given user ID
+	 * @param userID		the id of the line user
+	 * @return the booking information of a particular user
+	 * @throws	Exception when database is not accessed successfully
+	 */
+	public String reviewBookingInformation(String userID) throws Exception{
+<span class="fc" id="L849">		String result=&quot;&quot;;</span>
+<span class="fc" id="L850">		int result2=0;</span>
+<span class="fc" id="L851">		double fee=0;</span>
+<span class="fc" id="L852">		double paid_fee=0;</span>
+		try {
+<span class="fc" id="L854">			Connection connection = getConnection();</span>
+<span class="fc" id="L855">			PreparedStatement stmt = connection.prepareStatement(</span>
+					&quot;SELECT line_booking.adult_num, line_booking.child_num, line_booking.toddler_num, line_booking.tour_fee, &quot;
+					+ &quot;line_booking.special_request, line_touroffering.offer_date, line_touroffering.hotel, &quot;
+					+ &quot;line_touroffering.capacity_max, line_touroffering.guide_name, line_touroffering.guide_line, &quot;
+					+ &quot;line_tour.name, line_tour.description, line_tour.duration, line_booking.state, line_booking.paid_fee FROM line_booking, &quot;
+					+ &quot;line_touroffering, line_tour WHERE line_booking.user_id = ? AND line_booking.state &gt; 0 AND &quot;
+					+ &quot;line_booking.\&quot;tourOffering_id\&quot;=line_touroffering.id AND line_touroffering.tour_id=line_tour.id;&quot;);
+<span class="fc" id="L862">			stmt.setString(1, userID);</span>
+<span class="fc" id="L863">			ResultSet rs = stmt.executeQuery();</span>
+<span class="fc bfc" id="L864" title="All 2 branches covered.">			while (rs.next()) {</span>
+<span class="fc" id="L865">				Timestamp time=rs.getTimestamp(6);</span>
+<span class="fc" id="L866">				String time_change_2=&quot;&quot;+time;</span>
+<span class="fc" id="L867">				String time_change=time_change_2.substring(0, 12)+'8'+time_change_2.substring(13);</span>
+				
+<span class="fc" id="L869">				result+=(&quot;Tour name: &quot;+rs.getString(11)+&quot;\n\nDescription: &quot;+rs.getString(12)+&quot;\n\nDuration: &quot;+rs.getInt(13)+&quot;\n\nOffer date: &quot;</span>
+<span class="fc" id="L870">				+time_change+&quot;\n\nHotel: &quot;+rs.getString(7)+&quot;\n\nMax people: &quot;+rs.getInt(8)+&quot;\n\nGuide name: &quot;+rs.getString(9)</span>
+<span class="fc" id="L871">				+&quot;\n\nGuide line account: &quot;+rs.getString(10)+&quot;\n\nAdult: &quot;+rs.getInt(1)+&quot;\n\nChild: &quot;+rs.getInt(2)+&quot;\n\nToddler: &quot;+rs.getInt(3)</span>
+<span class="fc" id="L872">				+&quot;\n\nSpecial request: &quot;+rs.getString(5));</span>
+<span class="fc" id="L873">				fee=rs.getDouble(4);</span>
+<span class="fc" id="L874">				paid_fee=rs.getDouble(15);</span>
+<span class="fc" id="L875">				int fee_int = (int)fee;</span>
+<span class="fc" id="L876">				int need_to_pay=(int)(fee-paid_fee);</span>
+<span class="fc" id="L877">				int state=rs.getInt(14);</span>
+<span class="pc bpc" id="L878" title="1 of 2 branches missed.">				if(state==2) {</span>
+<span class="nc" id="L879">					result+=(&quot;\n\nTotal fee: HKD &quot;+fee_int+&quot;  \n\nPAID \n\n&quot;);</span>
+				}
+				else {
+<span class="fc" id="L882">					result+=(&quot;\n\nNeed to pay: HKD &quot;+need_to_pay+&quot;  \n\nUNPAID \n\n&quot;);</span>
+				}
+<span class="fc" id="L884">				result+=(&quot;=====\n\n\n\n&quot;);</span>
+<span class="fc" id="L885">			}</span>
+<span class="fc" id="L886">			rs.close();</span>
+<span class="fc" id="L887">			stmt.close();</span>
+<span class="fc" id="L888">			connection.close();</span>
+<span class="nc" id="L889">		} catch (Exception e) {</span>
+<span class="nc" id="L890">			log.info(e.toString());</span>
+<span class="fc" id="L891">		} </span>
+<span class="pc bpc" id="L892" title="1 of 2 branches missed.">		if (result == &quot;&quot;)</span>
+<span class="nc" id="L893">			return &quot;null&quot;;</span>
+		else
+<span class="fc" id="L895">			return result;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
