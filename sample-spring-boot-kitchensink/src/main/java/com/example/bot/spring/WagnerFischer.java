@@ -14,6 +14,11 @@ import java.util.ArrayList;
 
 import java.util.List;
 @Slf4j
+
+/**
+ * This class is a container for wagner fischer which is used to find distance between String
+ * @author Group 16
+ */
 public class WagnerFischer {
     private char[] s1;
     private char[] s2;

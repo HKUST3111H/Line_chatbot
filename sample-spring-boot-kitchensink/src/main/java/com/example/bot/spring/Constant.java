@@ -11,10 +11,22 @@ import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.*;
-
+/**
+ * This class is a container for constant which stores a lot of constant variables used in other classes
+ * @author Group 16
+ */
 @Slf4j
 public  class Constant {
+	/**
+	 * Private constructor means it is singleton
+	 */
+	private static Constant uniqueInstance = new Constant();
 	
+	/**
+	 * Default constructor for Constant class
+	 */
+	
+	private Constant () {};
 	// FAQ
 	public static final int FAQ_NO_USER_INFORMATION = 100;
 	public static final int FAQ_NO_CONFIRMATION_WITH_USER_INFORMATION = 300;
@@ -42,6 +54,25 @@ public  class Constant {
 	public static final int DELETING_NOTHING = 2;
 	
 	public static final long TIME_GAPPING = 10;
+	
+	
+	public static final int SET_USER_TIME = 1;
+	public static final int SET_USER_STATE = 2;
+	public static final int SET_USER_NAME = 3;
+	public static final int SET_USER_PHONE = 4;
+	public static final int SET_USER_AGE = 5;
+	public static final int CREATE_USER = 6;
+	public static final int DELETE_USER = 7;
+	public static final int TOUR_FOUND = 8;
+	public static final int SET_BUFFER_TOUR_ID = 9;
+	public static final int DELETE_BUFFER_BOOKING = 10;
+	public static final int DELETE_BOOKING = 11;
+	public static final int SET_BOOKING_TOUR_OFFERING_ID = 12;
+	public static final int SET_BOOKING_ADULT_NUMBER = 13;
+	public static final int SET_BOOKING_CHILD_NUMBER = 14;
+	public static final int SET_BOOKING_TODDLER_NUMBER = 15;
+	public static final int SET_BOOKING_SPECIAL_REQUEST = 16;
+	public static final int SET_BOOKING_CONFIRMATION = 17;
 	
 	
 	public static final String GREETING_FIRST_USE = "Thanks for your first use of our app! "
@@ -78,9 +109,12 @@ public  class Constant {
 	public static final String ERROR_REENTER_CHILDREN_NUMBER = "Invalid number! Please reinput the number of CHILDREN.";
 	public static final String INSTRTUCTION_ENTER_TODDLER_NUMBER = "Please input the number of TODDLERS (age not larger than 3) for this tour offering.";
 	public static final String ERROR_REENTER_TODDLER_NUMBER = "Invalid number! Please reinput the number of TODDLERS.";
+	public static final String QUOTA_FULL_1 = "Sorry we do not have enough quota for your booking, only ";
+	public static final String QUOTA_FULL_2 = " quota left. \nYou can re-input the number of people or you can terminate the booking procedure by texting \"Q\"."
+			+ "\n\nPlease input the number of ADULTS for this tour offering.";
 	public static final String INSTRTUCTION_ENTER_SPECIAL_REQUEST = "Please leave your special request.";
 	public static final String CONFIRM_REGISTRATION = "Great! Basic information registered!\n";
-	public static final String INSTRUCTION_PAYMENT = "Thanks for your interest!\n"
+	public static final String INSTRUCTION_PAYMENT = "Booking Confirmed.\nThanks for your interest!\n"
 			+ "Please pay your tour fee by ATM to 123-345-432-211 of ABC Bank or by cash in our store.\n"
 			+ "You shall send you pay-in slip to us by email or LINE. \n"
 			+ "You are welcome to ask other questions!";
@@ -88,6 +122,12 @@ public  class Constant {
 	public static final String QUESTION_CONFIRM_OR_NOT = "Do you want to confirm your booking";
 	public static final String FAQ_NOT_FOUND = "Sorry! We don't have relevant information.";
 	public static final String BOOKING_CANCELLED = "Booking cancelled!";
+	public static final String TEXT_NEW_BOOKING="New Booking";
 	
+	
+	public static final String STICKER_ID_CONFIRMBOOK="407";
+	
+	public static final String IMGPRFIX="static/pictures/";
+
 
 }
