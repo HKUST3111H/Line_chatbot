@@ -528,9 +528,9 @@ public class LineMessageController {
 						description=description.replace("* ", "\n");
 						description=description.replace("*", "\n");
 						lines=description.split("[\\r\\n]+");
-						description="";
+						description=tour.getTourName();
 						for (String line :lines) {
-							description+="\u2606" +line+"\n";
+							description+="\n\u2606" +line;
 						}
 
 					}
