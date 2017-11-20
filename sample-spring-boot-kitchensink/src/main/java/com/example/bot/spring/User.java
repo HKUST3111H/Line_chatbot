@@ -60,42 +60,42 @@ public class User {
 	//getter
 	
 	/**
-	 * @return userName user name
+	 * @return user name
 	 */
 	public String getUserName(){
 		return userName;
 	}
 	
 	/**
-	 * @return userID user id 
+	 * @return user id 
 	 */
 	public String getUserID(){
 		return userID;
 	}
 	
 	/**
-	 * @return phoneNumber phone number
+	 * @return phone number
 	 */
 	public String getPhoneNumber(){
 		return phoneNumber;
 	}
 	
 	/**
-	 * @return age age 
+	 * @return age 
 	 */
 	public String getAge(){
 		return age;
 	}
 	
 	/**
-	 * @return state booking state 
+	 * @return booking state 
 	 */
 	public int getState(){
 		return state;
 	}
 	
 	/**
-	 * @return time last log in time
+	 * @return last log in time
 	 */
 	public java.sql.Timestamp getTime(){
 		return time;
