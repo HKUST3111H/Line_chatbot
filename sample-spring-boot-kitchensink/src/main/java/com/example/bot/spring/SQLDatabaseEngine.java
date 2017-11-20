@@ -667,7 +667,7 @@ public class SQLDatabaseEngine {
 						+ "AND line_discount.id IN "
 						+ "(SELECT line_discount.id FROM line_discount LEFT JOIN line_booking ON line_booking.discount_id=line_discount.id "
 						+ "GROUP BY line_discount.id "
-						+ "HAVING COUNT(*) < line_discount.quota);");
+						+ "HAVING COUNT(line_booking.discount_id=line_discount.id) < line_discount.quota) < line_discount.quota);");
 				stmt2.setString(1, userID);
 				ResultSet rs2 = stmt2.executeQuery();
 				if (rs2.next()) {
