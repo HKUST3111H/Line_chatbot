@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This class is a container for tour offerings
  * @author Group 16
- * This class is a container for TourOfferings
  */
 @Slf4j
 public class TourOffering {
@@ -26,13 +26,13 @@ public class TourOffering {
 	// constructor
 	/**
 	 * Constructor
-	 * @param offeringID
-	 * @param date
-	 * @param hotel
-	 * @param maxCapacity
-	 * @param price
-	 * @param duration
-	 * @param quota
+	 * @param offeringID ID of tour offering
+	 * @param date date of tour offering
+	 * @param hotel hotel of tour offering 
+	 * @param maxCapacity max capacity of tour offering
+	 * @param price price of tour offering
+	 * @param duration duration of tour offering
+	 * @param quota quota of tour offering
 	 */
 	public TourOffering(int offeringID, String date,String hotel,int maxCapacity, int price, int duration, int quota) {
 		this.offeringID = offeringID;
@@ -46,17 +46,17 @@ public class TourOffering {
 	
 	/**
 	 * Constructor
-	 * @param offeringID
-	 * @param date
-	 * @param hotel
-	 * @param maxCapacity
-	 * @param price
-	 * @param duration
-	 * @param quota
-	 * @param guideName
-	 * @param guideAccount
-	 * @param minCapacity
-	 * @param state
+	 * @param offeringID ID of tour offering
+	 * @param date date of tour offering
+	 * @param hotel hotel of tour offering
+	 * @param maxCapacity max capacity of tour offering
+	 * @param price price of tour offering
+	 * @param duration duration of tour offering
+	 * @param quota quota of tour offering
+	 * @param guideName name of the guide 
+	 * @param guideAccount line account of the guide 
+	 * @param minCapacity minimum capacity of tour offering
+	 * @param state	state of tour offering
 	 */
 	public TourOffering(int offeringID, String date,String hotel,int maxCapacity, int price, int duration, int quota,
 			String guideName,String guideAccount,int minCapacity,int state) {
@@ -72,142 +72,165 @@ public class TourOffering {
 		this.minCapacity = minCapacity;
 		this.state = state;
 	}
-	/**
-	 * @return offeringID
-	 */
 	// get functions
+	/**
+	 * Gets ID of the tour offering
+	 * @return ID of the tour offering
+	 */
 	public int getOfferingID() {
 		return offeringID;
 	}
 	/**
-	 * @return date
+	 * Gets date of the tour offering
+	 * @return date of the tour offering
 	 */
 	public String getDate() {
 		return date;
 	}
 	/**
-	 * @return guideName
+	 * Gets name of the tour guide
+	 * @return name of the tour guide
 	 */
 	public String getGuideName() {
 		return guideName;
 	}
 	/**
-	 * @return guideAccount
+	 * Gets line account of the tour guide
+	 * @return line account of the tour guide
 	 */
 	public String getGuideAccount() {
 		return guideAccount;
 	}
 	/**
-	 * @return hotel
+	 * Gets name of the hotel
+	 * @return name of the hotel 
 	 */
 	public String getHotel() {
 		return hotel;
 	}
 	/**
-	 * @return maxCapacity
+	 * Gets the maximum capacity of a tour offering
+	 * @return maximum capacity of a tour offering
 	 */
 	public int getMaxCapacity() {
 		return maxCapacity;
 	}
 	/**
-	 * @return minCapacity
+	 * Gets the minimum capacity of a tour offering
+	 * @return minimum capacity of a tour offering
 	 */
 	public int getMinCapacity() {
 		return minCapacity;
 	}
 	/**
-	 * @return state
+	 * Gets the state of the tour offering
+	 * @return state of the tour offering
 	 */
 	public int getState() {
 		return state;
 	}
 
 	/**
-	 * @return price
+	 * Gets the price of the tour offering
+	 * @return the price of the tour offering
 	 */
 	public int getPrice() {
 		return price;
 	}
 	/**
-	 * @return duration
+	 * Gets the duration of the tour offering
+	 * @return duration of the tour offering
 	 */
 	public int getDuration() {
 		return duration;
 	}
 	/**
-	 * @return quota
+	 * Gets the quota of the tour offering
+	 * @return quota of the tour offering
 	 */
 	public int getQuota() {
 		return quota;
 	}
-	/**
-	 * @param offeringID
-	 */
+	
 	// set functions
+	/**
+	 * Sets the offering ID
+	 * @param offeringID ID of the tour offering to be set
+	 */
 	public void setOfferingID(int offeringID) {
 		this.offeringID = offeringID;
 	}
 	/**
-	 * @param date
+	 * Sets the data of the tour offering
+	 * @param date date of the tour offering to be set
 	 */
 	public void setDate(String date) {
 		this.date = date;
 	}
 	/**
-	 * @param guideName
+	 * Sets the name of the tour guide
+	 * @param guideName name of the guide to be set
 	 */
 	public void setGuideName(String guideName) {
 		this.guideName = guideName;
 	}
 	/**
-	 * @param guideAccount
+	 * Sets the line account of the tour guide
+	 * @param guideAccount line account of the tour guide to be set
 	 */
 	public void setGuideAccount(String guideAccount) {
 		this.guideAccount = guideAccount;
 	}
 	/**
-	 * @param hotel
+	 * Sets the hotel name of the tour offering
+	 * @param hotel hotel name of the tour offering to be set
 	 */
 	public void setHotel(String hotel) {
 		this.hotel = hotel;
 	}
 	/**
-	 * @param maxCapacity
+	 * Sets the max capacity of the tour offering
+	 * @param maxCapacity max capacity of the tour offering to be set
 	 */
 	public void setMaxCapacity(int maxCapacity) {
 		this.maxCapacity = maxCapacity;
 	}
 	/**
-	 * @param minCapacity
+	 * Sets the min capacity of the tour offering
+	 * @param minCapacity min capacity of the tour offering to be set
 	 */
 	public void setMinCapacity(int minCapacity) {
 		this.minCapacity = minCapacity;
 	}
 
 	/**
-	 *OPEN = 0;
-	 *CONFIRMED = 1;
-	 *CANCLE = 2;
-	 *CLOSED = 3;
-	 * @param state
+	 * Sets the state of the tour offering
+	 * OPEN = 0;
+	 * CONFIRMED = 1;
+	 * CANCLE = 2;
+	 * CLOSED = 3;
+	 * @param state state of the tour offering to be set
 	 */
 	public void setState(int state) {
 		this.state = state;
 	}
 	/**
-	 * @param price
+	 * Sets the price of the tour offering
+	 * @param price price of the tour offering to be set
 	 */
 	public void setPrice(int price) {
 		this.price = price;
 	}
 	/**
-	 * @param duration
+	 * Sets the duration of the tour offering
+	 * @param duration duration of the tour offering to be set
 	 */
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
 	/**
-	 * @param quota
+	 * Sets the quota of the tour offering
+	 * @param quota quota of the tour offering to be set
 	 */
 	public void setQuota(int quota) {
 		this.quota = quota;
