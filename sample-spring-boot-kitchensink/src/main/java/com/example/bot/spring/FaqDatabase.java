@@ -14,16 +14,17 @@ import java.util.regex.Pattern;
 import java.util.*;
 
 /**
- * @author Group 16 This class is a container for Faq database
+ * This class is a container for faq database
+ * @author Group 16 
  */
 @Slf4j
 public class FaqDatabase extends SQLDatabaseEngine {
 
 	/**
-	 * To get reply image
+	 * Replies user with a image
 	 * 
-	 * @param answer
-	 * @return image
+	 * @param answer		a parameter which indactes the need of replying a image
+	 * @return 			url of image
 	 */
 	public String replyImage(String answer) {
 		// String pattern = "(\\d+)[.](.*[?])[\\n][>](.*)[\\n]";
@@ -38,7 +39,11 @@ public class FaqDatabase extends SQLDatabaseEngine {
 
 
 	/**
-	 * To load question
+	 * Loads question from database
+	 * 
+	 * @return		faq question from databse
+	 * @see 			faqEntry
+	 * @throws		Exception when databse is not accessed successfully
 	 */
 	public List<faqEntry> loadQuestion() throws Exception{
 		//return loadQuestionStatic();
@@ -47,8 +52,11 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	}
 
 	/**
-	 * To load question from database
-	 * @return listOfEntry
+	 * Loads question from database
+	 * 
+	 * @return		faq question from databse
+	 * @see 			faqEntry
+	 * @throws		Exception when databse is not accessed successfully
 	 */
 	public List<faqEntry> loadQuestionSQL() throws Exception{
 		try {
@@ -83,10 +91,12 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	}
 
 	/**
-	 * Update hit number
+	 * Updates hit number given the question id
 	 * 
-	 * @param qid
-	 * @param hit
+	 * @param qid	question id
+	 * @param hit	the hit number to be updated to
+	 * @return		indicates whether updateHit function has been successfully called
+	 * @throws		Exception when databse is not accessed successfully
 	 */
 	public boolean updateHit(int qid, int hit) throws Exception {
 		try {
@@ -108,11 +118,13 @@ public class FaqDatabase extends SQLDatabaseEngine {
 	}
 
 	/**
-	 * Search from FAQ list
+	 * Searchs answer from FAQ list
 	 * 
-	 * @param text
-	 * @param userID
-	 * @return result
+	 * @param text		the question which user input
+	 * @param userID		the id of the user
+	 * @return			the answer of the question which user asks
+	 * @see				faqEntry
+	 * @throws			Exception when there is no answer for the given question
 	 */
 
 	public String search(String text, String userID) throws Exception {
@@ -123,7 +135,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		int qid = -1;
 		int hit = 0;
 		// using wagnerFischer Algorithm to select question within 10 unit distance
-		if (!listOfEntry.isEmpty()) {
+//		if (!listOfEntry.isEmpty()) {
 			int dist;
 			int minDistance = 1000000;
 			for (faqEntry entry : listOfEntry) {
@@ -139,7 +151,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 				for (faqEntry entry : listOfEntry) {
 					if (text.toLowerCase().contains(entry.Keyword.toLowerCase())) {
 						dist = new WagnerFischer(entry.Question, text).getDistance();
-						if (dist <= 30 && dist < minDistance) {
+						if (dist < minDistance) {
 							minDistance = dist;
 							if (result == null) {
 								result = entry.Answer + "\n\n";
@@ -148,9 +160,9 @@ public class FaqDatabase extends SQLDatabaseEngine {
 							}
 							qid = entry.questionID;
 							hit = entry.hit;
-							if (qid != -1) {
+//							if (qid != -1) {
 								updateHit(qid, hit + 1);
-							}
+//							}
 						}
 					}
 				}
@@ -169,19 +181,28 @@ public class FaqDatabase extends SQLDatabaseEngine {
 					result = dynamic_mountain();
 				}
 			}
-		}
+//		}
 
 		if (result != null)
 			return result;
 		throw new Exception("NOT FOUND");
 	}
 
-	public String dynamic_top_five_tours(String userID) {
+	
+	/**
+	 * Returns result of the top five tours
+	 * 
+	 * @param userID		the id of the user
+	 * @return			result of the top five tours without including the tours which the user has visited
+	 * @throws			Exception when database is not accessed successfully
+	 */
+	
+	public String dynamic_top_five_tours(String userID) throws Exception{
 		try {
 			String result = "";
 			Connection connection = super.getConnection();
 			PreparedStatement stmt = connection.prepareStatement(
-					"SELECT line_tour.id, line_tour.name, line_tour.description, COUNT(line_booking.state) "
+					"SELECT line_tour.id, line_tour.name, line_tour.description, SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) "
 							+ "FROM line_booking, line_touroffering, line_tour "
 							+ "WHERE line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id "
 							+ "AND line_booking.state > 0 " + "AND line_tour.id NOT IN "
@@ -189,12 +210,12 @@ public class FaqDatabase extends SQLDatabaseEngine {
 							+ "WHERE line_booking.user_id = ? AND line_booking.state = 2 AND "
 							+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id) "
 							+ "GROUP BY line_tour.id, line_tour.name, line_tour.description "
-							+ "ORDER BY COUNT(line_booking.state) DESC;");
+							+ "ORDER BY SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) DESC;");
 			stmt.setString(1, userID);
 			ResultSet rs = stmt.executeQuery();
 			int i = 0;
 			while (rs.next() && i < 5) {
-				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + parse(rs.getString(3)) + "\n"
+				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + rs.getString(3) + "\n"
 						+ "Number of people who have visited: " + rs.getInt(4) + "\n\n");
 				i++;
 			}
@@ -214,12 +235,21 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		}
 	}
 
-	public String dynamic_more_tours(String userID) {
+	
+	/**
+	 * Returns more tours after user has asked about hot tours
+	 * 
+	 * @param userID		the id of the user
+	 * @return			more tours which are popular without including the tours which the user has visited
+	 * @throws			Exception when database is not accessed successfully
+	 */
+	
+	public String dynamic_more_tours(String userID) throws Exception{
 		try {
 			String result = "";
 			Connection connection = super.getConnection();
 			PreparedStatement stmt = connection.prepareStatement(
-					"SELECT line_tour.id, line_tour.name, line_tour.description, COUNT(line_booking.state) "
+					"SELECT line_tour.id, line_tour.name, line_tour.description, SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) "
 							+ "FROM line_booking, line_touroffering, line_tour "
 							+ "WHERE line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id "
 							+ "AND line_booking.state > 0 " + "AND line_tour.id NOT IN "
@@ -227,7 +257,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 							+ "WHERE line_booking.user_id = ? AND line_booking.state = 2 AND "
 							+ "line_booking.\"tourOffering_id\"=line_touroffering.id AND line_touroffering.tour_id=line_tour.id) "
 							+ "GROUP BY line_tour.id, line_tour.name, line_tour.description "
-							+ "ORDER BY COUNT(line_booking.state) DESC;");
+							+ "ORDER BY SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) DESC;");
 			stmt.setString(1, userID);
 			ResultSet rs = stmt.executeQuery();
 			ResultSet temp = rs;
@@ -236,7 +266,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 				i++;
 			}
 			while (rs.next()) {
-				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + parse(rs.getString(3)) + "\n"
+				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + rs.getString(3) + "\n"
 						+ "Number of people who have visited: " + rs.getInt(4) + "\n\n");
 			}
 			if (result.equals("")) {
@@ -255,7 +285,15 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		}
 	}
 
-	public String dynamic_hot_spring() {
+	
+	/**
+	 * Returns tours which provide hot spring service
+	 * 
+	 * @return			tours which provide hot spring service
+	 * @throws			Exception when database is not accessed successfully
+	 */
+	
+	public String dynamic_hot_spring() throws Exception{
 		try {
 			String result = "";
 			Connection connection = super.getConnection();
@@ -265,7 +303,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 							+ "OR line_tour.description like \'%Hot Spring%\';");
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + parse(rs.getString(3)) + "\n\n");
+				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + rs.getString(3) + "\n\n");
 			}
 			if (result.equals("")) {
 				result = "No tours with hot spring! Thanks for your interest and support!\n";
@@ -283,7 +321,15 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		}
 	}
 
-	public String dynamic_mountain() {
+	
+	/**
+	 * Returns tours which organize hiking activity
+	 * 
+	 * @return			tours which organize hiking activity
+	 * @throws			Exception when database is not accessed successfully
+	 */
+	
+	public String dynamic_mountain() throws Exception{
 		try {
 			String result = "";
 			Connection connection = super.getConnection();
@@ -293,7 +339,7 @@ public class FaqDatabase extends SQLDatabaseEngine {
 							+ "OR line_tour.description like \'%Mountain%\';");
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + parse(rs.getString(3)) + "\n\n");
+				result += (rs.getString(1) + " " + rs.getString(2) + "\n" + rs.getString(3) + "\n\n");
 			}
 			if (result.equals("")) {
 				result = "No tours with mountain! Thanks for your interest and support!\n";
@@ -311,33 +357,14 @@ public class FaqDatabase extends SQLDatabaseEngine {
 		}
 	}
 
-	/**
-	 * parse description
-	 * 
-	 * @param description
-	 * @return parseDescription
-	 */
-	public String parse(String description) {
-		String parseDescription = "";
-		for (int i = 0; i < description.length(); i++) {
-			if (description.charAt(i) == '*') {
-				parseDescription += "\n*";
-			} else {
-				parseDescription += description.charAt(i);
-			}
-		}
-		return parseDescription;
-	}
 
-	/*
-	 * public void setFilename(String txt) { this.FILENAME=txt; }
-	 */
 	private String FILENAME = "/static/faq.txt";
 
 }
 
 /**
- * @author Group 16 This class is a container for Faq Entry
+ * This class is a container for faq entry which is loaded from faq database
+ * @author Group 16 
  */
 @Slf4j
 class faqEntry {
@@ -348,6 +375,15 @@ class faqEntry {
 		this.hit = hit;
 	}
 
+	/**
+	 * Constructor of faqEntry class
+	 * 
+	 * @param questionID		question id of faq entry
+	 * @param Question		question of faq entry
+	 * @param Answer			answer of faq entry
+	 * @param Keyword		keyword of faq entry
+	 * @param hit			hit number of faq entry
+	 */
 	faqEntry(int questionID, String Question, String Answer, String Keyword, int hit) {
 		this.questionID = questionID;
 		this.Question = Question;

@@ -1,11 +1,13 @@
 package com.example.bot.spring;
 
 import static java.util.Collections.singletonList;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
 import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.doThrow;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 import java.util.*;
@@ -61,7 +63,10 @@ import com.linecorp.bot.model.response.BotApiResponse;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 
+import ch.qos.logback.core.sift.AbstractAppenderFactoryUsingJoran;
+
 @RunWith(MockitoJUnitRunner.class)
+//@Ignore
 public class LineMessageControllerTest2 {
 
 	@Mock
@@ -122,20 +127,77 @@ public class LineMessageControllerTest2 {
 
 	}
 	
-	// @Test
-	// public void test_reply() throws Exception{
-	// 	String replyToken = "replyToken";
-	// 	String testMsg = "message";
-	// 	String expectReply = "expectReply";
-
-    //     when(lineMessagingClient.replyMessage(new ReplyMessage(
-    //             replyToken, expectReply
-    //     ))).thenReturn(CompletableFuture.completedFuture(
-    //             new BotApiResponse("ok", Collections.emptyList())
-	// 	));
-
-	// 	underTest.replyText(replyToken, "");
-	// 	verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
-	// }
+	@Test
+	public void test_reply() throws Exception{
+		String replyToken = "replyToken";
+	 	String testMsg = "message";
+	 	String expectReply = "expectReply";
+	 	boolean thrown = false;
+	 	
+	 	try {
+	 		when(lineMessagingClient.replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))))).thenThrow(new InterruptedException());
+	 		underTest.replyText(replyToken, expectReply);
+	 	}
+	 	catch(RuntimeException e) {
+	 		thrown = true;
+	 	}
+	 	assertThat(thrown).isEqualTo(true);
+	 	
+//		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, singletonList(new TextMessage(expectReply))));
+	 }
 	
+	 @Test 
+	 public void test_listTourForBook() throws Exception {
+
+		String userID = "userId";
+		String replyToken = "replyToken";
+		List<Message> expectReply = new ArrayList<Message>();
+		List<Tour> tourList = new ArrayList<Tour>();
+
+		tourList.add(new Tour(1, "1_name", "1_discription", 2));
+		tourList.add(new Tour(2, "2_name", "2_discription", 2));
+
+		tourList.add(new Tour(3, "3_name", "3_discription", 2, "404.png", ""));
+		tourList.add(new Tour(4, "4_name", "4_discription", 2, "404.png", ""));
+
+		when(database.setUserState(userID, Constant.BOOKING_TOUR_ID)).thenReturn(true);
+		when(database.getTours()).thenReturn(tourList);
+		expectReply.add(new TextMessage(Constant.INSTRUCTION_BOOKING));
+
+		List<CarouselColumn> carousel = new ArrayList<CarouselColumn>();
+		Tour tour = tourList.get(0);
+		tour.setImagePath(null);
+		String imagePath = "404.png";
+		String imageUrl = LineMessageController.createUri(imagePath);
+		CarouselColumn item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
+				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
+		carousel.add(item);
+		tour = tourList.get(1);
+		tour.setImagePath(" ");
+		item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
+				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
+		carousel.add(item);
+		tour = tourList.get(2);
+		tour.setImagePath(" ");
+		item = new CarouselColumn(imageUrl, tour.getTourName(), tour.getDescription(),
+				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
+		carousel.add(item);
+		tour = tourList.get(3);
+		tour.setDescription("descriptiondescriptiondescriptiondescriptiondescriptiondescription");
+		String description = "descriptiondescriptiondescriptiondescriptiondescriptiondes..";
+		item = new CarouselColumn(imageUrl, tour.getTourName(), description,
+				Arrays.asList(new MessageAction("Book", Integer.toString(tour.getTourID()))));
+		carousel.add(item);
+
+		CarouselTemplate carouselTemplate = new CarouselTemplate(carousel);
+		TemplateMessage templateMessage = new TemplateMessage("Carousel of List", carouselTemplate);
+		expectReply.add(templateMessage);
+
+		when(lineMessagingClient.replyMessage(new ReplyMessage(replyToken, expectReply))).thenReturn(
+				CompletableFuture.completedFuture(new BotApiResponse("ok", Collections.emptyList())));
+
+		underTest.listTourForBooking(replyToken, "");
+		verify(lineMessagingClient).replyMessage(new ReplyMessage(replyToken, expectReply));
+
+	 }
 }
