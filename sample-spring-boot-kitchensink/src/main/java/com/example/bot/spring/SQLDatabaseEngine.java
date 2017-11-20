@@ -26,11 +26,15 @@ import java.math.*;
 public class SQLDatabaseEngine {
 	//booking state: 0 isBooking; 1 done; 2 confirmed;
 	//offering state: 0 not enough; 1 enough; 2 full; 3 old;
-	/**
-	 * Connect to database】‘、
-	 * @return Connection
-	 */
+
 	private java.sql.Timestamp timeInput = new java.sql.Timestamp(new java.util.Date().getTime());
+	
+	/**
+	 * Connects to database
+	 * @return	Connection object for database
+	 * @throws	URISyntaxException when URI access fails
+	 * @throws	SQLException when database is not connected successfully
+	 */
 	protected Connection getConnection() throws URISyntaxException, SQLException {
 		Connection connection;
 		URI dbUri = new URI(System.getenv("DATABASE_URL"));
@@ -47,7 +51,18 @@ public class SQLDatabaseEngine {
 		return connection;
 	}
 	
-	public boolean generalFuction(int functionID, String userID, String stringInput, int intInput, Timestamp timeInput) {
+	/**
+	 * A lot of basic operations based on database
+	 * @param	functionID	the id of the function to be called
+	 * @param	userID		the id of the line user
+	 * @param	stringInput	the input string
+	 * @param	intInput		the input integer
+	 * @param	timeInput	the input timestamp
+	 * @return	the result is true if the opearion successes, otherwise the result is false
+	 * @throws	Exception when database is not accessed successfully
+	 */
+	
+	public boolean generalFuction(int functionID, String userID, String stringInput, int intInput, Timestamp timeInput) throws Exception{
 		int result=0;
 		try {
 			Connection connection = getConnection();
@@ -188,147 +203,196 @@ public class SQLDatabaseEngine {
 		else
 			return false;
 	}
+	
 	/**
-	 * Set User last response Time
-	 * @param id
-	 * @param time
+	 * Sets the last response time of user
+	 * @param id		the id of the line user
+	 * @param time	the time stamp to be set
+	 * @return	the result is true if the setting is called successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean setUserTime(String id, java.sql.Timestamp time) {
+	public boolean setUserTime(String id, java.sql.Timestamp time) throws Exception{
 		return generalFuction(Constant.SET_USER_TIME, id, "", 0, time);
 	}
+	
 	/**
-	 * Set User State
-	 * @param id
-	 * @param state
+	 * Sets the state of user
+	 * @param id		the id of the line user
+	 * @param state	the user state to be set
+	 * @return	the result is true if the setting is called successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean setUserState(String id, int state) {
+	public boolean setUserState(String id, int state) throws Exception{
 		return generalFuction(Constant.SET_USER_STATE, id, "", state, timeInput);
 	}
+	
 	/**
-	 * Set User Name
-	 * @param id
-	 * @param text
+	 * Sets the name of user
+	 * @param id		the id of the line user
+	 * @param text	the user name to be set
+	 * @return	the result is true if the setting is called successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean setUserName(String id, String text) {
+	public boolean setUserName(String id, String text) throws Exception{
 		return generalFuction(Constant.SET_USER_NAME, id, text, 0, timeInput);
 	}
+	
 	/**
-	 * Set User PhoneNum
-	 * @param id
-	 * @param text
+	 * Sets the phone number of user
+	 * @param id		the id of the line user
+	 * @param text	the user's phone number to be set
+	 * @return	the result is true if the setting is called successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean setUserPhoneNum(String id, String text) {
+	public boolean setUserPhoneNum(String id, String text) throws Exception{
 		return generalFuction(Constant.SET_USER_PHONE, id, text, 0, timeInput);
 	}
+	
 	/**
-	 * Set User Age
-	 * @param id
-	 * @param text
+	 * Sets the age of user
+	 * @param id		the id of the line user
+	 * @param text	the user age to be set
+	 * @return	the result is true if the setting is called successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean setUserAge(String id, String text){
+	public boolean setUserAge(String id, String text) throws Exception{
 		return generalFuction(Constant.SET_USER_AGE, id, text, 0, timeInput);
 	}
+	
 	/**
-	 * Create User in Database
-	 * @param id
-	 * @param time
-	 * @param state
+	 * Creates user in database
+	 * @param id		the id of the line user
+	 * @param time	the last response time of user to be set
+	 * @param state	the user state to be set
+	 * @return	the result is true if the creation is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean createUser(String id, java.sql.Timestamp time, int state) {
+	public boolean createUser(String id, java.sql.Timestamp time, int state) throws Exception{
 		return generalFuction(Constant.CREATE_USER, id, "", state, time);
 	}
+	
 	/**
-	 * Delete User in Database
-	 * @param id
+	 * Deletes user in database
+	 * @param id		the id of the line user
+	 * @return	the result is true if the deletion is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean deleteUser(String id)  {
+	public boolean deleteUser(String id)  throws Exception{
 		return generalFuction(Constant.DELETE_USER, id, "", 0, timeInput);
 	}
-	/**
-	 * find the tour with Tour ID
-	 * @param tourID
-	 */
 	
-	public boolean tourFound(int tourID) {
+	/**
+	 * Finds the tour with tour ID
+	 * @param tourID		the id of the tour
+	 * @return	the result is true if the tour is found successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */	
+	public boolean tourFound(int tourID) throws Exception{
 		return generalFuction(Constant.TOUR_FOUND, "", "",tourID , timeInput);
 	}
+	
 	/**
-	 * Set Buffer Tour ID
-	 * @param userID
-	 * @param tourID
-	 */
-	public boolean setBufferTourID(String userID, int tourID){
+	 * Sets the buffering tour with tour ID
+	 * @param userID		the id of the line user
+	 * @param tourID		the id of the tour
+	 * @return	the result is true if the buffering tour is set successfully, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */	
+	public boolean setBufferTourID(String userID, int tourID) throws Exception{
 		return generalFuction(Constant.SET_BUFFER_TOUR_ID, userID, "",tourID , timeInput);
 	}
+	
 	/**
-	 * Delete Buffer Booking Entry
-	 * @param userID
-	 */
-	public boolean deleteBufferBookingEntry(String userID) {
+	 * Deletes the buffering booking entry with userID
+	 * @param userID		the id of the line user
+	 * @return	the result is true if the deletion is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */	
+	public boolean deleteBufferBookingEntry(String userID) throws Exception{
 		return generalFuction(Constant.DELETE_BUFFER_BOOKING, userID, "",0, timeInput);
 	}
 
 	/**
-	 * Delete Buffer Booking Entry
-	 * @param userID
-	 */
-	public boolean deleteBookingEntry(String userID) {
+	 * Deletes the booking entry with userID
+	 * @param userID		the id of the line user
+	 * @return	the result is true if the deletion is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
+	 */	
+	public boolean deleteBookingEntry(String userID) throws Exception{
 		return generalFuction(Constant.DELETE_BOOKING, userID, "",0, timeInput);
 	}
+	
 	/**
-	 * Set Booking TourOffering ID
-	 * @param userID
-	 * @param tourOfferingID
+	 * Sets the id of the tour offering for booking
+	 * @param userID		the id of the line user
+	 * @param tourOfferingID		the id os the tour offering
+	 * @return	the result is true if the setting is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean setBookingTourOfferingID(String userID, int tourOfferingID) {
+	public boolean setBookingTourOfferingID(String userID, int tourOfferingID) throws Exception{
 		return generalFuction(Constant.SET_BOOKING_TOUR_OFFERING_ID, userID, "",tourOfferingID, timeInput);
 	}
+	
 	/**
-	 * Set Booking Adult Number
-	 * @param userID
-	 * @param number
+	 * Sets the number of adults for booking
+	 * @param userID		the id of the line user
+	 * @param number		the number of adults to be set
+	 * @return	the result is true if the setting is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean setBookingAdultNumber(String userID,int number) {
+	public boolean setBookingAdultNumber(String userID,int number) throws Exception{
 		return generalFuction(Constant.SET_BOOKING_ADULT_NUMBER, userID, "",number, timeInput);
 	}
+	
 	/**
-	 * Set Booking Children Number
-	 * @param userID
-	 * @param number
+	 * Sets the number of children for booking
+	 * @param userID		the id of the line user
+	 * @param number		the number of children to be set
+	 * @return	the result is true if the setting is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean setBookingChildrenNumber(String userID,int number){
+	public boolean setBookingChildrenNumber(String userID,int number) throws Exception{
 		return generalFuction(Constant.SET_BOOKING_CHILD_NUMBER, userID, "",number, timeInput);
 	}
+	
 	/**
-	 * Set Booking Toddler Number
-	 * @param userID
-	 * @param number
+	 * Sets the number of toddlers for booking
+	 * @param userID		the id of the line user
+	 * @param number		the number of toddlers to be set
+	 * @return	the result is true if the setting is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean setBookingToddlerNumber(String userID,int number) {
+	public boolean setBookingToddlerNumber(String userID,int number) throws Exception{
 		return generalFuction(Constant.SET_BOOKING_TODDLER_NUMBER, userID, "",number, timeInput);
 	}
+	
 	/**
-	 * Set Booking Special Request
-	 * @param userID
-	 * @param request
+	 * Sets the special request from user for booking
+	 * @param userID		the id of the line user
+	 * @param request	the special request to be set
+	 * @return	the result is true if the setting is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean setBookingSpecialRequest(String userID,String request) {
+	public boolean setBookingSpecialRequest(String userID,String request) throws Exception{
 		return generalFuction(Constant.SET_BOOKING_SPECIAL_REQUEST, userID, request,0, timeInput);
 	}
+	
 	/**
-	 * Set Booking Confirmation
-	 * @param userID
+	 * Sets the confirmation for user after booking
+	 * @param userID		the id of the line user
+	 * @return	the result is true if the setting is successful, otherwise the result is false
+	 * @throws	Exception when calling generalFuction fails
 	 */
-	public boolean setBookingConfirmation(String userID) {
+	public boolean setBookingConfirmation(String userID) throws Exception{
 		return generalFuction(Constant.SET_BOOKING_CONFIRMATION, userID, "",0, timeInput);
 	}
+	
 	/**
-	 * Get User Information
-	 * @param id
-	 * @return result
+	 * Gets the user information given user ID
+	 * @param id		the id of the line user
+	 * @return 		the user obeject given the user ID
 	 * @see User
 	 */
-	
 	public User getUserInformation(String id){
 		User result=new User();
 		try {
@@ -355,12 +419,15 @@ public class SQLDatabaseEngine {
 		}
 		return result;
 	}
+	
 	/**
-	 * Add Unknown Question To Unknown Datatabse
-	 * @param text
+	 * Adds unknown question to unknown datatabse
+	 * @param text	the unknown questoin
+	 * @return	the result is true if the addition is successful, otherwise the result is false
+	 * @throws	Exception when database is not accessed successfully
 	 */
 	
-	public boolean addToUnknownDatatabse(String text) {
+	public boolean addToUnknownDatatabse(String text) throws Exception{
 		int result=0;
 		int min_dist = 5;
 		String resultString = null;
@@ -403,9 +470,10 @@ public class SQLDatabaseEngine {
 			return false;
 	}
 	/**
-	 * Get Available Tour
-	 * @return listOfTours
+	 * Gets current available tours
+	 * @return list of current available tours
 	 * @see Tour
+	 * @throws	Exception when database is not accessed successfully
 	 */
 	
 	public List<Tour> getTours()throws Exception {
@@ -431,13 +499,14 @@ public class SQLDatabaseEngine {
 	}
 
 	/**
-	 * Get Available TourOffering
-	 * @param tourID
-	 * @return listOfTourOfferings
+	 * Gets available tour offerings
+	 * @param tourID		the id of the given tour
+	 * @return list of current available tour offerings
 	 * @see TourOffering
+	 * @throws	Exception when database is not accessed successfully
 	 */
 
-	public List<TourOffering> displayTourOffering(int tourID) {
+	public List<TourOffering> displayTourOffering(int tourID) throws Exception{
 		List<TourOffering> listOfTourOfferings = new ArrayList<TourOffering>();
 		String result="";
 		try {
@@ -484,11 +553,12 @@ public class SQLDatabaseEngine {
 	
 	
 	/**
-	 * Get Buffer Tour ID
-	 * @param userID
-	 * @return result
+	 * Gets buffering tour ID
+	 * @param userID		the ID of the line user
+	 * @return buffering tour ID given the user ID
+	 * @throws	Exception when database is not accessed successfully
 	 */
-	public int getBufferTourID(String userID) {
+	public int getBufferTourID(String userID) throws Exception{
 		int result=-1;
 		try {
 			Connection connection = getConnection();
@@ -508,12 +578,14 @@ public class SQLDatabaseEngine {
 	}
 
 	/**
-	 * Check TourID and TourOfferingID are match
-	 * @param tourID
-	 * @param tourOfferingID
+	 * Checks tour ID and tour offering ID are matched
+	 * @param tourID		the ID of the tour
+	 * @param tourOfferingID		the ID of the tour offering
+	 * @return	the result is true if tour ID and tour offering ID are matched, otherwise the result is false
+	 * @throws	Exception when database is not accessed successfully
 	 */
 
-	public boolean tourOfferingFound(int tourID,int tourOfferingID){
+	public boolean tourOfferingFound(int tourID,int tourOfferingID) throws Exception{
 		boolean result=false;
 		try {
 			Connection connection = getConnection();
@@ -545,11 +617,12 @@ public class SQLDatabaseEngine {
 		return result;
 	}
 	/**
-	 * Get Quota for Booking
-	 * @param userID
-	 * @return result
+	 * Gets quota for booking of the user
+	 * @param userID		the id of the line user
+	 * @return the remaining quota for the user
+	 * @throws	Exception when database is not accessed successfully
 	 */
-	public int checkQuota(String userID) {
+	public int checkQuota(String userID) throws Exception{
 		int result=-1;
 		int max=0;
 		int sum=0;
@@ -607,11 +680,12 @@ public class SQLDatabaseEngine {
 	}
 	
 	/**
-	 * Display Booking Information
-	 * @param userID
-	 * @return result
+	 * Displays booking information given user ID
+	 * @param userID		the id of the line user
+	 * @return the booking information of a particular user
+	 * @throws	Exception when database is not accessed successfully
 	 */
-	public String displaytBookingInformation(String userID) {
+	public String displaytBookingInformation(String userID) throws Exception{
 		String result="";
 		int result2=0;
 		String special="";
@@ -732,7 +806,18 @@ public class SQLDatabaseEngine {
 			return result;
 	}
 	
-	
+	/**
+	 * Calculates the discount fee if a user gets the discount quota
+	 * @param seat	the number of seats of the discount campaign
+	 * @param adult  the number of adults
+	 * @param discount_fee the fee to be calculated
+	 * @param rate 	the discount rate
+	 * @param price	the full price
+	 * @param seat_for_adult the number of seats for aults
+	 * @param child 	the number of children
+	 * @param seat_for_child the numeber of seats for children
+	 * @return the discount fee
+	 */
 
 	public double calculateDiscount(int seat, int adult,double discount_fee, double rate,double price,
 			int seat_for_adult, int child, int seat_for_child) {
@@ -758,11 +843,12 @@ public class SQLDatabaseEngine {
 		return discount_fee;
 	}
 	/**
-	 * Review Booking Information
-	 * @param userID
-	 * @return result
+	 * Reviews booking information given user ID
+	 * @param userID		the id of the line user
+	 * @return the booking information of a particular user
+	 * @throws	Exception when database is not accessed successfully
 	 */
-	public String reviewBookingInformation(String userID){
+	public String reviewBookingInformation(String userID) throws Exception{
 		String result="";
 		int result2=0;
 		double fee=0;

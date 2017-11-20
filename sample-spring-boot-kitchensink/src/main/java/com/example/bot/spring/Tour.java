@@ -23,12 +23,12 @@ public class Tour {
 	
 	/**
 	 * Constructor
-	 * @param tourID Id number of a tour
-	 * @param tourName Name of the tour
+	 * @param tourID ID number of a tour
+	 * @param tourName name of the tour
 	 * @param description description of the tour
 	 * @param duration duration of the tour
 	 * @param imagePath path of the image
-	 * @param shortDescription an short version of description
+	 * @param shortDescription a short version of description
 	 */
 	public Tour(int tourID, String tourName, String description, int duration,String imagePath, String shortDescription) {
 		this.tourID = tourID;
@@ -41,8 +41,8 @@ public class Tour {
 	
 	/**
 	 * Constructor
-	 * @param tourID Id number of a tour
-	 * @param tourName Name of the tour
+	 * @param tourID ID number of a tour
+	 * @param tourName name of the tour
 	 * @param description description of the tour
 	 * @param duration duration of the tour
 	 */
@@ -57,6 +57,7 @@ public class Tour {
 	
 	// get functions
 	/**
+	 * Gets tour ID
 	 * @return id number of a tour
 	 */
 	public int getTourID() {
@@ -64,6 +65,7 @@ public class Tour {
 	}
 	
 	/**
+	 * Gets tour name
 	 * @return name of the tour
 	 */
 	public String getTourName() {
@@ -71,6 +73,7 @@ public class Tour {
 	}
 	
 	/**
+	 * Gets tour description
 	 * @return description of the tour 
 	 */
 	public String getDescription() {
@@ -78,18 +81,21 @@ public class Tour {
 	}
 	
 	/**
+	 * Gets tour duration
 	 * @return duration of the tour
 	 */
 	public int getDuration() {
 		return duration;
 	}
 	/**
+	 * Gets image path
 	 * @return path of an image
 	 */
 	public String getImagePath() {
 		return imagePath;
 	}
 	/**
+	 * Gets short version of tour description
 	 * @return short version of description
 	 */
 	public String getShortDescription() {
@@ -97,40 +103,46 @@ public class Tour {
 	}
 	// set functions
 	/**
-	 * @param tourID Id number of a tour
+	 * Sets tour ID
+	 * @param tourID ID number of the tour to be set
 	 */
 	public void setTourID(int tourID) {
 		this.tourID = tourID;
 	}
 	
 	/**
-	 * @param tourName Name of the tour
+	 * Sets tour name
+	 * @param tourName name of the tour to be set
 	 */
 	public void setTourName(String tourName) {
 		this.tourName = tourName;
 	}
 	
 	/**
-	 * @param description description of the tour
+	 * Sets tour description
+	 * @param description description of the tour to be set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 	
 	/**
-	 * @param duration duration of the tour
+	 * Sets tour duration
+	 * @param duration duration of the tour to be set
 	 */
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
 	/**
-	 * @param imagePath path of the image
+	 * Sets image path
+	 * @param imagePath path of the image to be set
 	 */
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
 	}
 	/**
-	 * @param shortDescription an short version of description
+	 * Sets a short version of description
+	 * @param shortDescription a short version of description to be set
 	 */
 	public void setShortDescription(String shortDescription) {
 		this.shortDescription = shortDescription;

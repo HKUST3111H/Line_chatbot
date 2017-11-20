@@ -28,6 +28,10 @@ public class User {
 	private int state;//chatting or booking state
 	private java.sql.Timestamp time;
 	
+	
+	/**
+	 * Default constructor
+	 */
 	public User (){//except for tripHistory
 		tripHistory = new ArrayList<String>();
 		this.userID = "null";
@@ -39,12 +43,12 @@ public class User {
 	
 	/**
 	 * Constructor
-	 * @param id id of a user
-	 * @param name name 
-	 * @param phoneno phone numeber
-	 * @param age age 
-	 * @param state booking state
-	 * @param time last log in time
+	 * @param id id of the line user
+	 * @param name name of the user
+	 * @param phoneno phone numeber of the user
+	 * @param age age of the user
+	 * @param state booking state of the user
+	 * @param time last log in time of the user
 	 */
 	public User (String id,String name, String phoneno, String age, int state, java.sql.Timestamp time ){//except for tripHistory
 		tripHistory = new ArrayList<String>();
@@ -60,49 +64,55 @@ public class User {
 	//getter
 	
 	/**
-	 * @return user name
+	 * Gets the user name
+	 * @return name of the user
 	 */
 	public String getUserName(){
 		return userName;
 	}
 	
 	/**
-	 * @return user id 
+	 * Gets the user ID
+	 * @return ID of the user
 	 */
 	public String getUserID(){
 		return userID;
 	}
 	
 	/**
-	 * @return phone number
+	 * Gets the phone number of the user
+	 * @return phone number of the user
 	 */
 	public String getPhoneNumber(){
 		return phoneNumber;
 	}
 	
 	/**
-	 * @return age 
+	 * Gets the age of the user
+	 * @return age of the user
 	 */
 	public String getAge(){
 		return age;
 	}
 	
 	/**
-	 * @return booking state 
+	 * Gets the state of the user
+	 * @return state of the user
 	 */
 	public int getState(){
 		return state;
 	}
 	
 	/**
-	 * @return last log in time
+	 * Gets last log in time of the user
+	 * @return last log in time of the user
 	 */
 	public java.sql.Timestamp getTime(){
 		return time;
 	}
 	
 	/**
-	 * show tour history
+	 * Shows tour history of the user
 	 */
 	public void outputTripHistory(){
 		for(int i = 0; i <this.tripHistory.size();i++){
@@ -111,7 +121,8 @@ public class User {
 	}
 	
 	/**
-	 * @param state booking state
+	 * Sets the state of the user
+	 * @param state state of the user to be set
 	 */
 	//mutator
 	public void setState(int state){
@@ -119,35 +130,40 @@ public class User {
 	}
 	
 	/**
-	 * @param Age age 
+	 * Sets the age of the user
+	 * @param Age age of the user to be set
 	 */
 	public void setAge(String Age){
 		this.age = Age;
 	}
 	
 	/**
-	 * @param PhoneNo phone number 
+	 * Sets the phone number of the user
+	 * @param PhoneNo phone number of the user to be set 
 	 */
 	public void setPhoneNumber(String PhoneNo){
 		this.phoneNumber = PhoneNo;
 	}
 	
 	/**
-	 * @param userID user id 
+	 * Sets the ID of the user
+	 * @param userID ID of the user to be set
 	 */
 	public void setID(String userID){
 		this.userID = userID;
 	}
 	
 	/**
-	 * @param userName name of user
+	 * Sets the name of the user
+	 * @param userName name of the user to be set
 	 */
 	public void setName(String userName){
 		this.userName = userName;
 	}
 	
 	/**
-	 * @param tourID id of tour
+	 * Adds a tour to the trip history of the user
+	 * @param tourID ID of the tour to be added
 	 */
 	public void addTripHistory(String tourID){
 		this.tripHistory.add(tourID);
@@ -155,16 +171,18 @@ public class User {
 	}
 	
 	/**
-	 * @param time last log in time
+	 * Sets last log in time of the user
+	 * @param time last log in time of the user to be set
 	 */
 	public void setTime(java.sql.Timestamp time){
 		this.time = time;
 	}
 	
 	/**
-	 * @param userID id of user
-	 * @param time last log in time
-	 * @param state booking state
+	 * Sets information of the user
+	 * @param userID ID of the user to be set
+	 * @param time last log in time of the user to be set
+	 * @param state state of the user to be set
 	 */
 	public void setUser(String userID, java.sql.Timestamp time, int state) {
 		setID(userID);
