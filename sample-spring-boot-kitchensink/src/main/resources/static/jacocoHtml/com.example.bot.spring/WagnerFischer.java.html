@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WagnerFischer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sample-spring-boot-kitchensink</a> &gt; <a href="index.source.html" class="el_package">com.example.bot.spring</a> &gt; <span class="el_source">WagnerFischer.java</span></div><h1>WagnerFischer.java</h1><pre class="source lang-java linenums">package com.example.bot.spring;
+
+import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+import java.sql.*;
+import java.net.URISyntaxException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+
+import java.util.ArrayList;
+
+import java.util.List;
+
+
+/**
+ * This class is a container for wagner fischer which is used to find distance between String
+ * @author Group 16
+ */
+<span class="fc" id="L22">@Slf4j</span>
+public class WagnerFischer {
+    private char[] s1;
+    private char[] s2;
+
+<span class="fc" id="L27">    public WagnerFischer(String s1, String s2) {</span>
+<span class="fc" id="L28">        this.s1 = s1.toLowerCase().toCharArray();</span>
+<span class="fc" id="L29">        this.s2 = s2.toLowerCase().toCharArray();</span>
+<span class="fc" id="L30">    }</span>
+
+    private int min(int a, int b, int c) {
+<span class="fc" id="L33">        return Math.min(a, Math.min(b, c));</span>
+    }
+
+    /**
+     * Using Dynamic Programming, the Wagner-Fischer algorithm is able to 
+     * calculate the edit distance between two strings.
+     * @return edit distance between s1 and s2
+     */
+    public int getDistance() {
+<span class="fc" id="L42">        int[][] dp = new int[s1.length + 1][s2.length + 1];</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        for (int i = 0; i &lt;= s1.length; dp[i][0] = i++);</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        for (int j = 0; j &lt;= s2.length; dp[0][j] = j++);</span>
+
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        for (int i = 1; i &lt;= s1.length; i++) {</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            for (int j = 1; j &lt;= s2.length; j++) {</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">                if (s1[i - 1] == s2[j - 1]) {</span>
+<span class="fc" id="L49">                    dp[i][j] = dp[i - 1][j - 1];</span>
+                } else {
+<span class="fc" id="L51">                    dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, </span>
+                    		dp[i - 1][j - 1] + 1);
+                }
+            }
+        }
+<span class="fc" id="L56">        return dp[s1.length][s2.length];</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FaqDatabase.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sample-spring-boot-kitchensink</a> &gt; <a href="index.source.html" class="el_package">com.example.bot.spring</a> &gt; <span class="el_source">FaqDatabase.java</span></div><h1>FaqDatabase.java</h1><pre class="source lang-java linenums">package com.example.bot.spring;
+
+import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+import java.sql.*;
+import java.net.URISyntaxException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.*;
+
+/**
+ * This class is a container for faq database
+ * @author Group 16 
+ */
+<span class="fc" id="L20">@Slf4j</span>
+<span class="fc" id="L21">public class FaqDatabase extends SQLDatabaseEngine {</span>
+
+	/**
+	 * Replies user with a image
+	 * 
+	 * @param answer		a parameter which indactes the need of replying a image
+	 * @return 			url of image
+	 */
+	public String replyImage(String answer) {
+		// String pattern = &quot;(\\d+)[.](.*[?])[\\n][&gt;](.*)[\\n]&quot;;
+<span class="fc" id="L31">		String pattern = &quot;see the picture (.*)[)]&quot;;</span>
+<span class="fc" id="L32">		Pattern r = Pattern.compile(pattern);</span>
+<span class="fc" id="L33">		Matcher m = r.matcher(answer);</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">		if (m.find()) {</span>
+<span class="fc" id="L35">			return m.group(1);</span>
+		} else
+<span class="fc" id="L37">			return null;</span>
+	}
+
+
+	/**
+	 * Loads question from database
+	 * 
+	 * @return		faq question from databse
+	 * @see 			faqEntry
+	 * @throws		Exception when databse is not accessed successfully
+	 */
+	public List&lt;faqEntry&gt; loadQuestion() throws Exception{
+		//return loadQuestionStatic();
+<span class="fc" id="L50">		return loadQuestionSQL();</span>
+
+	}
+
+	/**
+	 * Loads question from database
+	 * 
+	 * @return		faq question from databse
+	 * @see 			faqEntry
+	 * @throws		Exception when databse is not accessed successfully
+	 */
+	public List&lt;faqEntry&gt; loadQuestionSQL() throws Exception{
+		try {
+<span class="fc" id="L63">			Connection connection = super.getConnection();</span>
+<span class="fc" id="L64">			List&lt;faqEntry&gt; listOfEntry = new ArrayList&lt;faqEntry&gt;();</span>
+<span class="fc" id="L65">			PreparedStatement stmt = connection.prepareStatement(</span>
+					&quot;SELECT line_faq.id, line_faq.question, line_faq.answer, line_faq.hit, line_keyword.keyword_text &quot;
+							+ &quot;FROM line_faq, line_keyword, line_faq_keyword WHERE line_faq.id=line_faq_keyword.faq_id AND &quot;
+							+ &quot;line_keyword.id=line_faq_keyword.keyword_id;&quot;);
+<span class="fc" id="L69">			ResultSet rs = stmt.executeQuery();</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">			while (rs.next()) {</span>
+<span class="fc" id="L71">				faqEntry entry = new faqEntry(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(5),</span>
+<span class="fc" id="L72">						rs.getInt(4));</span>
+<span class="fc" id="L73">				listOfEntry.add(entry);</span>
+				// PreparedStatement stmt2 = connection.prepareStatement(&quot;UPDATE keywords SET
+				// hit = ? WHERE question = ?;&quot;);
+<span class="fc" id="L76">			}</span>
+<span class="fc" id="L77">			rs.close();</span>
+<span class="fc" id="L78">			stmt.close();</span>
+<span class="fc" id="L79">			connection.close();</span>
+
+<span class="fc" id="L81">			log.info(&quot;faq database load successfully&quot;);</span>
+<span class="fc" id="L82">			return listOfEntry;</span>
+<span class="nc" id="L83">		} catch (Exception e) {</span>
+<span class="nc" id="L84">			log.info(&quot;Exception while reading database: {}&quot;, e.toString());</span>
+<span class="nc" id="L85">			return null;</span>
+		}
+
+		// if (listOfEntry != null &amp;&amp; !listOfEntry.isEmpty())
+		// log.info(&quot;faq database probably empty&quot;);
+		// throw new Exception(&quot;EMPTY DATABASE&quot;);
+	}
+
+	/**
+	 * Updates hit number given the question id
+	 * 
+	 * @param qid	question id
+	 * @param hit	the hit number to be updated to
+	 * @return		indicates whether updateHit function has been successfully called
+	 * @throws		Exception when databse is not accessed successfully
+	 */
+	public boolean updateHit(int qid, int hit) throws Exception {
+		try {
+<span class="fc" id="L103">			Connection connection = super.getConnection();</span>
+<span class="fc" id="L104">			int result = 0;</span>
+<span class="fc" id="L105">			PreparedStatement stmt2 = connection.prepareStatement(&quot;UPDATE line_faq SET hit = ? WHERE id = ?;&quot;);</span>
+<span class="fc" id="L106">			stmt2.setInt(1, hit);</span>
+<span class="fc" id="L107">			stmt2.setInt(2, qid);</span>
+<span class="fc" id="L108">			result = stmt2.executeUpdate();</span>
+<span class="fc" id="L109">			stmt2.close();</span>
+<span class="fc" id="L110">			connection.close();</span>
+
+<span class="fc" id="L112">			log.info(&quot;update hit successfully&quot;);</span>
+<span class="fc" id="L113">			return true;</span>
+<span class="nc" id="L114">		} catch (Exception e) {</span>
+<span class="nc" id="L115">			log.info(&quot;Exception while reading database: {}&quot;, e.toString());</span>
+<span class="nc" id="L116">			return false;</span>
+		}
+	}
+
+	/**
+	 * Searchs answer from FAQ list
+	 * 
+	 * @param text		the question which user input
+	 * @param userID		the id of the user
+	 * @return			the answer of the question which user asks
+	 * @see				faqEntry
+	 * @throws			Exception when there is no answer for the given question
+	 */
+
+	public String search(String text, String userID) throws Exception {
+
+<span class="fc" id="L132">		String result = null;</span>
+
+<span class="fc" id="L134">		List&lt;faqEntry&gt; listOfEntry = loadQuestion();</span>
+<span class="fc" id="L135">		int qid = -1;</span>
+<span class="fc" id="L136">		int hit = 0;</span>
+		// using wagnerFischer Algorithm to select question within 10 unit distance
+//		if (!listOfEntry.isEmpty()) {
+			int dist;
+<span class="fc" id="L140">			int minDistance = 1000000;</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">			for (faqEntry entry : listOfEntry) {</span>
+<span class="fc" id="L142">				dist = new WagnerFischer(entry.Question, text).getDistance();</span>
+<span class="fc bfc" id="L143" title="All 4 branches covered.">				if (dist &lt;= 2 &amp;&amp; dist &lt; minDistance) {</span>
+<span class="fc" id="L144">					minDistance = dist;</span>
+<span class="fc" id="L145">					result = entry.Answer;</span>
+<span class="fc" id="L146">					qid = entry.questionID;</span>
+<span class="fc" id="L147">					hit = entry.hit;</span>
+				}
+<span class="fc" id="L149">			}</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">			if (result == null) {</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">				for (faqEntry entry : listOfEntry) {</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">					if (text.toLowerCase().contains(entry.Keyword.toLowerCase())) {</span>
+<span class="fc" id="L153">						dist = new WagnerFischer(entry.Question, text).getDistance();</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">						if (dist &lt; minDistance) {</span>
+<span class="fc" id="L155">							minDistance = dist;</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">							if (result == null) {</span>
+<span class="fc" id="L157">								result = entry.Answer + &quot;\n\n&quot;;</span>
+							} else {
+<span class="nc" id="L159">								result += entry.Answer + &quot;\n\n&quot;;</span>
+							}
+<span class="fc" id="L161">							qid = entry.questionID;</span>
+<span class="fc" id="L162">							hit = entry.hit;</span>
+//							if (qid != -1) {
+<span class="fc" id="L164">								updateHit(qid, hit + 1);</span>
+//							}
+						}
+					}
+<span class="fc" id="L168">				}</span>
+			}
+
+			// dynamic question
+<span class="fc bfc" id="L172" title="All 2 branches covered.">			if (result.toLowerCase().contains(&quot;return&quot;)) {</span>
+
+<span class="fc bfc" id="L174" title="All 2 branches covered.">				if (result.toLowerCase().contains(&quot;top 5 tours&quot;)) {</span>
+<span class="fc" id="L175">					result = dynamic_top_five_tours(userID);</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">				} else if (result.toLowerCase().contains(&quot;more tours&quot;)) {</span>
+<span class="fc" id="L177">					result = dynamic_more_tours(userID);</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">				} else if (result.toLowerCase().contains(&quot;hot spring&quot;)) {</span>
+<span class="fc" id="L179">					result = dynamic_hot_spring();</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">				} else if (result.toLowerCase().contains(&quot;mountain&quot;)) {</span>
+<span class="fc" id="L181">					result = dynamic_mountain();</span>
+				}
+			}
+//		}
+
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">		if (result != null)</span>
+<span class="fc" id="L187">			return result;</span>
+<span class="nc" id="L188">		throw new Exception(&quot;NOT FOUND&quot;);</span>
+	}
+
+	
+	/**
+	 * Returns result of the top five tours
+	 * 
+	 * @param userID		the id of the user
+	 * @return			result of the top five tours without including the tours which the user has visited
+	 * @throws			Exception when database is not accessed successfully
+	 */
+	
+	public String dynamic_top_five_tours(String userID) throws Exception{
+		try {
+<span class="fc" id="L202">			String result = &quot;&quot;;</span>
+<span class="fc" id="L203">			Connection connection = super.getConnection();</span>
+<span class="fc" id="L204">			PreparedStatement stmt = connection.prepareStatement(</span>
+					&quot;SELECT line_tour.id, line_tour.name, line_tour.description, SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) &quot;
+							+ &quot;FROM line_booking, line_touroffering, line_tour &quot;
+							+ &quot;WHERE line_booking.\&quot;tourOffering_id\&quot;=line_touroffering.id AND line_touroffering.tour_id=line_tour.id &quot;
+							+ &quot;AND line_booking.state &gt; 0 &quot; + &quot;AND line_tour.id NOT IN &quot;
+							+ &quot;(SELECT line_tour.id FROM line_booking, line_touroffering, line_tour &quot;
+							+ &quot;WHERE line_booking.user_id = ? AND line_booking.state = 2 AND &quot;
+							+ &quot;line_booking.\&quot;tourOffering_id\&quot;=line_touroffering.id AND line_touroffering.tour_id=line_tour.id) &quot;
+							+ &quot;GROUP BY line_tour.id, line_tour.name, line_tour.description &quot;
+							+ &quot;ORDER BY SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) DESC;&quot;);
+<span class="fc" id="L214">			stmt.setString(1, userID);</span>
+<span class="fc" id="L215">			ResultSet rs = stmt.executeQuery();</span>
+<span class="fc" id="L216">			int i = 0;</span>
+<span class="pc bpc" id="L217" title="1 of 4 branches missed.">			while (rs.next() &amp;&amp; i &lt; 5) {</span>
+<span class="fc" id="L218">				result += (rs.getString(1) + &quot; &quot; + rs.getString(2) + &quot;\n&quot; + rs.getString(3) + &quot;\n&quot;</span>
+<span class="fc" id="L219">						+ &quot;Number of people who have visited: &quot; + rs.getInt(4) + &quot;\n\n&quot;);</span>
+<span class="fc" id="L220">				i++;</span>
+			}
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">			if (result.equals(&quot;&quot;)) {</span>
+<span class="nc" id="L223">				result = &quot;You have been to all tours we provided. Thanks for your interest and support!\n&quot;;</span>
+			} else {
+<span class="fc" id="L225">				String header = &quot;The following are hot tours we recommend based on your booking history.\n\n&quot;;</span>
+<span class="fc" id="L226">				result = header + result;</span>
+			}
+<span class="fc" id="L228">			rs.close();</span>
+<span class="fc" id="L229">			stmt.close();</span>
+<span class="fc" id="L230">			connection.close();</span>
+<span class="fc" id="L231">			return result;</span>
+<span class="nc" id="L232">		} catch (Exception e) {</span>
+<span class="nc" id="L233">			log.info(&quot;Exception while reading database: {}&quot;, e.toString());</span>
+<span class="nc" id="L234">			return null;</span>
+		}
+	}
+
+	
+	/**
+	 * Returns more tours after user has asked about hot tours
+	 * 
+	 * @param userID		the id of the user
+	 * @return			more tours which are popular without including the tours which the user has visited
+	 * @throws			Exception when database is not accessed successfully
+	 */
+	
+	public String dynamic_more_tours(String userID) throws Exception{
+		try {
+<span class="fc" id="L249">			String result = &quot;&quot;;</span>
+<span class="fc" id="L250">			Connection connection = super.getConnection();</span>
+<span class="fc" id="L251">			PreparedStatement stmt = connection.prepareStatement(</span>
+					&quot;SELECT line_tour.id, line_tour.name, line_tour.description, SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) &quot;
+							+ &quot;FROM line_booking, line_touroffering, line_tour &quot;
+							+ &quot;WHERE line_booking.\&quot;tourOffering_id\&quot;=line_touroffering.id AND line_touroffering.tour_id=line_tour.id &quot;
+							+ &quot;AND line_booking.state &gt; 0 &quot; + &quot;AND line_tour.id NOT IN &quot;
+							+ &quot;(SELECT line_tour.id FROM line_booking, line_touroffering, line_tour &quot;
+							+ &quot;WHERE line_booking.user_id = ? AND line_booking.state = 2 AND &quot;
+							+ &quot;line_booking.\&quot;tourOffering_id\&quot;=line_touroffering.id AND line_touroffering.tour_id=line_tour.id) &quot;
+							+ &quot;GROUP BY line_tour.id, line_tour.name, line_tour.description &quot;
+							+ &quot;ORDER BY SUM (line_booking.adult_num+line_booking.child_num+line_booking.toddler_num) DESC;&quot;);
+<span class="fc" id="L261">			stmt.setString(1, userID);</span>
+<span class="fc" id="L262">			ResultSet rs = stmt.executeQuery();</span>
+<span class="fc" id="L263">			ResultSet temp = rs;</span>
+<span class="fc" id="L264">			int i = 0;</span>
+<span class="pc bpc" id="L265" title="1 of 4 branches missed.">			while (i &lt; 5 &amp;&amp; rs.next()) {</span>
+<span class="fc" id="L266">				i++;</span>
+			}
+<span class="fc bfc" id="L268" title="All 2 branches covered.">			while (rs.next()) {</span>
+<span class="fc" id="L269">				result += (rs.getString(1) + &quot; &quot; + rs.getString(2) + &quot;\n&quot; + rs.getString(3) + &quot;\n&quot;</span>
+<span class="fc" id="L270">						+ &quot;Number of people who have visited: &quot; + rs.getInt(4) + &quot;\n\n&quot;);</span>
+			}
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">			if (result.equals(&quot;&quot;)) {</span>
+<span class="nc" id="L273">				result = &quot;No more recommendations! Thanks for your interest and support!\n&quot;;</span>
+			} else {
+<span class="fc" id="L275">				String header = &quot;The following are more hot tours we recommend based on your booking history.\n\n&quot;;</span>
+<span class="fc" id="L276">				result = header + result;</span>
+			}
+<span class="fc" id="L278">			rs.close();</span>
+<span class="fc" id="L279">			stmt.close();</span>
+<span class="fc" id="L280">			connection.close();</span>
+<span class="fc" id="L281">			return result;</span>
+<span class="nc" id="L282">		} catch (Exception e) {</span>
+<span class="nc" id="L283">			log.info(&quot;Exception while reading database: {}&quot;, e.toString());</span>
+<span class="nc" id="L284">			return null;</span>
+		}
+	}
+
+	
+	/**
+	 * Returns tours which provide hot spring service
+	 * 
+	 * @return			tours which provide hot spring service
+	 * @throws			Exception when database is not accessed successfully
+	 */
+	
+	public String dynamic_hot_spring() throws Exception{
+		try {
+<span class="fc" id="L298">			String result = &quot;&quot;;</span>
+<span class="fc" id="L299">			Connection connection = super.getConnection();</span>
+<span class="fc" id="L300">			PreparedStatement stmt = connection</span>
+<span class="fc" id="L301">					.prepareStatement(&quot;SELECT line_tour.id, line_tour.name, line_tour.description &quot; + &quot;FROM line_tour &quot;</span>
+							+ &quot;WHERE line_tour.description like \'%hot spring%\' &quot;
+							+ &quot;OR line_tour.description like \'%Hot Spring%\';&quot;);
+<span class="fc" id="L304">			ResultSet rs = stmt.executeQuery();</span>
+<span class="fc bfc" id="L305" title="All 2 branches covered.">			while (rs.next()) {</span>
+<span class="fc" id="L306">				result += (rs.getString(1) + &quot; &quot; + rs.getString(2) + &quot;\n&quot; + rs.getString(3) + &quot;\n\n&quot;);</span>
+			}
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">			if (result.equals(&quot;&quot;)) {</span>
+<span class="nc" id="L309">				result = &quot;No tours with hot spring! Thanks for your interest and support!\n&quot;;</span>
+			} else {
+<span class="fc" id="L311">				String header = &quot;The following are tours with hot spring.\n\n&quot;;</span>
+<span class="fc" id="L312">				result = header + result;</span>
+			}
+<span class="fc" id="L314">			rs.close();</span>
+<span class="fc" id="L315">			stmt.close();</span>
+<span class="fc" id="L316">			connection.close();</span>
+<span class="fc" id="L317">			return result;</span>
+<span class="nc" id="L318">		} catch (Exception e) {</span>
+<span class="nc" id="L319">			log.info(&quot;Exception while reading database: {}&quot;, e.toString());</span>
+<span class="nc" id="L320">			return null;</span>
+		}
+	}
+
+	
+	/**
+	 * Returns tours which organize hiking activity
+	 * 
+	 * @return			tours which organize hiking activity
+	 * @throws			Exception when database is not accessed successfully
+	 */
+	
+	public String dynamic_mountain() throws Exception{
+		try {
+<span class="fc" id="L334">			String result = &quot;&quot;;</span>
+<span class="fc" id="L335">			Connection connection = super.getConnection();</span>
+<span class="fc" id="L336">			PreparedStatement stmt = connection</span>
+<span class="fc" id="L337">					.prepareStatement(&quot;SELECT line_tour.id, line_tour.name, line_tour.description &quot; + &quot;FROM line_tour &quot;</span>
+							+ &quot;WHERE line_tour.description like \'%mountain%\' &quot;
+							+ &quot;OR line_tour.description like \'%Mountain%\';&quot;);
+<span class="fc" id="L340">			ResultSet rs = stmt.executeQuery();</span>
+<span class="fc bfc" id="L341" title="All 2 branches covered.">			while (rs.next()) {</span>
+<span class="fc" id="L342">				result += (rs.getString(1) + &quot; &quot; + rs.getString(2) + &quot;\n&quot; + rs.getString(3) + &quot;\n\n&quot;);</span>
+			}
+<span class="pc bpc" id="L344" title="1 of 2 branches missed.">			if (result.equals(&quot;&quot;)) {</span>
+<span class="nc" id="L345">				result = &quot;No tours with mountain! Thanks for your interest and support!\n&quot;;</span>
+			} else {
+<span class="fc" id="L347">				String header = &quot;The following are tours with mountain.\n\n&quot;;</span>
+<span class="fc" id="L348">				result = header + result;</span>
+			}
+<span class="fc" id="L350">			rs.close();</span>
+<span class="fc" id="L351">			stmt.close();</span>
+<span class="fc" id="L352">			connection.close();</span>
+<span class="fc" id="L353">			return result;</span>
+<span class="nc" id="L354">		} catch (Exception e) {</span>
+<span class="nc" id="L355">			log.info(&quot;Exception while reading database: {}&quot;, e.toString());</span>
+<span class="nc" id="L356">			return null;</span>
+		}
+	}
+
+
+<span class="fc" id="L361">	private String FILENAME = &quot;/static/faq.txt&quot;;</span>
+
+}
+
+/**
+ * This class is a container for faq entry which is loaded from faq database
+ * @author Group 16 
+ */
+<span class="fc" id="L369">@Slf4j</span>
+class faqEntry {
+<span class="nc" id="L371">	faqEntry(int questionID, String Question, String Answer, int hit) {</span>
+<span class="nc" id="L372">		this.questionID = questionID;</span>
+<span class="nc" id="L373">		this.Question = Question;</span>
+<span class="nc" id="L374">		this.Answer = Answer;</span>
+<span class="nc" id="L375">		this.hit = hit;</span>
+<span class="nc" id="L376">	}</span>
+
+	/**
+	 * Constructor of faqEntry class
+	 * 
+	 * @param questionID		question id of faq entry
+	 * @param Question		question of faq entry
+	 * @param Answer			answer of faq entry
+	 * @param Keyword		keyword of faq entry
+	 * @param hit			hit number of faq entry
+	 */
+<span class="fc" id="L387">	faqEntry(int questionID, String Question, String Answer, String Keyword, int hit) {</span>
+<span class="fc" id="L388">		this.questionID = questionID;</span>
+<span class="fc" id="L389">		this.Question = Question;</span>
+<span class="fc" id="L390">		this.Answer = Answer;</span>
+<span class="fc" id="L391">		this.Keyword = Keyword;</span>
+<span class="fc" id="L392">		this.hit = hit;</span>
+<span class="fc" id="L393">	}</span>
+
+	public int questionID;
+	public String Question;
+	public String Answer;
+	public String Keyword;
+	public int hit;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

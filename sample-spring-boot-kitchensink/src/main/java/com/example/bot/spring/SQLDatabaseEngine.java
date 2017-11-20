@@ -401,7 +401,6 @@ public class SQLDatabaseEngine {
 			stmt.setString(1, id);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
-					log.info("fuck fuck");
 					result.setID(rs.getString(1));
 					result.setName(rs.getString(2));
 					result.setPhoneNumber(rs.getString(3));
@@ -413,7 +412,6 @@ public class SQLDatabaseEngine {
 			rs.close();
 			stmt.close();
 			connection.close();
-			log.info("fuck");
 		} catch (Exception e) {
 			log.info(e.toString());
 		}
